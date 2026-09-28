@@ -40,27 +40,51 @@
 @import "../styles/en-linea/contacto.css" layer(en-linea);
 
 /* ---------- Tipografías (referencia/index.html:19-22) ---------- */
-@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:400 700;font-display:swap;src:url("/fonts/cormorant.woff2") format('woff2')}
-@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:400 700;font-display:swap;src:url("/fonts/cormorant-italic.woff2") format('woff2')}
-@font-face{font-family:'Mulish';font-style:normal;font-weight:400 800;font-display:swap;src:url("/fonts/mulish.woff2") format('woff2')}
-@font-face{font-family:'Yellowtail';font-style:normal;font-weight:400;font-display:swap;src:url("/fonts/yellowtail.woff2") format('woff2')}
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/cormorant.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/cormorant-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("/fonts/mulish.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Yellowtail";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/yellowtail.woff2") format("woff2");
+}
 
 /* ---------- Tokens de la marca (docs/PLAN DE REFACTORIZACION.md, 4.6) ---------- */
 @theme {
-  --color-crema: #F7F4EC;
-  --color-crema-2: #EFEBDF;
-  --color-crema-3: #E7E4D6;
-  --color-tinta: #2A2621;
-  --color-oscuro: #1B1815;
-  --color-marron: #5E3D22;
-  --color-marron-2: #7A4E2B;
-  --color-naranja: #C67A31;
-  --color-naranja-2: #DA8737;
-  --color-verde: #617C52;
+  --color-crema: #f7f4ec;
+  --color-crema-2: #efebdf;
+  --color-crema-3: #e7e4d6;
+  --color-tinta: #2a2621;
+  --color-oscuro: #1b1815;
+  --color-marron: #5e3d22;
+  --color-marron-2: #7a4e2b;
+  --color-naranja: #c67a31;
+  --color-naranja-2: #da8737;
+  --color-verde: #617c52;
 
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-  --font-sans: 'Mulish', system-ui, sans-serif;
-  --font-script: 'Yellowtail', cursive;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Mulish", system-ui, sans-serif;
+  --font-script: "Yellowtail", cursive;
 
   --breakpoint-tablet: 1024px;
   --breakpoint-celular: 720px;

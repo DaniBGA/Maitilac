@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { getConfig } from "@/lib/datos";
-
-const CONFIG = getConfig();
+import { getConfig, getLocales } from "@/lib/datos";
 
 // FOOTER_HTML de referencia/index.html:1779-1807. Se repite en Inicio, Catálogo, Locales y Contacto.
-export function FooterOscuro() {
+export async function FooterOscuro() {
+  const [CONFIG, locales] = await Promise.all([getConfig(), getLocales()]);
   return (
     <footer className="foot-dark js-footer-dark">
       <div className="foot-grid">
@@ -32,8 +31,9 @@ export function FooterOscuro() {
         <div>
           <div className="foot-tit">CONTACTO</div>
           <div className="foot-col">
-            <span>Maipú 1135, Tandil</span>
-            <span>Avellaneda 655, Tandil</span>
+            {locales.map((l) => (
+              <span key={l.nombre}>{l.direccion}</span>
+            ))}
             <a href={`mailto:${CONFIG.email}`}>{CONFIG.email}</a>
             <Link href="/contacto" data-go="contacto">
               Contacto

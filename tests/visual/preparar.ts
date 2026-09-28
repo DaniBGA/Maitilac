@@ -32,6 +32,8 @@ export async function prepararPagina(page: Page, ruta: Ruta) {
   });
 
   await page.goto(ES_REFERENCIA ? ruta.vieja : ruta.nueva);
+  // Sitio nuevo: esperar a que React termine de hidratar (components/sitio/MarcaHidratado.tsx).
+  if (!ES_REFERENCIA) await page.locator("html[data-hidratado='si']").waitFor({ state: "attached" });
   await esperarContenido(page);
   await page.clock.pauseAt(CONGELADO);
   await detenerCarruseles(page);

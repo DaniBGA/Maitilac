@@ -1,21 +1,25 @@
 /**
  * Acceso a los datos del sitio.
- * Etapa 2: salen de data/*.json (extraídos del sitio viejo con `pnpm datos:extraer`).
- * Etapa 3: estas mismas funciones pasan a leer de PostgreSQL, sin cambiar las páginas.
+ *
+ * - Lo que edita el gestor sale de PostgreSQL, con caché por etiqueta: cada
+ *   función guarda su resultado ('use cache') hasta que el gestor guarde un
+ *   cambio en esa entidad y la invalide (updateTag, Etapa 5).
+ * - Los textos fijos (historia, proceso, Instagram) salen de content/.
+ *
+ * Las funciones devuelven la misma forma que las constantes del sitio viejo, así
+ * los componentes no dependen de cómo se guardan los datos.
  */
-import anuncios from "@/data/anuncios.json";
-import colores from "@/data/colores.json";
-import config from "@/data/config.json";
-import equipo from "@/data/equipo.json";
-import fotosHistoria from "@/data/fotos-historia.json";
-import fotosHoy from "@/data/fotos-hoy.json";
-import historia from "@/data/historia.json";
-import insta from "@/data/insta.json";
-import locales from "@/data/locales.json";
-import ocasiones from "@/data/ocasiones.json";
-import pasos from "@/data/pasos.json";
-import premios from "@/data/premios.json";
-import productos from "@/data/productos.json";
+import { and, asc, eq, isNull } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
+import colores from "@/content/colores.json";
+import fotosHistoria from "@/content/fotos-historia.json";
+import fotosHoy from "@/content/fotos-hoy.json";
+import historia from "@/content/historia.json";
+import insta from "@/content/insta.json";
+import pasos from "@/content/pasos.json";
+import * as s from "@/db/schema";
+import { db } from "./db";
+import { precioTexto } from "./precio";
 import type {
   Anuncios,
   Color,
@@ -28,27 +32,196 @@ import type {
   Persona,
   Premio,
   Producto,
+  ProductoDelMes,
 } from "./tipos";
 import { slug } from "./util";
 
-export const getConfig = (): Config => config;
-export const getAnuncios = (): Anuncios => anuncios;
+/** Caché hasta que el gestor invalide alguna de estas etiquetas. */
+function cachear(...etiquetas: string[]) {
+  cacheLife("max");
+  cacheTag(...etiquetas);
+}
+
+// ---------- Textos fijos (content/) ----------
+
 /** Color de un anuncio; si no existe, marrón (como `col()` del sitio viejo). */
 export const getColor = (clave: string): Color => (colores as Record<string, Color>)[clave] ?? colores.marron;
-
-export const getProductos = (): Producto[] => productos as Producto[];
-export const getProductosVisibles = () => getProductos().filter((p) => p.activo !== false);
-export const getProductosDestacados = () => getProductos().filter((p) => p.destacado && p.activo !== false);
-
-export const getOcasiones = (): Ocasion[] => ocasiones;
 export const getHistoria = (): Hito[] => historia;
 export const getFotosHistoria = (): string[] => fotosHistoria;
 export const getFotosHoy = (): string[] => fotosHoy;
-export const getLocales = (): Local[] => locales;
 export const getPasos = (): Paso[] => pasos;
-export const getEquipoVisible = (): Persona[] => equipo.filter((p) => p.ver !== false);
-export const getPremiosVisibles = (): Premio[] => premios.filter((p) => p.ver !== false);
 export const getInsta = (): FotoInsta[] => insta;
 
+// ---------- Base de datos ----------
+
+export async function getConfig(): Promise<Config> {
+  "use cache";
+  cachear("config");
+  const [c] = await db.select().from(s.config).limit(1);
+  return c;
+}
+
+export async function getAnuncios(): Promise<Anuncios> {
+  "use cache";
+  cachear("anuncios");
+  const filas = await db.select().from(s.anuncios);
+  const vacio = { ver: false, texto: "", color: "marron" };
+  const por = (clave: string) => filas.find((f) => f.clave === clave) ?? vacio;
+  return { barra: por("barra"), badge1: por("badge1"), badge2: por("badge2") };
+}
+
+/** Productos visibles en el sitio (activos y no borrados), en el orden del gestor. */
+export async function getProductosVisibles(): Promise<Producto[]> {
+  "use cache";
+  cachear("productos");
+  const filas = await db
+    .select()
+    .from(s.productos)
+    .where(and(eq(s.productos.activo, true), isNull(s.productos.eliminadoEn)))
+    .orderBy(asc(s.productos.orden));
+  const fotos = await db
+    .select({ productoId: s.productoFotos.productoId, archivo: s.fotos.archivo })
+    .from(s.productoFotos)
+    .innerJoin(s.fotos, eq(s.fotos.id, s.productoFotos.fotoId))
+    .orderBy(asc(s.productoFotos.orden));
+  const quesos = await db
+    .select({ comboId: s.comboQuesos.comboId, nombre: s.productos.nombre })
+    .from(s.comboQuesos)
+    .innerJoin(s.productos, eq(s.productos.id, s.comboQuesos.quesoId))
+    .orderBy(asc(s.comboQuesos.orden));
+
+  return filas.map((p) => ({
+    nombre: p.nombre,
+    destacado: p.destacado,
+    tipo: p.tipo,
+    activo: p.activo,
+    desc: p.descripcion,
+    precio: precioTexto(p.precio, p.precioPrefijo),
+    unidad: p.unidad,
+    verPrecio: p.verPrecio,
+    badge: p.badge,
+    photos: fotos.filter((f) => f.productoId === p.id).map((f) => f.archivo),
+    comida: p.maridajeComida,
+    bebida: p.maridajeBebida,
+    presentaciones: p.presentaciones,
+    quesos: quesos.filter((q) => q.comboId === p.id).map((q) => q.nombre),
+    premios: p.premiosTexto,
+  }));
+}
+
+export async function getProductosDestacados(): Promise<Producto[]> {
+  return (await getProductosVisibles()).filter((p) => p.destacado);
+}
+
 /** Producto visible por su slug (URL /catalogo/<slug>). */
-export const getProductoPorSlug = (s: string) => getProductosVisibles().find((p) => slug(p.nombre) === s);
+export async function getProductoPorSlug(s: string): Promise<Producto | undefined> {
+  return (await getProductosVisibles()).find((p) => slug(p.nombre) === s);
+}
+
+/** Filtros "Buscá por ocasión", con los nombres de sus productos (como `match` del sitio viejo). */
+export async function getOcasiones(): Promise<Ocasion[]> {
+  "use cache";
+  cachear("ocasiones", "productos");
+  const filas = await db.select().from(s.ocasiones).orderBy(asc(s.ocasiones.orden));
+  const rel = await db
+    .select({ ocasionId: s.ocasionProductos.ocasionId, nombre: s.productos.nombre })
+    .from(s.ocasionProductos)
+    .innerJoin(s.productos, eq(s.productos.id, s.ocasionProductos.productoId));
+  return filas.map((o) => ({
+    key: o.clave,
+    label: o.label,
+    ver: o.ver,
+    match: rel.filter((r) => r.ocasionId === o.id).map((r) => r.nombre),
+  }));
+}
+
+/** Bloque "Producto del mes": su texto y foto, más nombre, precio y unidad del producto. */
+export async function getProductoDelMes(): Promise<ProductoDelMes | null> {
+  "use cache";
+  cachear("producto-del-mes", "productos");
+  const [f] = await db
+    .select({
+      texto: s.productoDelMes.texto,
+      foto: s.fotos.archivo,
+      nombre: s.productos.nombre,
+      precio: s.productos.precio,
+      precioPrefijo: s.productos.precioPrefijo,
+      unidad: s.productos.unidad,
+      verPrecio: s.productos.verPrecio,
+    })
+    .from(s.productoDelMes)
+    .innerJoin(s.productos, eq(s.productos.id, s.productoDelMes.productoId))
+    .leftJoin(s.fotos, eq(s.fotos.id, s.productoDelMes.fotoId))
+    .limit(1);
+  if (!f) return null;
+  return {
+    nombre: f.nombre,
+    slug: slug(f.nombre),
+    texto: f.texto,
+    foto: f.foto ?? "",
+    precio: precioTexto(f.precio, f.precioPrefijo),
+    unidad: f.unidad,
+    verPrecio: f.verPrecio,
+  };
+}
+
+export async function getLocales(): Promise<Local[]> {
+  "use cache";
+  cachear("locales");
+  const filas = await db.select().from(s.locales).orderBy(asc(s.locales.orden));
+  const fotos = await db.select({ id: s.fotos.id, archivo: s.fotos.archivo, alt: s.fotos.alt }).from(s.fotos);
+  const foto = (id: string | null) => fotos.find((f) => f.id === id);
+  return filas.map((l) => ({
+    nombre: l.nombre,
+    direccion: l.direccion,
+    semana: l.horarioSemana,
+    domingo: l.horarioDomingo,
+    foto: foto(l.fotoId)?.archivo ?? "",
+    abre: l.abre,
+    cierra: l.cierra,
+    domAbre: l.domAbre,
+    domCierra: l.domCierra,
+    fotoDetalle: foto(l.fotoDetalleId)?.archivo ?? "",
+    fotoDetalleAlt: foto(l.fotoDetalleId)?.alt ?? "",
+    encuadreDetalle: l.encuadreDetalle,
+    comoLlegar: l.comoLlegar,
+    mapaUrl: l.mapaUrl,
+  }));
+}
+
+export async function getEquipoVisible(): Promise<Persona[]> {
+  "use cache";
+  cachear("equipo");
+  const filas = await db
+    .select({
+      nombre: s.equipo.nombre,
+      rol: s.equipo.rol,
+      area: s.equipo.area,
+      foto: s.fotos.archivo,
+      ver: s.equipo.ver,
+    })
+    .from(s.equipo)
+    .leftJoin(s.fotos, eq(s.fotos.id, s.equipo.fotoId))
+    .where(eq(s.equipo.ver, true))
+    .orderBy(asc(s.equipo.orden));
+  return filas.map((m) => ({ ...m, foto: m.foto ?? "" }));
+}
+
+export async function getPremiosVisibles(): Promise<Premio[]> {
+  "use cache";
+  cachear("premios");
+  const filas = await db
+    .select({
+      anio: s.premios.anio,
+      titulo: s.premios.titulo,
+      evento: s.premios.evento,
+      detalle: s.premios.detalle,
+      foto: s.fotos.archivo,
+      ver: s.premios.ver,
+    })
+    .from(s.premios)
+    .leftJoin(s.fotos, eq(s.fotos.id, s.premios.fotoId))
+    .where(eq(s.premios.ver, true))
+    .orderBy(asc(s.premios.orden));
+  return filas.map((p) => ({ ...p, foto: p.foto ?? "" }));
+}

@@ -29,8 +29,10 @@ test.describe("navegación", () => {
     await expect(page.locator("#modal")).toBeVisible();
     await expect(page).toHaveURL("/catalogo/gouda");
     await page.goBack();
-    await expect(page.locator("#modal")).toHaveCount(0);
+    // Con cacheComponents, Next conserva lo último que mostró oculto (Activity): no se ve.
+    await expect(page.locator("#modal")).toBeHidden();
     await expect(page).toHaveURL("/");
+    expect(await page.evaluate(() => document.body.style.overflow)).toBe("");
   });
 
   test("entrar directo a /catalogo/gouda muestra el catálogo con el modal", async ({ page }) => {
@@ -39,7 +41,7 @@ test.describe("navegación", () => {
     await expect(page.locator("#catalogo-grid")).toBeVisible();
     await page.locator("#cerrar-modal").click();
     await expect(page).toHaveURL("/catalogo");
-    await expect(page.locator("#modal")).toHaveCount(0);
+    await expect(page.locator("#modal")).toBeHidden();
   });
 
   test("el menú del header navega entre páginas", async ({ page }) => {

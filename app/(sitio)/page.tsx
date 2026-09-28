@@ -4,13 +4,20 @@ import { LocalResumen } from "@/components/sitio/inicio/LocalResumen";
 import { TarjetaDestacado } from "@/components/sitio/inicio/TarjetaDestacado";
 import { getAnuncios, getColor, getConfig, getInsta, getLocales, getProductosDestacados } from "@/lib/datos";
 import { ruta } from "@/lib/util";
+import { connection } from "next/server";
 
 // Página de Inicio: markup de referencia/index.html:497-628, convertido con
 // scripts/html_a_jsx.py (estilos en styles/en-linea/inicio.css). Las partes que
 // llenaba el JavaScript viejo usan los componentes de components/sitio/inicio/.
-export default function Inicio() {
-  const config = getConfig();
-  const a = getAnuncios();
+export default async function Inicio() {
+  // Se arma en cada pedido con datos en caché: la base no hace falta al compilar (ver app/(sitio)/layout.tsx).
+  await connection();
+  const [config, a, destacados, locales] = await Promise.all([
+    getConfig(),
+    getAnuncios(),
+    getProductosDestacados(),
+    getLocales(),
+  ]);
   const cBarra = getColor(a.barra.color);
   const c1 = getColor(a.badge1.color);
   const c2 = getColor(a.badge2.color);
@@ -18,8 +25,6 @@ export default function Inicio() {
   const verBarra = a.barra.ver && a.barra.texto.trim() !== "";
   const verB1 = a.badge1.ver && a.badge1.texto.trim() !== "";
   const verB2 = a.badge2.ver && a.badge2.texto.trim() !== "";
-  const destacados = getProductosDestacados();
-  const locales = getLocales();
   const insta = getInsta();
 
   return (

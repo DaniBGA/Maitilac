@@ -12,13 +12,15 @@ import {
   getPremiosVisibles,
 } from "@/lib/datos";
 import { ruta } from "@/lib/util";
+import { connection } from "next/server";
 
 // Página Nosotros: markup de referencia/index.html:631-801, convertido con
 // scripts/html_a_jsx.py (estilos en styles/en-linea/nosotros.css). Las partes que
 // llenaba el JavaScript viejo usan los componentes de components/sitio/nosotros/.
-export default function Nosotros() {
-  const equipo = getEquipoVisible();
-  const premios = getPremiosVisibles();
+export default async function Nosotros() {
+  // Se arma en cada pedido con datos en caché: la base no hace falta al compilar (ver app/(sitio)/layout.tsx).
+  await connection();
+  const [equipo, premios] = await Promise.all([getEquipoVisible(), getPremiosVisibles()]);
 
   return (
     <main id="page-nosotros" className="page">

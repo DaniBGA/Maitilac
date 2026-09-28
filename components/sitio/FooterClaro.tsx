@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { getConfig } from "@/lib/datos";
+import { getConfig, getLocales } from "@/lib/datos";
 
-const CONFIG = getConfig();
+/** "2494538291" → "249 4538291", como se muestra en el sitio viejo. */
+const telefonoVisible = (t: string) => `${t.slice(0, 3)} ${t.slice(3)}`;
 
 // Footer propio de la página Nosotros, referencia/index.html:759-800. Texto tal cual.
 const Pin = () => (
@@ -19,7 +20,8 @@ const Pin = () => (
   </svg>
 );
 
-export function FooterClaro() {
+export async function FooterClaro() {
+  const [CONFIG, locales] = await Promise.all([getConfig(), getLocales()]);
   return (
     <footer className="fc">
       <div className="foot-grid fc-grid">
@@ -43,7 +45,7 @@ export function FooterClaro() {
                 <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"></circle>
               </svg>
             </a>
-            <a href="https://www.facebook.com/maitilac" target="_blank" rel="noopener" className="fc-red">
+            <a href={CONFIG.facebook} target="_blank" rel="noopener" className="fc-red">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M13.5 9H16V6h-2.5C11.6 6 10 7.6 10 9.5V11H8v3h2v7h3v-7h2.2l.8-3H13V9.3c0-.2.2-.3.5-.3z"></path>
               </svg>
@@ -73,14 +75,12 @@ export function FooterClaro() {
         <div>
           <div className="fc-tit">Locales</div>
           <div className="fc-col">
-            <span className="fc-item">
-              <Pin />
-              Maipú 1135, Tandil
-            </span>
-            <span className="fc-item">
-              <Pin />
-              Avellaneda 655, Tandil
-            </span>
+            {locales.map((l) => (
+              <span key={l.nombre} className="fc-item">
+                <Pin />
+                {l.direccion}
+              </span>
+            ))}
           </div>
         </div>
         <div>
@@ -98,7 +98,7 @@ export function FooterClaro() {
               >
                 <path d="M5 4h3l2 5-2.5 1.5a11 11 0 005 5L14 13l5 2v3a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"></path>
               </svg>
-              249 4538291
+              {telefonoVisible(CONFIG.telefono)}
             </a>
             <a href={`mailto:${CONFIG.email}`} className="fc-item-link">
               <svg

@@ -37,6 +37,22 @@ export type Local = {
   cierra: string;
   domAbre: string | null;
   domCierra: string | null;
+  /** Página Locales: segunda foto, cómo llegar y enlace al mapa. */
+  fotoDetalle: string;
+  fotoDetalleAlt: string;
+  encuadreDetalle: string;
+  comoLlegar: string;
+  mapaUrl: string;
+};
+
+export type ProductoDelMes = {
+  nombre: string;
+  slug: string;
+  texto: string;
+  foto: string;
+  precio: string;
+  unidad: string;
+  verPrecio: boolean;
 };
 
 export type Paso = { titulo: string; desc: string };
@@ -56,4 +72,5 @@ export type Config = {
   telefono: string;
   email: string;
   instagram: string;
+  facebook: string;
 };

@@ -1,0 +1,17 @@
+{
+  "marron": {
+    "nombre": "Marrón",
+    "fondo": "#5E3D22",
+    "texto": "#F7F4EC"
+  },
+  "naranja": {
+    "nombre": "Naranja",
+    "fondo": "#C67A31",
+    "texto": "#ffffff"
+  },
+  "verde": {
+    "nombre": "Verde",
+    "fondo": "#617C52",
+    "texto": "#ffffff"
+  }
+}

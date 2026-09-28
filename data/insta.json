@@ -1,0 +1,26 @@
+[
+  {
+    "foto": "img/insta-tambo.jpg",
+    "alt": "El tambo"
+  },
+  {
+    "foto": "img/insta-quesos.jpg",
+    "alt": "Nuestros quesos"
+  },
+  {
+    "foto": "img/insta-fabrica.jpg",
+    "alt": "La fábrica"
+  },
+  {
+    "foto": "img/insta-vaca.jpg",
+    "alt": "Las vacas en el campo"
+  },
+  {
+    "foto": "img/insta-local.jpg",
+    "alt": "Nuestro local"
+  },
+  {
+    "foto": "img/insta-familia.jpg",
+    "alt": "La familia Maitia"
+  }
+]

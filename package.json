@@ -10,7 +10,8 @@
     "format": "prettier --write .",
     "ref:servir": "serve referencia -l 4500 --no-clipboard",
     "ref:capturar": "REFERENCIA=1 playwright test --update-snapshots=all",
-    "test:visual": "playwright test"
+    "test:visual": "playwright test",
+    "datos:extraer": "tsx scripts/extraer-datos.ts"
   },
   "dependencies": {
     "next": "16.3.6",

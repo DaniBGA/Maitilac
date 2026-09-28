@@ -1,0 +1,90 @@
+[
+  {
+    "anio": "2025",
+    "titulo": "Mejor Queso del Año",
+    "evento": "14ª Cata de Quesos · Quesos y Sabores, Tandil",
+    "detalle": "Categoría Micro PyME",
+    "foto": "img/premio-2025-mejor-queso.jpg",
+    "ver": true
+  },
+  {
+    "anio": "2025",
+    "titulo": "Primer Premio",
+    "evento": "14ª Cata de Quesos · Quesos y Sabores, Tandil",
+    "detalle": "Pasta Semidura Sin Ojos — Tipo Gouda",
+    "foto": "img/premio-2025-gouda.jpg",
+    "ver": true
+  },
+  {
+    "anio": "2025",
+    "titulo": "Primer Premio",
+    "evento": "14ª Cata de Quesos · Quesos y Sabores, Tandil",
+    "detalle": "Pasta Semidura Sin Ojos — Tipo Barra",
+    "foto": "img/premio-2025-barra.jpg",
+    "ver": true
+  },
+  {
+    "anio": "2025",
+    "titulo": "Primer Premio",
+    "evento": "14ª Cata de Quesos · Quesos y Sabores, Tandil",
+    "detalle": "Pasta Blanda — Tipo Cremoso",
+    "foto": "img/premio-2025-cremoso.jpg",
+    "ver": true
+  },
+  {
+    "anio": "2025",
+    "titulo": "Primer Premio",
+    "evento": "14ª Cata de Quesos · Quesos y Sabores, Tandil",
+    "detalle": "Pasta Dura III — Tipo Sardo",
+    "foto": "img/premio-2025-sardo.jpg",
+    "ver": true
+  },
+  {
+    "anio": "2025",
+    "titulo": "Segundo Premio",
+    "evento": "14ª Cata de Quesos · Quesos y Sabores, Tandil",
+    "detalle": "Pasta Blanda Hilada — Tipo Mozzarella",
+    "foto": "img/premio-2025-mozzarella.jpg",
+    "ver": true
+  },
+  {
+    "anio": "2023",
+    "titulo": "Primer Premio",
+    "evento": "13ª Cata de Quesos · Quesos y Sabores, Tandil",
+    "detalle": "Pasta Semidura Sin Ojos — Tipo Gouda",
+    "foto": "img/premio-2023-gouda.jpg",
+    "ver": true
+  },
+  {
+    "anio": "2023",
+    "titulo": "Primer Premio",
+    "evento": "13ª Cata de Quesos · Quesos y Sabores, Tandil",
+    "detalle": "Pasta Semidura Con Ojos — Tipo Pategras",
+    "foto": "img/premio-2023-pategras.jpg",
+    "ver": true
+  },
+  {
+    "anio": "2023",
+    "titulo": "Segundo Premio",
+    "evento": "13ª Cata de Quesos · Quesos y Sabores, Tandil",
+    "detalle": "Pasta Semidura Sin Ojos — Tipo Barra",
+    "foto": "img/premio-2023-barra.jpg",
+    "ver": true
+  },
+  {
+    "anio": "2023",
+    "titulo": "Segundo Premio",
+    "evento": "13ª Cata de Quesos · Quesos y Sabores, Tandil",
+    "detalle": "Pasta Dura III — Tipo Sardo",
+    "foto": "img/premio-2023-sardo.jpg",
+    "ver": true
+  },
+  {
+    "anio": "2019",
+    "titulo": "Participación",
+    "evento": "12ª Cata de Quesos · Quesos y Sabores, Tandil",
+    "detalle": "Certificado de participación",
+    "foto": "img/premio-2019-participacion.jpg",
+    "ver": true
+  }
+]

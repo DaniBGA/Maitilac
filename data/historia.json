@@ -1,0 +1,78 @@
+[
+  {
+    "anio": "1940",
+    "titulo": "El primer tambo",
+    "resumen": "El abuelo Miguel Maitia arranca con su primer tambo de ordeñe a mano en Napaleofú.",
+    "textos": [
+      "El abuelo <strong>Miguel Maitia</strong> arranca con su primer tambo de ordeñe a mano en Napaleofú.",
+      "No había grandes máquinas ni tecnología de punta: el trabajo era mucho y los días arrancaban antes de que saliera el sol."
+    ]
+  },
+  {
+    "anio": "1982",
+    "titulo": "Llega el ordeñe mecánico",
+    "resumen": "Se transforma en el primer tambo de ordeñe mecánico.",
+    "textos": [
+      "Se transforma en el primer tambo de ordeñe mecánico.",
+      "Una novedad para la época que ayudó a dar un gran paso adelante."
+    ]
+  },
+  {
+    "anio": "1997",
+    "titulo": "La segunda generación toma la posta",
+    "resumen": "La segunda generación, Raúl Maitia, continúa la actividad tambera instalando un nuevo tambo, modernizando las instalaciones y mejorando la eficiencia productiva.",
+    "textos": [
+      "La segunda generación, <strong>Raúl Maitia</strong>, continúa la actividad tambera instalando un nuevo tambo, modernizando las instalaciones y mejorando la eficiencia productiva."
+    ]
+  },
+  {
+    "anio": "2000",
+    "titulo": "Más campos, más leche",
+    "resumen": "Raúl comienza a producir en campos alquilados, para aumentar la producción de leche.",
+    "textos": [
+      "Raúl comienza a producir en campos alquilados, para aumentar la producción de leche."
+    ]
+  },
+  {
+    "anio": "2017",
+    "titulo": "Se suma la tercera generación",
+    "resumen": "Se incorpora formalmente la tercera generación de la familia, Victoria y Rosario Maitia.",
+    "textos": [
+      "Se incorpora formalmente la tercera generación de la familia: <strong>Victoria y Rosario Maitia</strong>.",
+      "Y con ellas llegó una pregunta que cambió todo: <em>¿y si además de producir la leche hacíamos nuestros propios quesos?</em>"
+    ]
+  },
+  {
+    "anio": "2018",
+    "titulo": "Los primeros quesos Maitilac",
+    "resumen": "Se alquila un tambo con fábrica de quesos y se comienzan a producir los primeros quesos Maitilac.",
+    "textos": [
+      "Se alquila un tambo con fábrica de quesos y se comienzan a producir los primeros quesos <strong>MAITILAC</strong>."
+    ]
+  },
+  {
+    "anio": "2019",
+    "titulo": "Llegamos a la góndola",
+    "resumen": "Se comienzan a comercializar los quesos en nuestros locales MAITILAC, y en diferentes lugares de la ciudad.",
+    "textos": [
+      "Se comienzan a comercializar los quesos en nuestros locales <strong>MAITILAC</strong>, y en diferentes lugares de la ciudad."
+    ]
+  },
+  {
+    "anio": "2022",
+    "titulo": "Empiezan las obras",
+    "resumen": "Comienzan las obras para la planta propia.",
+    "textos": [
+      "Comienzan las obras para la planta propia."
+    ]
+  },
+  {
+    "anio": "2023",
+    "titulo": "Nuestra propia fábrica",
+    "resumen": "En diciembre se inaugura la fábrica MAITILAC en el Parque Industrial de Tandil, donde producimos quesos con leche producida en nuestros tambos.",
+    "textos": [
+      "En diciembre se inaugura la fábrica <strong>MAITILAC</strong> en el Parque Industrial de Tandil, donde producimos quesos con leche producida en nuestros tambos.",
+      "Porque para nosotros los quesos no nacen en una fábrica. Nacen mucho antes, en una familia que lleva más de <strong>40 años</strong> trabajando alrededor de la misma pasión."
+    ]
+  }
+]

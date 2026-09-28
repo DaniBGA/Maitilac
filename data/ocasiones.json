@@ -1,0 +1,65 @@
+[
+  {
+    "key": "picadita",
+    "label": "Sale picadita",
+    "ver": true,
+    "match": [
+      "Gouda",
+      "Sardo",
+      "Holanda"
+    ]
+  },
+  {
+    "key": "parrilla",
+    "label": "Va a la parrilla",
+    "ver": true,
+    "match": [
+      "Provoleta"
+    ]
+  },
+  {
+    "key": "pizza",
+    "label": "Nació para la pizza",
+    "ver": true,
+    "match": [
+      "Cremoso",
+      "Mozzarella"
+    ]
+  },
+  {
+    "key": "postre",
+    "label": "Para postre",
+    "ver": true,
+    "match": [
+      "Gouda",
+      "Cremoso"
+    ]
+  },
+  {
+    "key": "regalar",
+    "label": "Para regalar",
+    "ver": true,
+    "match": [
+      "Combo 3 Quesos",
+      "Flor de Picada"
+    ]
+  },
+  {
+    "key": "sandwich",
+    "label": "Maestros del sandwich",
+    "ver": true,
+    "match": [
+      "Barra Tybo",
+      "Cremoso"
+    ]
+  },
+  {
+    "key": "rallar",
+    "label": "A rallar se ha dicho",
+    "ver": true,
+    "match": [
+      "Reggianito",
+      "Sardo"
+    ]
+  }
+]

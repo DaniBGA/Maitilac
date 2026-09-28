@@ -1,0 +1,24 @@
+[
+  {
+    "nombre": "Local Maipú",
+    "direccion": "Maipú 1135, Tandil",
+    "semana": "8:30 a 21:00 hs",
+    "domingo": "",
+    "foto": "img/local-maipu-1.jpg",
+    "abre": "08:30",
+    "cierra": "21:00",
+    "domAbre": null,
+    "domCierra": null
+  },
+  {
+    "nombre": "Local Avellaneda",
+    "direccion": "Avellaneda 655, Tandil",
+    "semana": "8:30 a 21:00 hs",
+    "domingo": "9:30 a 13:30 hs",
+    "foto": "img/local-avellaneda-1.jpg",
+    "abre": "08:30",
+    "cierra": "21:00",
+    "domAbre": "09:30",
+    "domCierra": "13:30"
+  }
+]

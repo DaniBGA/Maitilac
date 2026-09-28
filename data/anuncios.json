@@ -1,0 +1,17 @@
+{
+  "barra": {
+    "ver": true,
+    "texto": "¡NUEVA VARIEDAD DE QUESO AZUL DISPONIBLE!",
+    "color": "marron"
+  },
+  "badge1": {
+    "ver": true,
+    "texto": "20% OFF",
+    "color": "naranja"
+  },
+  "badge2": {
+    "ver": true,
+    "texto": "¡NUEVA VARIEDAD DE QUESO AZUL DISPONIBLE!",
+    "color": "verde"
+  }
+}

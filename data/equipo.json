@@ -1,0 +1,65 @@
+[
+  {
+    "nombre": "Victoria Maitia",
+    "rol": "Gerente de Producción",
+    "area": "Ing. Agrónoma",
+    "foto": "img/equipo-victoria.jpg",
+    "ver": true
+  },
+  {
+    "nombre": "Raúl Maitia",
+    "rol": "Gerente General",
+    "area": "Méd. Veterinario",
+    "foto": "img/equipo-raul.jpg",
+    "ver": true
+  },
+  {
+    "nombre": "Rosario Maitia",
+    "rol": "Gerente Administrativa y Comercial",
+    "area": "Ing. Agrónoma",
+    "foto": "img/equipo-rosario.jpg",
+    "ver": true
+  },
+  {
+    "nombre": "Jefe de Planta",
+    "rol": "Producción",
+    "area": "Planta",
+    "foto": "",
+    "ver": true
+  },
+  {
+    "nombre": "Maestro Quesero",
+    "rol": "Elaboración",
+    "area": "Fábrica",
+    "foto": "",
+    "ver": true
+  },
+  {
+    "nombre": "Responsable de Tambo",
+    "rol": "Campo",
+    "area": "Tambo",
+    "foto": "",
+    "ver": true
+  },
+  {
+    "nombre": "Control de Calidad",
+    "rol": "Laboratorio",
+    "area": "Calidad",
+    "foto": "",
+    "ver": true
+  },
+  {
+    "nombre": "Ventas y Atención",
+    "rol": "Locales",
+    "area": "Comercial",
+    "foto": "",
+    "ver": true
+  },
+  {
+    "nombre": "Administración",
+    "rol": "Gestión",
+    "area": "Oficina",
+    "foto": "",
+    "ver": true
+  }
+]

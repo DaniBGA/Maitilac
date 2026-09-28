@@ -8,6 +8,15 @@ import { defineConfig } from "@playwright/test";
  *   pnpm test:visual   → compara el sitio nuevo contra esas capturas
  */
 const ES_REFERENCIA = process.env.REFERENCIA === "1";
+try {
+  process.loadEnvFile(".env");
+} catch {}
+
+const anchos = {
+  escritorio: { viewport: { width: 1440, height: 900 } },
+  tablet: { viewport: { width: 1024, height: 1366 } },
+  celular: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 },
+};
 
 export default defineConfig({
   testDir: "./tests/visual",
@@ -25,19 +34,29 @@ export default defineConfig({
     timezoneId: "America/Argentina/Buenos_Aires",
     locale: "es-AR",
   },
+  globalSetup: "./tests/visual/preparar-bd.ts",
   projects: [
-    { name: "escritorio", use: { browserName: "chromium", viewport: { width: 1440, height: 900 } } },
-    { name: "tablet", use: { browserName: "chromium", viewport: { width: 1024, height: 1366 } } },
-    {
-      name: "celular",
-      use: {
-        browserName: "chromium",
-        viewport: { width: 390, height: 844 },
-        isMobile: true,
-        hasTouch: true,
-        deviceScaleFactor: 2,
-      },
-    },
+    // Sitio nuevo: primero se inicia sesión en el gestor (una vez) para los tests que lo usan.
+    ...(ES_REFERENCIA ? [] : [{ name: "sesion", testMatch: /sesion\.setup\.ts/ }]),
+    ...Object.entries(anchos).map(([name, use]) => ({
+      name,
+      use: { browserName: "chromium" as const, ...use },
+      testIgnore: /gestor-funcional/,
+      dependencies: ES_REFERENCIA ? [] : ["sesion"],
+    })),
+    // Tests que modifican datos desde el gestor: corren al final y de a uno,
+    // para no cambiar nada mientras se sacan las capturas.
+    ...(ES_REFERENCIA
+      ? []
+      : [
+          {
+            name: "gestor-funcional",
+            testMatch: /gestor-funcional\.spec\.ts/,
+            use: { browserName: "chromium" as const, ...anchos.escritorio },
+            dependencies: ["escritorio", "tablet", "celular"],
+            fullyParallel: false,
+          },
+        ]),
   ],
   // Se lanzan con "exec" y sin pnpm en el medio: si no, al terminar Playwright cierra
   // pnpm pero el servidor queda vivo y la corrida no termina nunca.

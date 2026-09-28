@@ -5,11 +5,12 @@ import { TarjetaDestacado } from "@/components/sitio/inicio/TarjetaDestacado";
 import { getAnuncios, getColor, getConfig, getInsta, getLocales, getProductosDestacados } from "@/lib/datos";
 import { ruta } from "@/lib/util";
 import { connection } from "next/server";
+import { Pagina } from "@/components/sitio/Pagina";
 
 // Página de Inicio: markup de referencia/index.html:497-628, convertido con
 // scripts/html_a_jsx.py (estilos en styles/en-linea/inicio.css). Las partes que
 // llenaba el JavaScript viejo usan los componentes de components/sitio/inicio/.
-export default async function Inicio() {
+async function InicioContenido() {
   // Se arma en cada pedido con datos en caché: la base no hace falta al compilar (ver app/(sitio)/layout.tsx).
   await connection();
   const [config, a, destacados, locales] = await Promise.all([
@@ -310,5 +311,13 @@ export default async function Inicio() {
 
       <FooterOscuro />
     </main>
+  );
+}
+
+export default function Inicio() {
+  return (
+    <Pagina>
+      <InicioContenido />
+    </Pagina>
   );
 }

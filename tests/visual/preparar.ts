@@ -22,7 +22,7 @@ const CONGELADO = new Date("2026-10-01T11:00:00-03:00");
  * reloj fijo, datos de fábrica, fuentes e imágenes cargadas y carruseles
  * automáticos detenidos en su posición inicial.
  */
-export async function prepararPagina(page: Page, ruta: Ruta) {
+export async function prepararPagina(page: Page, ruta: { vieja: string; nueva: string }) {
   await page.clock.install({ time: INICIO });
   // El sitio viejo guarda lo editado en el gestor: se parte siempre de fábrica.
   await page.addInitScript(() => {

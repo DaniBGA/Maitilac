@@ -1,0 +1,263 @@
+Inicio
+Nosotros
+Catálogo
+Locales
+Contactanos
+Gestor del Catálogo
+Nuevo producto
+Exportar
+Ver el catálogo
+Anuncios de la portada
+Guardar anuncios
+Barra marrón superior
+La franja que cruza todo el ancho, arriba de la foto.
+¡NUEVA VARIEDAD DE QUESO AZUL DISPONIBLE!
+Texto
+Color
+Banner naranja
+El primer globo sobre la foto. Suele usarse para promociones.
+20% OFF
+Texto
+Color
+Banner verde
+El segundo globo, al lado del naranja.
+¡NUEVA VARIEDAD DE QUESO AZUL DISPONIBLE!
+Texto
+Color
+Buscá por ocasión
+Agregar filtro
+Son los botones que se ven arriba del catálogo ("Sale picadita", "Va a la parrilla"...) y la única forma en que el cliente busca los quesos. En cada uno marcá qué quesos tiene que mostrar. Destildá la casilla de la izquierda para que un filtro deje de verse en el sitio sin borrarlo. Un filtro sin quesos marcados se ve apagado y no se puede apretar.
+3 en el sitio
+Eliminar
+Gouda
+Holanda
+Sardo
+Barra Tybo
+Reggianito
+Provoleta
+Cremoso
+Mozzarella
+Combo 3 Quesos
+Flor de Picada
+Picadas
+Tabla de Quesos
+1 en el sitio
+Eliminar
+Gouda
+Holanda
+Sardo
+Barra Tybo
+Reggianito
+Provoleta
+Cremoso
+Mozzarella
+Combo 3 Quesos
+Flor de Picada
+Picadas
+Tabla de Quesos
+2 en el sitio
+Eliminar
+Gouda
+Holanda
+Sardo
+Barra Tybo
+Reggianito
+Provoleta
+Cremoso
+Mozzarella
+Combo 3 Quesos
+Flor de Picada
+Picadas
+Tabla de Quesos
+2 en el sitio
+Eliminar
+Gouda
+Holanda
+Sardo
+Barra Tybo
+Reggianito
+Provoleta
+Cremoso
+Mozzarella
+Combo 3 Quesos
+Flor de Picada
+Picadas
+Tabla de Quesos
+2 en el sitio
+Eliminar
+Gouda
+Holanda
+Sardo
+Barra Tybo
+Reggianito
+Provoleta
+Cremoso
+Mozzarella
+Combo 3 Quesos
+Flor de Picada
+Picadas
+Tabla de Quesos
+2 en el sitio
+Eliminar
+Gouda
+Holanda
+Sardo
+Barra Tybo
+Reggianito
+Provoleta
+Cremoso
+Mozzarella
+Combo 3 Quesos
+Flor de Picada
+Picadas
+Tabla de Quesos
+2 en el sitio
+Eliminar
+Gouda
+Holanda
+Sardo
+Barra Tybo
+Reggianito
+Provoleta
+Cremoso
+Mozzarella
+Combo 3 Quesos
+Flor de Picada
+Picadas
+Tabla de Quesos
+Premios
+Restaurar premios
+Agregar premio
+Son los que se ven en el carrusel de la página Nosotros. Destildá uno para que deje de mostrarse sin borrarlo. "Restaurar premios" vuelve a la lista original con las fotos de los diplomas.
+Eliminar
+Eliminar
+Eliminar
+Eliminar
+Eliminar
+Eliminar
+Eliminar
+Eliminar
+Eliminar
+Eliminar
+Eliminar
+Nuestro Equipo
+Agregar persona
+Son las personas que aparecen en la sección "Nuestro Equipo" de la página Nosotros. Destildá a alguien para que deje de mostrarse sin borrarlo.
+Eliminar
+Eliminar
+Eliminar
+Sin foto
+Eliminar
+Sin foto
+Eliminar
+Sin foto
+Eliminar
+Sin foto
+Eliminar
+Sin foto
+Eliminar
+Sin foto
+Eliminar
+Productos
+Crear producto
+Todos
+En el sitio
+Ocultos
+Restaurar original
+EN EL SITIO
+★
+Gouda
+Pasta Semidura sin Ojos
+$4500 / kg
+Entero
+Trozado
+Editar
+Sacar del sitio
+EN EL SITIO
+★
+Holanda
+Pasta Semidura con Ojos
+$4800 / kg
+Entero
+Trozado
+Editar
+Sacar del sitio
+EN EL SITIO
+★
+Sardo
+Pasta Dura
+$5200 / kg
+Entero
+Trozado
+Editar
+Sacar del sitio
+EN EL SITIO
+Barra Tybo
+Pasta Semidura sin Ojos
+$3900 / kg
+Entero
+Feteado
+Editar
+Sacar del sitio
+EN EL SITIO
+Reggianito
+Pasta Dura
+$6200 / kg
+Entero
+Trozado
+Editar
+Sacar del sitio
+EN EL SITIO
+Provoleta
+Pasta Dura
+$5600 / kg
+Entero
+Trozado al vacío
+Editar
+Sacar del sitio
+EN EL SITIO
+Cremoso
+Pasta Blanda
+$3200 / kg
+Entero
+Trozado
+Editar
+Sacar del sitio
+EN EL SITIO
+★
+Mozzarella
+Pasta Hilada
+$3800 / kg
+Entero
+Trozado
+Editar
+Sacar del sitio
+EN EL SITIO
+Combo 3 Quesos
+Combo de 3 Quesos
+Desde $8500 / combo
+Gouda
+Sardo
+Holanda
+Editar
+Sacar del sitio
+EN EL SITIO
+Flor de Picada
+Consultar / unidad
+Cremoso
+Gouda
+Sardo
+Editar
+Sacar del sitio
+Sin foto
+EN EL SITIO
+Picadas
+Consultar / unidadEn el sitio dice "Consultar"
+Editar
+Sacar del sitio
+Sin foto
+EN EL SITIO
+Tabla de Quesos
+Consultar / unidadEn el sitio dice "Consultar"
+Editar
+Sacar del sitio

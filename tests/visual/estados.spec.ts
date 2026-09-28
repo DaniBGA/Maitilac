@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { RUTAS, capturarElemento, esperarImagenes, prepararPagina } from "./preparar";
 
 const [, nosotros] = RUTAS;
@@ -35,6 +35,16 @@ test.describe("estados — Nosotros", () => {
 
 const catalogo = RUTAS[2];
 
+/**
+ * El modal se abre navegando (ruta interceptada) y su contenido va dentro de un
+ * Suspense, que React revela con un temporizador corto: con el reloj pausado no
+ * aparecería nunca. En el catálogo no hay nada animado que cambie la captura.
+ * En el sitio viejo el modal no dependía de temporizadores, así que da igual.
+ */
+async function reanudarReloj(page: Page) {
+  await page.clock.resume();
+}
+
 test.describe("estados — Catálogo", () => {
   test("filtro por ocasión activo", async ({ page }) => {
     await prepararPagina(page, catalogo);
@@ -65,6 +75,7 @@ test.describe("estados — Catálogo", () => {
   for (const foto of [1, 2]) {
     test(`modal de producto abierto (foto ${foto})`, async ({ page }) => {
       await prepararPagina(page, catalogo);
+      await reanudarReloj(page);
       await page.locator("#catalogo-grid .btn-detalles").first().click();
       const modal = page.locator("#modal");
       await modal.waitFor({ state: "visible" });
@@ -80,6 +91,7 @@ test.describe("estados — Catálogo", () => {
 
   test("el modal se cierra con Esc y devuelve el scroll", async ({ page }) => {
     await prepararPagina(page, catalogo);
+    await reanudarReloj(page);
     await page.locator("#catalogo-grid .btn-detalles").first().click();
     await page.locator("#modal").waitFor({ state: "visible" });
     expect(await page.evaluate(() => document.body.style.overflow)).toBe("hidden");

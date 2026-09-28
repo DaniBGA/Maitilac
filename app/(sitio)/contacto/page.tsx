@@ -2,9 +2,10 @@ import { FooterOscuro } from "@/components/sitio/FooterOscuro";
 import { SeccionContacto } from "@/components/sitio/contacto/SeccionContacto";
 import { getConfig } from "@/lib/datos";
 import { connection } from "next/server";
+import { Pagina } from "@/components/sitio/Pagina";
 
 // Página Contacto: markup de referencia/index.html:955-1104.
-export default async function Contacto() {
+async function ContactoContenido() {
   // Se arma en cada pedido con datos en caché: la base no hace falta al compilar (ver app/(sitio)/layout.tsx).
   await connection();
   const config = await getConfig();
@@ -17,5 +18,13 @@ export default async function Contacto() {
       <SeccionContacto whatsapp={config.whatsapp} whatsappMayorista={config.whatsappMayorista} />
       <FooterOscuro />
     </main>
+  );
+}
+
+export default function Contacto() {
+  return (
+    <Pagina>
+      <ContactoContenido />
+    </Pagina>
   );
 }

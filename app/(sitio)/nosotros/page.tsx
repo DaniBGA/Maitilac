@@ -13,11 +13,12 @@ import {
 } from "@/lib/datos";
 import { ruta } from "@/lib/util";
 import { connection } from "next/server";
+import { Pagina } from "@/components/sitio/Pagina";
 
 // Página Nosotros: markup de referencia/index.html:631-801, convertido con
 // scripts/html_a_jsx.py (estilos en styles/en-linea/nosotros.css). Las partes que
 // llenaba el JavaScript viejo usan los componentes de components/sitio/nosotros/.
-export default async function Nosotros() {
+async function NosotrosContenido() {
   // Se arma en cada pedido con datos en caché: la base no hace falta al compilar (ver app/(sitio)/layout.tsx).
   await connection();
   const [equipo, premios] = await Promise.all([getEquipoVisible(), getPremiosVisibles()]);
@@ -231,5 +232,13 @@ export default async function Nosotros() {
 
       <FooterClaro />
     </main>
+  );
+}
+
+export default function Nosotros() {
+  return (
+    <Pagina>
+      <NosotrosContenido />
+    </Pagina>
   );
 }

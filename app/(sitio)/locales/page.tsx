@@ -6,6 +6,7 @@ import { buscarLocalComoSitioViejo } from "@/lib/horarios";
 import type { Local } from "@/lib/tipos";
 import { ruta, slug } from "@/lib/util";
 import { connection } from "next/server";
+import { Pagina } from "@/components/sitio/Pagina";
 
 /**
  * Cartel "Abierto ahora". Reproduce la búsqueda por clave del sitio viejo
@@ -100,7 +101,7 @@ function Datos({ l, locales }: { l: Local; locales: Local[] }) {
 // Página Locales: markup de referencia/index.html:849-953 (estilos en
 // styles/en-linea/locales.css), armado con los datos de cada local. Como en el
 // sitio viejo, la foto va a la derecha en el primero y a la izquierda en el segundo.
-export default async function Locales() {
+async function LocalesContenido() {
   // Se arma en cada pedido con datos en caché: la base no hace falta al compilar (ver app/(sitio)/layout.tsx).
   await connection();
   const locales = await getLocales();
@@ -143,5 +144,13 @@ export default async function Locales() {
       </section>
       <FooterOscuro />
     </main>
+  );
+}
+
+export default function Locales() {
+  return (
+    <Pagina>
+      <LocalesContenido />
+    </Pagina>
   );
 }

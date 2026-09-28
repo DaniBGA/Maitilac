@@ -1,7 +1,6 @@
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { Header } from "@/components/sitio/Header";
-import { MarcaHidratado } from "@/components/sitio/MarcaHidratado";
 import { RedireccionHash } from "@/components/sitio/RedireccionHash";
 import { getConfig } from "@/lib/datos";
 
@@ -35,7 +34,6 @@ async function Contenido({ children, modal }: { children: React.ReactNode; modal
       {children}
       {modal}
       <RedireccionHash />
-      <MarcaHidratado />
     </>
   );
 }

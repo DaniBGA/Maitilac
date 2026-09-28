@@ -69,7 +69,10 @@ export default defineConfig({
       }
     : {
         command: "exec ./node_modules/.bin/next dev",
-        url: "http://localhost:3000",
+        // Playwright levanta el servidor antes del globalSetup (que reimporta la base) y
+        // consulta esta URL para saber si está listo. Tiene que ser una ruta que no lea
+        // datos cacheados: con "/" la caché se llenaba con la base de antes de reimportar.
+        url: "http://localhost:3000/api/auth/ok",
         reuseExistingServer: true,
         timeout: 120_000,
         gracefulShutdown: { signal: "SIGTERM", timeout: 1000 },

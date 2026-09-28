@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { productosDeOcasion } from "@/lib/ocasiones";
 import type { Ocasion, Producto } from "@/lib/tipos";
 import { TarjetaProducto } from "./TarjetaProducto";
 
@@ -11,10 +12,10 @@ export function Catalogo({ productos, ocasiones }: { productos: Producto[]; ocas
   // Tocar el filtro activo lo apaga y vuelve a mostrar todo.
   const alternar = (key: string) => setActiva(key === activa ? null : key);
 
-  const contar = (o: Ocasion) => productos.filter((p) => o.match.includes(p.nombre)).length;
+  const contar = (o: Ocasion) => productosDeOcasion(o, productos).length;
   const visibles = ocasiones.filter((o) => o.ver !== false);
   const oc = activa ? visibles.find((o) => o.key === activa) : undefined;
-  const lista = oc ? productos.filter((p) => oc.match.includes(p.nombre)) : productos;
+  const lista = oc ? productosDeOcasion(oc, productos) : productos;
 
   return (
     <>

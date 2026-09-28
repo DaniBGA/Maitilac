@@ -222,3 +222,43 @@ test("panel de producto: Tab no sale del panel y Esc devuelve el foco a Editar",
   await expect(page.locator("#g-velo")).toBeHidden();
   await expect(editar).toBeFocused();
 });
+
+test("filtros: desmarcar un queso cambia el contador del catálogo", async ({ page }) => {
+  const sardo = () =>
+    page
+      .locator(".g-oc")
+      .filter({ has: page.locator('.js-oc-nom[value="A rallar se ha dicho"]') })
+      .locator(".g-oc-queso", { hasText: /^\s*Sardo\s*$/ });
+  const filtro = page.locator("#filtros .js-filtro", { hasText: "A rallar se ha dicho" });
+
+  await page.goto("/gestor");
+  await expect(sardo()).toHaveClass(/\bon\b/);
+  await sardo().locator("input").click();
+  await expect(sardo()).not.toHaveClass(/\bon\b/);
+  await page.goto("/catalogo");
+  await expect(filtro).toHaveText("A rallar se ha dicho 1");
+
+  await page.goto("/gestor");
+  await sardo().locator("input").click();
+  await expect(sardo()).toHaveClass(/\bon\b/);
+  await page.goto("/catalogo");
+  await expect(filtro).toHaveText("A rallar se ha dicho 2");
+});
+
+test("equipo: el cargo editado se ve en Nosotros", async ({ page }) => {
+  const cargo = () => page.locator("#g-equipo .g-persona").first().locator('input[placeholder="Cargo"]');
+  await page.goto("/gestor");
+  const original = await cargo().inputValue();
+  await cargo().fill("Cargo de prueba");
+  await cargo().blur();
+  await expect(aviso(page)).toHaveText("Actualizado");
+  await page.goto("/nosotros");
+  await expect(page.locator("#equipo")).toContainText("Cargo de prueba");
+
+  await page.goto("/gestor");
+  await cargo().fill(original);
+  await cargo().blur();
+  await expect(aviso(page)).toHaveText("Actualizado");
+  await page.goto("/nosotros");
+  await expect(page.locator("#equipo")).not.toContainText("Cargo de prueba");
+});

@@ -162,6 +162,7 @@ Saca las capturas **desde `referencia/`** (el sitio viejo) y las guarda en `test
 | `pnpm ref:servir` | Sitio viejo de referencia (http://localhost:4500) |
 | `pnpm ref:capturar` | Genera las capturas de referencia desde el sitio viejo |
 | `pnpm test:visual` | Compara el sitio nuevo contra las capturas de referencia |
+| `pnpm test` | Tests unitarios (Vitest): horarios, precios, filtros, slugs |
 | `pnpm datos:extraer` | Vuelve a extraer los datos del sitio viejo (`content/` y `db/importar/data/`) |
 | `pnpm db:levantar` | Levanta PostgreSQL en Docker (puerto 5440) |
 | `pnpm db:migrar` | Aplica las migraciones pendientes |

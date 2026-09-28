@@ -10,6 +10,7 @@ import {
 } from "@/lib/gestor/acciones";
 import type { GOcasion, GProducto } from "@/lib/gestor/tipos";
 import { Flechas, Mas, type Correr } from "./comun";
+import { productosDeOcasion } from "@/lib/ocasiones";
 
 // Bloque "Buscá por ocasión": markup de referencia/index.html:1203-1214 y
 // gPintarOcasiones() y sus eventos de referencia/index.html:2443-2552.
@@ -54,7 +55,7 @@ export function BloqueOcasiones({
         ) : (
           ocasiones.map((o, i) => {
             // Cuántos de los quesos marcados se ven hoy en el sitio
-            const n = productos.filter((p) => p.activo && o.match.includes(p.nombre)).length;
+            const n = productosDeOcasion(o, productos.filter((p) => p.activo)).length;
             const oculto = !o.ver;
             const aviso = oculto ? (
               <span className="g-oc-cant off">No se muestra en el sitio</span>

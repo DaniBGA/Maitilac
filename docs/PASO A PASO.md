@@ -470,11 +470,11 @@ Las mejoras de esta etapa tienen que ser **invisibles**. Si alguna cambia el dis
 
 **Quedan como propuesta para la Etapa 7 (cambian el diseño):** el contraste de varios textos (años de la línea de tiempo, etiquetas de los canales de Contacto, unidades de precio, "Producto del Mes", etc.) no llega a AA (backlog 9), y el logo del footer claro de Nosotros se ve achatado en tablet y celular (backlog 10).
 
-### Paso 6.4 — Tests finales
+### Paso 6.4 — Tests finales (casi terminado)
 
-- [ ] Vitest: `horarios`, `precio` (incluido `leerPrecioEscrito`), conteo de ocasiones y slugs.
-- [ ] Playwright funcional: navegación, filtros, modal y mensaje de WhatsApp. Del gestor ya hay 13 (Etapa 5); faltan filtros y equipo.
-- [ ] Suite visual completa en verde en CI.
+- [x] Vitest (`pnpm test`, `tests/unit/`): `horarios` (incluida la hora de Argentina y el caso de Maipú), `precio` (reconstrucción de todos los precios de fábrica y `leerPrecioEscrito`), conteo de ocasiones (contra los números de la captura de textos del sitio viejo) y slugs. 32 tests. El conteo pasó a `lib/ocasiones.ts`, compartido por el catálogo y el gestor.
+- [x] Playwright funcional: navegación, modal y teclado (`navegacion.spec.ts`, `accesibilidad.spec.ts`); el filtro activo y el mensaje de WhatsApp se comparan contra el sitio viejo (`estados.spec.ts`). Del gestor, 16 (suman filtros y equipo).
+- [ ] Suite visual completa en verde en CI: se arma con el repo en GitHub (Etapa 4). En local, `pnpm test:visual` pasa completa (142).
 
 ### Paso 6.5 — Documentación
 

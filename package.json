@@ -17,7 +17,8 @@
     "db:migrar": "drizzle-kit migrate",
     "db:importar": "tsx --env-file=.env db/importar/index.ts",
     "db:estudio": "drizzle-kit studio",
-    "gestor:usuario": "tsx --env-file=.env scripts/crear-usuario.ts"
+    "gestor:usuario": "tsx --env-file=.env scripts/crear-usuario.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "better-auth": "^1.7.6",
@@ -42,7 +43,8 @@
     "serve": "^14.2.6",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.2"
   },
   "packageManager": "pnpm@12.6.0"
 }

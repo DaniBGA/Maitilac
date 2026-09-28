@@ -2,7 +2,7 @@
 
 Guía operativa para ejecutar el [PLAN DE REFACTORIZACION.md](PLAN%20DE%20REFACTORIZACION.md) de a un paso por vez. El plan explica **qué** se construye y **por qué**; esta guía explica **cómo** y en qué orden, y sobre todo **cómo verificar que el diseño quede idéntico**.
 
-> **Estado actual:** Etapa 0 terminada (salvo subir a GitHub). En curso: Etapa 1. *(Actualizar esta línea al cerrar cada paso.)*
+> **Estado actual:** Etapas 0 y 1 terminadas (falta subir el repo a GitHub). Próximo: **paso 2.1**. *(Actualizar esta línea al cerrar cada paso.)*
 
 ---
 
@@ -45,10 +45,17 @@ El objetivo de las etapas 0 a 6 es que **una persona no pueda distinguir el siti
 
 ### Estrategia de estilos
 
-1. **Primero se porta el CSS viejo casi textual** a archivos CSS por sección (`styles/sitio/*.css`), en la capa `components`.
-2. **Los 371 estilos en línea pasan a clases con los mismos valores**, en esos mismos archivos (ej. `style="margin:0;font-size:78px;…"` del título del hero → `.hero-titulo{margin:0;font-size:78px;…}`).
-3. Los colores repetidos pasan a los tokens de `@theme` (sección 4.6 del plan) **sólo si el valor es idéntico**.
-4. Tailwind se usa para el código nuevo (el gestor, las páginas nuevas). Convertir el CSS portado a utilidades de Tailwind es **opcional** y queda para la Etapa 7, siempre con los tests visuales en verde.
+Se usan **capas CSS** (`@layer`) para reproducir exactamente la cascada del sitio viejo (ver `app/globals.css`):
+
+```
+@layer theme, sitio, en-linea, utilities;
+```
+
+1. **`sitio`: el CSS viejo portado textual**, en el mismo orden, repartido en `styles/sitio/*.css`. Cada archivo indica de qué líneas de `referencia/index.html` sale. *(Ya portado completo en el paso 1.3.)*
+2. **`en-linea`: los 371 estilos en línea pasan a clases con los mismos valores**, en `styles/en-linea/*.css` (un archivo por página o componente). Ej.: `style="margin:0;font-size:78px;…"` del título del hero → `.hero-titulo{margin:0;font-size:78px;…}`. Por estar en una capa posterior, esas clases **les ganan a las reglas normales de `sitio` sin importar la especificidad**, igual que un `style=""`. Y los `!important` de `sitio` (el responsive) **les siguen ganando**, porque un `!important` de una capa anterior vence a todo lo que viene después. Es el mismo comportamiento que el sitio viejo.
+3. Los **valores que dependen de datos** (colores de los anuncios, etc.) quedan como `style={{…}}` de React: son estilos en línea de verdad.
+4. Los tokens de `@theme` (sección 4.6 del plan) se usan en el código nuevo. En el CSS portado se dejan los hex tal cual.
+5. Tailwind (capa `utilities`) sólo para el código nuevo. Convertir el CSS portado a utilidades es **opcional** y queda para la Etapa 7, siempre con los tests visuales en verde.
 
 ---
 
@@ -91,7 +98,7 @@ La herramienta central de toda la refactorización. Se arma en el paso 1.2 y se 
 
 - [x] Mover (`git mv`) a `referencia/` los archivos `index.html`, `img/`, `fonts/` y `fondo-hero.jpg`.
 - [x] Agregar `referencia/README.md` ("No editar").
-- [ ] Probar que se ve bien servida: `pnpm ref:servir` → abrir `http://localhost:5500`. *(Se verifica en el paso 1.2, al generar las capturas.)*
+- [ ] Probar que se ve bien servida: `pnpm ref:servir` → abrir `http://localhost:4500`. *(Se verifica en el paso 1.2, al generar las capturas.)*
 
 **Verificación:** el sitio de `referencia/` se ve igual que el original en las 6 secciones (`#home`, `#nosotros`, `#catalogo`, `#locales`, `#contacto`, `#gestor`).
 
@@ -116,128 +123,74 @@ La herramienta central de toda la refactorización. Se arma en el paso 1.2 y se 
 
 ## Etapa 1 — Proyecto base y sistema de verificación
 
-### Paso 1.1 — Crear el proyecto Next.js
+### Paso 1.1 — Crear el proyecto Next.js ✅
 
 **Objetivo:** proyecto vacío corriendo en local.
 
 Requisitos en la máquina: Node 24 LTS o superior (local: Node 26 con nvm), pnpm (`npm i -g pnpm`; Node 25+ ya no trae corepack), Docker, git. La imagen de producción usa Node 24 LTS.
 
-- [ ] Crear el proyecto en una carpeta temporal y moverlo a la raíz (`create-next-app` no acepta carpetas con archivos):
-  ```bash
-  pnpm create next-app@latest _nuevo --ts --eslint --app --no-src-dir --import-alias "@/*" --use-pnpm
-  rsync -a _nuevo/ ./ && rm -rf _nuevo
-  ```
-- [ ] Instalar Tailwind 4: `pnpm add -D tailwindcss @tailwindcss/postcss` y configurar `postcss.config.mjs`.
-- [ ] Borrar el contenido de ejemplo de `app/page.tsx` y `app/globals.css`.
-- [ ] En `next.config.ts`: `output: 'standalone'`.
-- [ ] Prettier y ESLint configurados; script `pnpm lint`.
+- [x] Proyecto creado con `create-next-app` (Next **16.3.6**, React 19.2, Tailwind 4.3, TypeScript, ESLint) en una carpeta temporal y movido a la raíz.
+- [x] `next.config.ts`: `output: 'standalone'`.
+- [x] Prettier (`.prettierrc.json`, `.prettierignore`) y `.dockerignore`.
+- [x] ESLint ignora `referencia/` y `_fuentes/`, y tiene apagada la regla `no-img-element` durante la paridad.
+- [x] Next genera `AGENTS.md`/`CLAUDE.md`: **esta versión de Next tiene cambios de API**. Antes de usar una API (caché, rutas interceptadas, etc.) leer su guía en `node_modules/next/dist/docs/`.
 
-**Verificación:** `pnpm dev` levanta en `http://localhost:3000` una página en blanco sin errores; `pnpm build` termina bien.
+**Verificación:** `pnpm build` y `pnpm lint` sin errores.
 
-**Commit:** `chore: crear proyecto Next.js 16 + TypeScript + Tailwind 4`
-
-### Paso 1.2 — Tests visuales (el vigilante del diseño)
+### Paso 1.2 — Tests visuales (el vigilante del diseño) ✅
 
 **Objetivo:** poder comparar automáticamente el sitio nuevo contra `referencia/`.
 
-- [ ] `pnpm add -D @playwright/test serve` y `pnpm exec playwright install chromium`.
-- [ ] Crear `tests/visual/rutas.ts` con el mapa de páginas viejas → nuevas:
-  ```ts
-  export const RUTAS = [
-    { nombre: 'inicio',   vieja: '/#home',     nueva: '/' },
-    { nombre: 'nosotros', vieja: '/#nosotros', nueva: '/nosotros' },
-    { nombre: 'catalogo', vieja: '/#catalogo', nueva: '/catalogo' },
-    { nombre: 'locales',  vieja: '/#locales',  nueva: '/locales' },
-    { nombre: 'contacto', vieja: '/#contacto', nueva: '/contacto' },
-  ];
-  export const ES_REFERENCIA = process.env.REFERENCIA === '1';
-  ```
-- [ ] Crear `playwright.config.ts` con 3 proyectos (todos en Chromium, para que la comparación sea justa):
-  ```ts
-  import { defineConfig } from '@playwright/test';
-  export default defineConfig({
-    testDir: './tests/visual',
-    snapshotPathTemplate: '{testDir}/__referencia__/{arg}-{projectName}{ext}',
-    expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.002, animations: 'disabled' } },
-    use: { baseURL: process.env.REFERENCIA === '1' ? 'http://localhost:5500' : 'http://localhost:3000' },
-    projects: [
-      { name: 'escritorio', use: { viewport: { width: 1440, height: 900 } } },
-      { name: 'tablet',     use: { viewport: { width: 1024, height: 1366 } } },
-      { name: 'celular',    use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 } },
-    ],
-  });
-  ```
-- [ ] Crear `tests/visual/preparar.ts` con una función `prepararPagina(page, ruta)` que:
-  1. Instala el reloj falso de Playwright en un día hábil a las 10:59 (hora de Argentina) y lo pausa a las 11:00.
-  2. Vacía `localStorage` con `addInitScript` (así el sitio viejo usa los datos de fábrica).
-  3. Navega a `ruta.vieja` o `ruta.nueva` según `ES_REFERENCIA`.
-  4. Espera a que carguen las fuentes (`document.fonts.ready`) y todas las imágenes.
-  5. Vuelve los carruseles a su posición inicial (`.tl-carrusel`, `#premios-carrusel` → `scrollLeft = 0`). Por eso el sitio nuevo **tiene que conservar esas clases e id**.
-- [ ] Crear `tests/visual/paginas.spec.ts`: para cada ruta, una captura de página completa con las fotos enmascaradas (tolerancia estricta) y otra sin máscara (tolerancia `threshold: 0.2`).
-- [ ] Crear `tests/visual/textos.spec.ts`: guarda `document.body.innerText` de cada página y lo compara entre viejo y nuevo.
-- [ ] Scripts en `package.json`:
-  ```json
-  "ref:servir": "serve referencia -l 5500",
-  "ref:capturar": "REFERENCIA=1 playwright test --update-snapshots",
-  "test:visual": "playwright test"
-  ```
-- [ ] Generar las referencias: `pnpm ref:servir` en una terminal y `pnpm ref:capturar` en otra.
-- [ ] **Revisar a ojo las capturas generadas** en `tests/visual/__referencia__/`: que no haya fuentes sin cargar, carruseles corridos ni recuadros vacíos.
-- [ ] Correr `pnpm ref:capturar` dos veces seguidas y confirmar que las capturas no cambian (si cambian, algo no quedó congelado).
+Archivos: `playwright.config.ts`, `tests/visual/preparar.ts`, `tests/visual/paginas.spec.ts`, `tests/visual/layout.spec.ts`. Capturas en `tests/visual/__referencia__/` (versionadas en git).
 
-**Verificación:** existen las capturas de referencia de las 5 páginas × 3 anchos; son estables entre corridas; `pnpm test:visual` contra el sitio nuevo (vacío) **falla**, como corresponde.
+**Uso:**
 
-**Commit:** `test: tests visuales y de texto contra el sitio de referencia`
+```bash
+pnpm ref:capturar   # genera las referencias desde referencia/ (levanta el servidor en :4500)
+pnpm test:visual    # compara el sitio nuevo (levanta pnpm dev en :3000)
+pnpm exec playwright show-report   # ver diferencias marcadas en rojo
+```
 
-> Los estados (modal, menú, globo, etc.) y el gestor se suman como tests en los pasos donde se construye cada cosa, **siempre generando primero la captura desde `referencia/`**.
+Para correr una parte: `pnpm test:visual layout.spec.ts`, `pnpm test:visual -g "página inicio"`, `--project=celular`.
 
-### Paso 1.3 — Estilos base, tokens y tipografías
+**Qué cubre:** 5 páginas × 3 anchos (escritorio 1440, tablet 1024, celular 390), cada una con 3 comprobaciones: *diseño* (fotos enmascaradas, estricta), *fotos* (tolerancia de color amplia) y *textos* (texto visible idéntico). Además: header, menú móvil abierto (sólo `#nav`), footer oscuro y footer claro.
 
-**Objetivo:** la base visual idéntica: fuentes, colores de fondo, tamaños de texto por defecto.
+**Cómo se estabilizan las capturas** (`preparar.ts`):
+- Reloj falso: jueves 01/10/2026 a las 11:00 en `America/Argentina/Buenos_Aires`, pausado.
+- `localStorage` vacío (datos de fábrica en el sitio viejo).
+- Imágenes `lazy` forzadas a cargar; se esperan fuentes e imágenes.
+- Carruseles en `scrollLeft = 0`. **No se puede usar la posición inicial real** de la fila de abajo (la mitad): al agrandar la ventana para la captura de página completa, el navegador reacomoda ese scroll a un valor que cambia entre corridas. En 0 no pasa, y como el contenido está duplicado se ve igual.
+- Componentes con `capturarElemento()`: recorte con coordenadas redondeadas. La captura por locator de Playwright da 1 px de diferencia de alto según la posición con decimales del elemento en la página.
+- `expect.timeout` de 20 s: las capturas grandes pueden tardar más de 5 s con 4 procesos en paralelo.
 
-- [ ] Copiar los 4 `.woff2` de `referencia/fonts/` a `public/fonts/`.
-- [ ] `app/globals.css` — Tailwind **sin preflight**:
-  ```css
-  @layer theme, base, components, utilities;
-  @import "tailwindcss/theme.css" layer(theme);
-  @import "tailwindcss/utilities.css" layer(utilities);
-  ```
-- [ ] Bloque `@theme` con los tokens de la sección 4.6 del plan (valores idénticos).
-- [ ] Portar **textualmente** de `referencia/index.html:17-47` las reglas `@font-face`, la base (`*`, `html`, `body`, `a`, `.serif`, `img`, inputs, botones), `.ph`, los `@keyframes`, `.wrap` y `.hidden`.
-- [ ] Crear `styles/sitio/` con un archivo por sección (`header.css`, `tarjetas.css`, `historia.css`, `cadena.css`, `grillas.css`, `botones.css`, `contacto.css`, `footer.css`, `responsive.css`) e importarlos en `globals.css` dentro de `@layer components`. De momento, vacíos.
+**Notas:**
+- El puerto 5500 estaba ocupado (Live Server de VS Code): la referencia se sirve en el **4500**.
+- Si una corrida se corta, puede quedar colgado el servidor de la referencia ocupando el puerto. Revisar con `ss -ltnp | grep 4500`.
 
-**Verificación:** una página de prueba con un `h1.serif`, un párrafo y un enlace se ve con las mismas fuentes, colores y márgenes que en el sitio viejo (comparar lado a lado con DevTools: estilos computados iguales).
+**Verificación:** 3 corridas seguidas de `REFERENCIA=1 playwright test` sin fallas (las referencias son estables). Contra el sitio nuevo, los tests de páginas completas fallan hasta que se construya cada página.
 
-**Commit:** `feat: estilos base, tokens y tipografías (sin preflight)`
+### Paso 1.3 — Estilos base, tokens y tipografías ✅
 
-### Paso 1.4 — Layout, header y menú móvil
+- [x] Fuentes, `img/` y `fondo-hero.jpg` copiados a `public/` con las mismas rutas.
+- [x] `app/globals.css`: capas, Tailwind **sin preflight**, `@font-face` con rutas absolutas y tokens en `@theme`.
+- [x] **Todo el CSS viejo** (líneas 24–472) portado textual a `styles/sitio/` en 11 archivos, en el mismo orden. Script de control: no quedó ninguna línea sin portar.
 
-**Objetivo:** header idéntico en los 3 anchos, con el menú hamburguesa funcionando.
+**Verificación:** cubierta por los tests del header y los footers (fuentes, colores y márgenes idénticos).
 
-Fuente: markup `index.html:477-495`, CSS `index.html:49-60` y reglas del header en los `@media`; lógica `irA()` en `index.html:1719` y el botón `#burger`.
+### Paso 1.4 — Layout, header y menú móvil ✅
 
-- [ ] Portar a `styles/sitio/header.css` todas las reglas de `header`, `.hdr`, `nav`, `.navlink`, `.btn-contacto`, `.ig-circle`, `.burger` (incluidas las de `@media (max-width:720px)`).
-- [ ] `components/sitio/Header.tsx` con el mismo markup, clases e íconos SVG.
-- [ ] `components/sitio/NavMovil.tsx` (`'use client'`): abre y cierra `nav.open`, actualiza `aria-expanded` y se cierra al navegar.
-- [ ] Enlace activo (`.navlink.on`) según `usePathname()`.
-- [ ] `app/layout.tsx`: `<html lang="es">`, `<title>` y `description` idénticos a los actuales, favicon `img/logo-tandil-2.png`.
-- [ ] Test visual del header solo (`locator('header').screenshot`) y del menú móvil abierto (captura de referencia primero).
+- [x] `components/sitio/Header.tsx` (cliente): mismo markup, clases e id; enlace activo con `usePathname()`; el menú se cierra al navegar.
+- [x] `app/(sitio)/layout.tsx` con el header; páginas vacías de las 5 secciones, cada una con su `<main id="page-…" class="page">`.
+- [x] `lib/config.ts`: los datos de `CONFIG`, provisorios hasta la Etapa 3.
 
-**Verificación:** `pnpm test:visual` pasa para el header en los 3 anchos y para el menú abierto en celular.
+**Verificación:** header en los 3 anchos y menú móvil abierto pasan contra la referencia.
 
-**Commit:** `feat: layout, header y menú móvil`
+### Paso 1.5 — Footers ✅
 
-### Paso 1.5 — Footers
-
-Fuente: `FOOTER_HTML` en `index.html:1779`, CSS `.foot-*`, footer claro de Nosotros en `index.html:758-800`.
-
-- [ ] `components/sitio/FooterOscuro.tsx` (con el enlace al gestor **por ahora**, para mantener la paridad; se quita en la Etapa 5).
-- [ ] `components/sitio/FooterClaro.tsx`.
-- [ ] Tests visuales de los dos footers.
+- [x] `FooterOscuro.tsx` (con el enlace al gestor hasta el paso 5.10) y `FooterClaro.tsx` (texto tal cual, incluido "con el trabajado de cada día").
+- [x] Se conserva un comportamiento del sitio viejo: la grilla del footer claro está en un estilo en línea que le gana al responsive, así que **sigue en 4 columnas en tablet y celular**. Anotado como dato a revisar en el backlog de la Etapa 7.
 
 **Verificación:** los dos footers pasan en los 3 anchos.
-
-**Commit:** `feat: footers oscuro y claro`
 
 ---
 
@@ -644,6 +597,7 @@ Ordenado por valor para el cliente. Se reordena según lo que se decida en cada 
 | 7 | Resolver los datos heredados sin confirmar (8 Variedades, premio de Barra Tybo, redes, etc.) | Plan §10 | Consultar al cliente |
 | 8 | Convertir el CSS portado a utilidades de Tailwind (sin cambio visual) | Estrategia de estilos | Opcional |
 | 9 | Mejoras de accesibilidad que cambian el diseño (contraste, tamaños) | Paso 6.3 | Según revisión |
+| 10 | Footer claro de Nosotros: en tablet y celular queda en 4 columnas apretadas (su grilla en línea le gana al responsive del sitio viejo) | Paso 1.5 | Proponer al cliente |
 
 ---
 

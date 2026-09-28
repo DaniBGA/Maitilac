@@ -39,7 +39,20 @@ export default defineConfig({
       },
     },
   ],
+  // Se lanzan con "exec" y sin pnpm en el medio: si no, al terminar Playwright cierra
+  // pnpm pero el servidor queda vivo y la corrida no termina nunca.
   webServer: ES_REFERENCIA
-    ? { command: "pnpm ref:servir", url: "http://localhost:4500", reuseExistingServer: true }
-    : { command: "pnpm dev", url: "http://localhost:3000", reuseExistingServer: true, timeout: 120_000 },
+    ? {
+        command: "exec ./node_modules/.bin/serve referencia -l 4500 --no-clipboard",
+        url: "http://localhost:4500",
+        reuseExistingServer: true,
+        gracefulShutdown: { signal: "SIGTERM", timeout: 1000 },
+      }
+    : {
+        command: "exec ./node_modules/.bin/next dev",
+        url: "http://localhost:3000",
+        reuseExistingServer: true,
+        timeout: 120_000,
+        gracefulShutdown: { signal: "SIGTERM", timeout: 1000 },
+      },
 });

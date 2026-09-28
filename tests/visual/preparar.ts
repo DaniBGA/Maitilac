@@ -37,16 +37,29 @@ export async function prepararPagina(page: Page, ruta: Ruta) {
   await detenerCarruseles(page);
 }
 
-/** Carga todas las imágenes (también las "lazy") y espera las fuentes. */
+/**
+ * Carga todas las imágenes (también las "lazy") y espera las fuentes.
+ * Las "lazy" se cargan recorriendo la página con scroll, como haría una persona:
+ * cambiarles el atributo "loading" tocaría el DOM antes de que React termine de
+ * hidratar y daría un error de hidratación.
+ */
 export async function esperarContenido(page: Page) {
   await page.evaluate(async () => {
-    document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((img) => {
-      img.loading = "eager";
-    });
+    const pausa = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 30)));
+    for (let y = 0; y < document.documentElement.scrollHeight; y += Math.round(innerHeight * 0.8)) {
+      scrollTo(0, y);
+      await pausa();
+    }
+    scrollTo(0, 0);
     await document.fonts.ready;
     await Promise.all(
       Array.from(document.images)
-        .filter((img) => !img.complete)
+        .filter((img) => {
+          // Las que quedan fuera del ancho visible (ej. fotos de un carrusel más
+          // a la derecha) o en elementos ocultos nunca se cargan: no se esperan.
+          const r = img.getBoundingClientRect();
+          return !img.complete && r.width > 0 && r.right > 0 && r.left < innerWidth;
+        })
         .map(
           (img) =>
             new Promise<void>((listo) => {
@@ -55,6 +68,7 @@ export async function esperarContenido(page: Page) {
             }),
         ),
     );
+    await pausa();
   });
 }
 
@@ -83,10 +97,23 @@ export const MAIN_VISIBLE = "main.page:not(.hidden)";
  * mientras la página esté vacía, en y = 85) y da 1 px de diferencia de alto.
  */
 export async function capturarElemento(page: Page, selector: string) {
-  const r = await page.locator(selector).first().evaluate((el) => {
-    const b = el.getBoundingClientRect();
-    return { x: b.left + scrollX, y: b.top + scrollY, width: b.width, height: b.height };
-  });
+  // Espera a que terminen las transiciones (ej. el año elegido agranda la letra
+  // en .2s): si no, se mide el elemento a mitad de camino.
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => a.effect?.getComputedTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => {})),
+    ),
+  );
+  const r = await page
+    .locator(selector)
+    .first()
+    .evaluate((el) => {
+      const b = el.getBoundingClientRect();
+      return { x: b.left + scrollX, y: b.top + scrollY, width: b.width, height: b.height };
+    });
   return page.screenshot({
     fullPage: true,
     animations: "disabled",
@@ -98,4 +125,28 @@ export async function capturarElemento(page: Page, selector: string) {
       height: Math.round(r.height),
     },
   });
+}
+
+/**
+ * Espera a que carguen las imágenes visibles (ej. después de cambiar de foto).
+ * Usa los eventos de carga y no temporizadores: con el reloj pausado,
+ * waitForFunction no avanza.
+ */
+export async function esperarImagenes(page: Page) {
+  await page.evaluate(() =>
+    Promise.all(
+      Array.from(document.images)
+        .filter((img) => {
+          const r = img.getBoundingClientRect();
+          return !img.complete && r.width > 0 && r.right > 0 && r.left < innerWidth;
+        })
+        .map(
+          (img) =>
+            new Promise<void>((listo) => {
+              img.addEventListener("load", () => listo(), { once: true });
+              img.addEventListener("error", () => listo(), { once: true });
+            }),
+        ),
+    ),
+  );
 }

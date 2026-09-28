@@ -140,6 +140,8 @@ class Conversor(HTMLParser):
                 salida.append(f'href="{"/" if destino == "home" else "/" + destino}"')
             elif v is None:
                 salida.append(camel(k))
+            elif k in ("rows", "cols", "size", "span", "maxlength", "tabindex", "colspan", "rowspan") and v.isdigit():
+                salida.append(f"{camel(k)}={{{v}}}")
             else:
                 if k in ("src", "href"):
                     v = ruta_absoluta(v)

@@ -47,7 +47,7 @@ En `.env` hay que completar dos valores:
 | `BETTER_AUTH_SECRET` | Un secreto al azar: `openssl rand -hex 32` |
 | `GESTOR_PRUEBA_CLAVE` | La contraseña del usuario de prueba (mínimo 10 caracteres). Es la misma que pide `pnpm gestor:usuario`, y la usan los tests para iniciar sesión |
 
-El resto ya viene listo para trabajar en local. `.env` no se sube al repo.
+El resto ya viene listo para trabajar en local (`SITIO_URL`, la dirección pública del sitio, en local es `http://localhost:3000`). `.env` no se sube al repo.
 
 La base queda guardada en un volumen de Docker: la próxima vez alcanza con `pnpm db:levantar` (si la máquina se reinició) y `pnpm dev`.
 

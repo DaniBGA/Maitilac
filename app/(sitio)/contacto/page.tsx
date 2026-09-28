@@ -1,8 +1,23 @@
+import type { Metadata } from "next";
+import { OG_BASE } from "@/lib/sitio";
 import { FooterOscuro } from "@/components/sitio/FooterOscuro";
 import { SeccionContacto } from "@/components/sitio/contacto/SeccionContacto";
 import { getConfig, getLocales } from "@/lib/datos";
 import { connection } from "next/server";
 import { Pagina } from "@/components/sitio/Pagina";
+
+// Título y descripción: el título y la bajada de la página, tal cual.
+export const metadata: Metadata = {
+  title: "Contacto",
+  description: "Estamos para escucharte. Realizá tu consulta.",
+  alternates: { canonical: "/contacto" },
+  openGraph: {
+    ...OG_BASE,
+    url: "/contacto",
+    title: "Contacto — Maitilac",
+    description: "Estamos para escucharte. Realizá tu consulta.",
+  },
+};
 
 // Página Contacto: markup de referencia/index.html:955-1104.
 async function ContactoContenido() {

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { FooterOscuro } from "@/components/sitio/FooterOscuro";
 import { LocalResumen } from "@/components/sitio/inicio/LocalResumen";
@@ -5,6 +6,9 @@ import { TarjetaDestacado } from "@/components/sitio/inicio/TarjetaDestacado";
 import { getAnuncios, getColor, getConfig, getInsta, getLocales, getProductosDestacados } from "@/lib/datos";
 import { connection } from "next/server";
 import { Pagina } from "@/components/sitio/Pagina";
+
+// Título y descripción: los del sitio viejo (app/layout.tsx).
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 import { Foto } from "@/components/sitio/Foto";
 
 // Página de Inicio: markup de referencia/index.html:497-628, convertido con

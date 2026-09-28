@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { OG_BASE } from "@/lib/sitio";
 import { FooterClaro } from "@/components/sitio/FooterClaro";
 import { IcoTick } from "@/components/sitio/Icono";
 import { CarruselHistoria } from "@/components/sitio/nosotros/CarruselHistoria";
@@ -14,6 +16,19 @@ import {
 import { connection } from "next/server";
 import { Pagina } from "@/components/sitio/Pagina";
 import { Foto } from "@/components/sitio/Foto";
+
+// Título y descripción: el título y la bajada de la página, tal cual.
+export const metadata: Metadata = {
+  title: "Nuestra Historia",
+  description: "En MAITILAC creemos que los buenos quesos empiezan mucho antes de llegar a la mesa.",
+  alternates: { canonical: "/nosotros" },
+  openGraph: {
+    ...OG_BASE,
+    url: "/nosotros",
+    title: "Nuestra Historia — Maitilac",
+    description: "En MAITILAC creemos que los buenos quesos empiezan mucho antes de llegar a la mesa.",
+  },
+};
 
 // Página Nosotros: markup de referencia/index.html:631-801, convertido con
 // scripts/html_a_jsx.py (estilos en styles/en-linea/nosotros.css). Las partes que

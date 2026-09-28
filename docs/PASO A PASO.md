@@ -444,11 +444,16 @@ Las mejoras de esta etapa tienen que ser **invisibles**. Si alguna cambia el dis
 
 **Verificación:** suite completa en verde, con el test "diseño" (fotos enmascaradas, estricto) y el test "fotos" (sin máscara, tolerancia de recompresión). Revisión a ojo, a doble densidad, del hero, el producto del mes, una tarjeta, la foto de un local y la del tambo: iguales al sitio viejo.
 
-### Paso 6.2 — SEO
+### Paso 6.2 — SEO ✅
 
-- [ ] `sitemap.ts`, `robots.ts` (bloquea `/gestor`).
-- [ ] `generateMetadata` por página y Open Graph; textos sacados del contenido existente, sin inventar (regla 3).
-- [ ] JSON-LD `LocalBusiness` por local y `Product` por producto.
+- [x] `app/robots.ts` (bloquea `/gestor` y `/api/`) y `app/sitemap.ts` (las 5 páginas y el detalle de cada producto visible; se arma en cada pedido, así el build no necesita la base).
+- [x] Título por página con la plantilla "%s — Maitilac": el `h1` de cada página ("Nuestra Historia", "Nuestro Catálogo", "Nuestros Locales", "Contacto") y, de descripción, su bajada tal cual. El Inicio conserva el título y la descripción del sitio viejo. Cada producto: su nombre, su descripción y su primera foto. URL canónica en todas.
+- [x] Open Graph con nombre del sitio, `es_AR` y la foto del hero (la del producto en su página). Base común en `lib/sitio.ts` (`OG_BASE`), porque el `openGraph` de una página reemplaza entero al del layout.
+- [x] JSON-LD (`components/sitio/DatosEstructurados.tsx`): `Product` en `/catalogo/<slug>`, con precio sólo si es exacto y visible (no con "Desde" ni "Consultar"); `LocalBusiness` por local en `/locales`, con dirección, teléfono, mapa y horarios de "Abierto ahora". Sin datos inventados: lo que no está en el sitio, no se pone.
+- [x] Nueva variable `SITIO_URL` (dirección pública). Se usa al compilar y al ejecutar.
+- [x] **Corregido de paso:** faltaban el ícono de la pestaña (`img/logo-tandil-2.png`) y el `viewport-fit=cover` del sitio viejo.
+
+**Verificación:** suite completa en verde; build sin base de datos; revisado a mano el `<head>`, `robots.txt`, `sitemap.xml` y que el JSON-LD sea válido. Falta pasar las páginas por el validador de resultados enriquecidos de Google cuando el sitio esté publicado.
 
 ### Paso 6.3 — Accesibilidad y rendimiento
 

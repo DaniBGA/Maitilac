@@ -1,13 +1,29 @@
+import type { Metadata } from "next";
+import { OG_BASE } from "@/lib/sitio";
 import Link from "next/link";
 import { AbiertoAhora } from "@/components/sitio/AbiertoAhora";
 import { FooterOscuro } from "@/components/sitio/FooterOscuro";
-import { getLocales } from "@/lib/datos";
+import { DatosLocales } from "@/components/sitio/DatosEstructurados";
+import { getConfig, getLocales } from "@/lib/datos";
 import { buscarLocalComoSitioViejo } from "@/lib/horarios";
 import type { Local } from "@/lib/tipos";
 import { slug } from "@/lib/util";
 import { connection } from "next/server";
 import { Pagina } from "@/components/sitio/Pagina";
 import { Foto } from "@/components/sitio/Foto";
+
+// Título y descripción: el título y la bajada de la página, tal cual.
+export const metadata: Metadata = {
+  title: "Nuestros Locales",
+  description: "Vení a visitarnos y descubrí el sabor de Tandil en cada rincón.",
+  alternates: { canonical: "/locales" },
+  openGraph: {
+    ...OG_BASE,
+    url: "/locales",
+    title: "Nuestros Locales — Maitilac",
+    description: "Vení a visitarnos y descubrí el sabor de Tandil en cada rincón.",
+  },
+};
 
 /**
  * Cartel "Abierto ahora". Reproduce la búsqueda por clave del sitio viejo
@@ -106,7 +122,7 @@ function Datos({ l, locales }: { l: Local; locales: Local[] }) {
 async function LocalesContenido() {
   // Se arma en cada pedido con datos en caché: la base no hace falta al compilar (ver app/(sitio)/layout.tsx).
   await connection();
-  const locales = await getLocales();
+  const [locales, config] = await Promise.all([getLocales(), getConfig()]);
   return (
     <main id="page-locales" className="page">
       <section className="sec-pad loc-1">
@@ -144,6 +160,7 @@ async function LocalesContenido() {
           </div>
         </div>
       </section>
+      <DatosLocales locales={locales} telefono={config.telefono} />
       <FooterOscuro />
     </main>
   );

@@ -32,6 +32,12 @@
 @import "../styles/en-linea/layout.css" layer(en-linea);
 @import "../styles/en-linea/inicio.css" layer(en-linea);
 @import "../styles/en-linea/inicio-componentes.css" layer(en-linea);
+@import "../styles/en-linea/nosotros.css" layer(en-linea);
+@import "../styles/en-linea/nosotros-componentes.css" layer(en-linea);
+@import "../styles/en-linea/catalogo.css" layer(en-linea);
+@import "../styles/en-linea/catalogo-componentes.css" layer(en-linea);
+@import "../styles/en-linea/locales.css" layer(en-linea);
+@import "../styles/en-linea/contacto.css" layer(en-linea);
 
 /* ---------- Tipografías (referencia/index.html:19-22) ---------- */
 @font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:400 700;font-display:swap;src:url("/fonts/cormorant.woff2") format('woff2')}

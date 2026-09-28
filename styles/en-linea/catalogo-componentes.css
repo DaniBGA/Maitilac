@@ -1,0 +1,53 @@
+/* Estilos en línea de las partes del Catálogo que armaba el JavaScript del sitio viejo.
+   Valores copiados textual de los template strings. */
+
+/* Filtros por ocasión — pintarFiltros(), referencia/index.html:2120-2134 */
+.fl-btn{cursor:pointer;border:1px solid rgba(94,61,34,.2);background:#fff;color:#4a453d;padding:10px 20px;border-radius:999px;font-size:14px;font-weight:700}
+.fl-btn.fl-on{border:1px solid #C67A31;background:#C67A31;color:#fff}
+.fl-n{opacity:.6;font-weight:600}
+.fl-off{cursor:not-allowed;border:1px solid rgba(94,61,34,.12);background:#F3EFE6;color:#b5afa4;padding:10px 20px;border-radius:999px;font-size:14px;font-weight:700}
+
+/* Catálogo sin resultados — pintarCatalogo(), referencia/index.html:2144-2151 */
+.cv-vacio{grid-column:1/-1;text-align:center;padding:60px 20px;color:#8a847a}
+.cv-texto{margin:0 0 18px;font-size:17px;font-weight:500}
+.cv-btn{cursor:pointer;border:1px solid rgba(94,61,34,.25);background:#fff;color:#2A2621;padding:11px 24px;border-radius:999px;font-size:14.5px;font-weight:700}
+
+/* Tarjeta de producto del catálogo — tarjetaHTML(p, 220), referencia/index.html:1811-1841 */
+.tc-foto{position:relative;height:220px;background:#e9e2d3}
+.tc-img{width:100%;height:220px;object-fit:cover;display:block}
+.tc-izq{left:10px}
+.tc-der{right:10px}
+.tc-cuerpo{padding:22px;display:flex;flex-direction:column;flex:1}
+.tc-titulo{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tc-tipo{margin-top:5px;font-size:12.5px;font-weight:700;color:#9a9488;min-height:17px}
+.tc-desc{margin:12px 0 0;font-size:15px;line-height:1.45;color:#6B655C;font-weight:500;min-height:22px}
+.tc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tc-chip{font-size:11px;padding:4px 10px}
+.tc-precio{margin:auto 0 20px;display:flex;align-items:baseline;gap:6px;padding-top:16px}
+.tc-unidad{font-size:14px;color:#9a9488;font-weight:600}
+
+/* Modal de producto — #modal y pintarModal(), referencia/index.html:844 y 2183-2238 */
+.md-velo{position:fixed;inset:0;background:rgba(27,24,21,.72);z-index:200;display:flex;align-items:center;justify-content:center;padding:32px;animation:catOverlayIn .18s ease-out}
+.md-caja{background:#fff;border-radius:22px;max-width:960px;width:100%;max-height:88vh;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;box-shadow:0 40px 90px rgba(0,0,0,.4);animation:catModalIn .2s ease-out;position:relative}
+.md-cerrar{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:999px;border:none;background:rgba(255,255,255,.92);color:#2A2621;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.md-foto{position:relative;min-height:340px;background:#e9e2d3}
+.md-img{width:100%;height:100%;min-height:340px;object-fit:cover;display:block}
+.md-izq{left:14px;width:42px;height:42px}
+.md-der{right:14px;width:42px;height:42px}
+.md-puntos{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.md-punto{width:7px;height:7px;border-radius:999px}
+.md-pad{padding:44px 40px;display:flex;flex-direction:column}
+.md-badges{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.md-badge{background:#DA8737;color:#fff;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:800}
+.md-nombre{margin:16px 0 0;font-size:38px;font-weight:600}
+.md-tipo{margin-top:4px;font-size:13.5px;font-weight:700;color:#9a9488}
+.md-desc{margin:16px 0 0;font-size:16px;line-height:1.55;color:#6B655C;font-weight:500}
+.md-precio-fila{margin:22px 0 24px;display:flex;align-items:baseline;gap:6px}
+.md-precio{font-size:30px;font-weight:800;color:#C67A31;letter-spacing:-.01em}
+.md-unidad{font-size:15px;color:#9a9488;font-weight:600}
+.md-info{border:1px solid rgba(94,61,34,.14);border-radius:12px;padding:18px;background:#FBF9F3}
+.md-rotulo{font-size:11px;font-weight:800;letter-spacing:.07em;color:#7A4E2B;margin-bottom:10px}
+.md-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.md-rotulo-premios{font-size:11px;font-weight:800;letter-spacing:.07em;color:#7A4E2B;margin:16px 0 8px}
+.md-premios{font-size:13.5px;font-weight:700;color:#C67A31}
+.md-wsp{margin-top:24px;justify-content:center}

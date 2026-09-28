@@ -23,7 +23,12 @@ export function TarjetaDestacado({ p }: { p: Producto }) {
   return (
     <div className="card">
       <div className="td-foto">
-        <img src={ruta(p.photos[0] || "")} alt={p.nombre} loading="lazy" className="td-img" />
+        <img
+          src={p.photos[0] ? ruta(p.photos[0]) : undefined}
+          alt={p.nombre}
+          loading="lazy"
+          className="td-img"
+        />
         {p.badge ? <span className="badge">{p.badge}</span> : null}
       </div>
       <div className="td-cuerpo">

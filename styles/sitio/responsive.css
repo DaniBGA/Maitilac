@@ -110,7 +110,8 @@
      (div[style*="letter-spacing:.08em"] / .07em), que ahora son clases. */
   #home-locales .lr-rotulo{font-size:12px !important}
   #home-products .td-rotulo,#home-products .td-rotulo-locales{font-size:12px !important}
-  #catalogo-grid .tc-rotulo{font-size:12px !important}
+  /* #catalogo-grid div[style*="letter-spacing:.07em"] no coincidía con ningún elemento
+     en el sitio viejo (la tarjeta del catálogo no tiene rótulos): no se porta. */
   .g-premio-foto span{font-size:12px}
 
   /* Ninguna palabra larga puede empujar el ancho de la pantalla */

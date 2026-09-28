@@ -17,3 +17,5 @@ export const precioVisible = (p: Producto) => p.verPrecio !== false;
 
 /** Índice circular de foto, igual que el sitio viejo (tolera negativos). */
 export const indiceCircular = (i: number, total: number) => (total ? ((i % total) + total) % total : 0);
+// Nota: en el sitio viejo, un producto sin fotos tenía <img src="">. React no admite
+// src vacío (avisa en consola), así que se omite el atributo: se ve igual.

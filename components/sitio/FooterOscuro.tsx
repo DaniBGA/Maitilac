@@ -15,10 +15,18 @@ export function FooterOscuro() {
         <div>
           <div className="foot-tit">NAVEGACIÓN</div>
           <div className="foot-col">
-            <Link href="/" data-go="home">Inicio</Link>
-            <Link href="/nosotros" data-go="nosotros">Nosotros</Link>
-            <Link href="/catalogo" data-go="catalogo">Catálogo</Link>
-            <Link href="/locales" data-go="locales">Locales</Link>
+            <Link href="/" data-go="home">
+              Inicio
+            </Link>
+            <Link href="/nosotros" data-go="nosotros">
+              Nosotros
+            </Link>
+            <Link href="/catalogo" data-go="catalogo">
+              Catálogo
+            </Link>
+            <Link href="/locales" data-go="locales">
+              Locales
+            </Link>
           </div>
         </div>
         <div>
@@ -27,7 +35,9 @@ export function FooterOscuro() {
             <span>Maipú 1135, Tandil</span>
             <span>Avellaneda 655, Tandil</span>
             <a href={`mailto:${CONFIG.email}`}>{CONFIG.email}</a>
-            <Link href="/contacto" data-go="contacto">Contacto</Link>
+            <Link href="/contacto" data-go="contacto">
+              Contacto
+            </Link>
           </div>
         </div>
       </div>

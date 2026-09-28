@@ -17,14 +17,24 @@ import pasos from "@/data/pasos.json";
 import premios from "@/data/premios.json";
 import productos from "@/data/productos.json";
 import type {
-  Anuncios, Color, Config, FotoInsta, Hito, Local, Ocasion, Paso, Persona, Premio, Producto,
+  Anuncios,
+  Color,
+  Config,
+  FotoInsta,
+  Hito,
+  Local,
+  Ocasion,
+  Paso,
+  Persona,
+  Premio,
+  Producto,
 } from "./tipos";
+import { slug } from "./util";
 
 export const getConfig = (): Config => config;
 export const getAnuncios = (): Anuncios => anuncios;
 /** Color de un anuncio; si no existe, marrón (como `col()` del sitio viejo). */
-export const getColor = (clave: string): Color =>
-  (colores as Record<string, Color>)[clave] ?? colores.marron;
+export const getColor = (clave: string): Color => (colores as Record<string, Color>)[clave] ?? colores.marron;
 
 export const getProductos = (): Producto[] => productos as Producto[];
 export const getProductosVisibles = () => getProductos().filter((p) => p.activo !== false);
@@ -39,3 +49,6 @@ export const getPasos = (): Paso[] => pasos;
 export const getEquipoVisible = (): Persona[] => equipo.filter((p) => p.ver !== false);
 export const getPremiosVisibles = (): Premio[] => premios.filter((p) => p.ver !== false);
 export const getInsta = (): FotoInsta[] => insta;
+
+/** Producto visible por su slug (URL /catalogo/<slug>). */
+export const getProductoPorSlug = (s: string) => getProductosVisibles().find((p) => slug(p.nombre) === s);

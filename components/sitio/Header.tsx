@@ -36,7 +36,12 @@ export function Header({ instagram }: { instagram: string }) {
         </button>
         <nav id="nav" className={abierto ? "open" : undefined}>
           {SECCIONES.map((s) => (
-            <Link key={s.href} href={s.href} className={ruta === s.href ? "navlink on" : "navlink"} onClick={cerrar}>
+            <Link
+              key={s.href}
+              href={s.href}
+              className={ruta === s.href ? "navlink on" : "navlink"}
+              onClick={cerrar}
+            >
               {s.texto}
             </Link>
           ))}

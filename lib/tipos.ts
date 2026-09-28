@@ -41,7 +41,14 @@ export type Local = {
 
 export type Paso = { titulo: string; desc: string };
 export type Persona = { nombre: string; rol: string; area: string; foto: string; ver: boolean };
-export type Premio = { anio: string; titulo: string; evento: string; detalle: string; foto: string; ver: boolean };
+export type Premio = {
+  anio: string;
+  titulo: string;
+  evento: string;
+  detalle: string;
+  foto: string;
+  ver: boolean;
+};
 export type FotoInsta = { foto: string; alt: string };
 export type Config = {
   whatsapp: string;

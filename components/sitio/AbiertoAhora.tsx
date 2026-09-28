@@ -27,7 +27,12 @@ export function AbiertoAhora({ local, className }: { local: Local; className: st
       style={{ color: abierto ? "#4f7a3f" : "#9a5a4a" }}
     >
       <span
-        style={{ width: "8px", height: "8px", borderRadius: "999px", background: abierto ? "#5aa04a" : "#c88b7d" }}
+        style={{
+          width: "8px",
+          height: "8px",
+          borderRadius: "999px",
+          background: abierto ? "#5aa04a" : "#c88b7d",
+        }}
       ></span>
       {abierto ? "Abierto ahora" : "Cerrado ahora"}
     </span>

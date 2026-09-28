@@ -1,5 +1,5 @@
 // Datos que maneja el gestor (misma forma que las listas del gestor viejo, más el id).
-import type { Anuncios } from "../tipos";
+import type { Anuncios, Config } from "../tipos";
 
 export type GProducto = {
   id: string;
@@ -33,16 +33,49 @@ export type GPremio = {
 };
 export type GPersona = { id: string; nombre: string; rol: string; area: string; foto: string; ver: boolean };
 
+export type GLocal = {
+  id: string;
+  nombre: string;
+  direccion: string;
+  horarioSemana: string;
+  horarioDomingo: string;
+  abre: string;
+  cierra: string;
+  domAbre: string;
+  domCierra: string;
+  foto: string;
+  fotoDetalle: string;
+  comoLlegar: string;
+  mapaUrl: string;
+};
+
+export type GProductoDelMes = { productoId: string; texto: string; foto: string };
+
+/** Foto del banco: dónde se usa. */
+export type GFoto = {
+  id: string;
+  archivo: string;
+  /** Productos que la usan (nombres). */
+  productos: string[];
+  /** Otros usos (Premios, Equipo, Locales, Producto del mes). */
+  otros: string[];
+};
+
 export type DatosGestor = {
   anuncios: Anuncios;
   ocasiones: GOcasion[];
   premios: GPremio[];
   equipo: GPersona[];
   productos: GProducto[];
+  config: Config;
+  locales: GLocal[];
+  productoDelMes: GProductoDelMes;
+  fotos: GFoto[];
 };
 
 /** Lo que se edita en el panel lateral de un producto. */
 export type ProductoEditado = Omit<GProducto, "id">;
 
 /** Resultado de una acción: los datos actualizados, o un mensaje de error. */
-export type Resultado = { ok: true; datos: DatosGestor; aviso?: string } | { ok: false; error: string };
+export type Resultado =
+  { ok: true; datos: DatosGestor; aviso?: string; id?: string } | { ok: false; error: string };

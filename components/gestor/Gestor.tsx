@@ -6,6 +6,8 @@ import { useCallback, useRef, useState } from "react";
 import { authCliente } from "@/lib/auth-cliente";
 import type { DatosGestor, Resultado } from "@/lib/gestor/tipos";
 import { BloqueAnuncios } from "./Anuncios";
+import { BancoFotos } from "./BancoFotos";
+import { BloqueContacto } from "./Contacto";
 import { Mas } from "./comun";
 import { BloqueEquipo, BloquePremios } from "./Listas";
 import { BloqueOcasiones } from "./Ocasiones";
@@ -112,6 +114,27 @@ export function Gestor({ inicial }: { inicial: DatosGestor }) {
         <BloquePremios premios={datos.premios} correr={correr} />
         <BloqueEquipo equipo={datos.equipo} correr={correr} />
         <BloqueProductos productos={datos.productos} correr={correr} alEditar={(id) => setPanel({ id })} />
+        {/* Bloques nuevos: el gestor viejo no los tenía (ver "Diferencias visuales aprobadas"). */}
+        <BloqueContacto
+          config={datos.config}
+          locales={datos.locales}
+          productoDelMes={datos.productoDelMes}
+          productos={datos.productos}
+          correr={correr}
+        />
+        <BancoFotos
+          fotos={datos.fotos}
+          productos={datos.productos}
+          correr={correr}
+          alCrearProducto={async (accion) => {
+            const r = await accion;
+            if (r.ok) {
+              setDatos(r.datos);
+              if (r.aviso) avisar(r.aviso);
+              if (r.id) setPanel({ id: r.id });
+            } else avisar(r.error);
+          }}
+        />
       </div>
 
       {panel ? (

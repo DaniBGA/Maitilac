@@ -130,3 +130,77 @@ test("Exportar descarga una copia de seguridad con todos los datos", async ({ pa
   expect(copia.productos).toHaveLength(12);
   expect(copia.equipo).toHaveLength(9); // el export viejo no incluía el equipo
 });
+
+// ---------- Bloques nuevos ----------
+
+const campo = (page: Page, contenedor: string, etiqueta: string) =>
+  page.locator(`${contenedor} .g-campo`).filter({ has: page.locator("label", { hasText: etiqueta }) }).locator("input, textarea, select").first();
+
+test("contacto: el email nuevo se ve en el footer", async ({ page }) => {
+  await page.goto("/gestor");
+  const email = campo(page, "#g-contacto", "Email");
+  const original = await email.inputValue();
+  await email.fill("pruebas@maitilac.com");
+  await page.locator("#g-contacto button", { hasText: "Guardar contacto" }).click();
+  await expect(aviso(page)).toHaveText("Datos de contacto guardados. Ya se ven en el sitio.");
+  await page.goto("/");
+  await expect(page.locator("footer.foot-dark")).toContainText("pruebas@maitilac.com");
+
+  await page.goto("/gestor");
+  await campo(page, "#g-contacto", "Email").fill(original);
+  await page.locator("#g-contacto button", { hasText: "Guardar contacto" }).click();
+  await expect(aviso(page)).toHaveText("Datos de contacto guardados. Ya se ven en el sitio.");
+});
+
+test("locales: el horario nuevo se ve en la página Locales", async ({ page }) => {
+  await page.goto("/gestor");
+  const local = page.locator("#g-contacto .gn-local").first();
+  const horario = local.locator(".g-campo").filter({ hasText: "lunes a sábado (como se muestra)" }).locator("input");
+  const original = await horario.inputValue();
+  await horario.fill("9:00 a 20:00 hs");
+  await local.locator("button", { hasText: "Guardar local" }).click();
+  await expect(aviso(page)).toHaveText("Local guardado. Ya se ve en el sitio.");
+  await page.goto("/locales");
+  await expect(page.locator("#page-locales")).toContainText("9:00 a 20:00 hs");
+
+  await page.goto("/gestor");
+  const local2 = page.locator("#g-contacto .gn-local").first();
+  await local2.locator(".g-campo").filter({ hasText: "lunes a sábado (como se muestra)" }).locator("input").fill(original);
+  await local2.locator("button", { hasText: "Guardar local" }).click();
+  await expect(aviso(page)).toHaveText("Local guardado. Ya se ve en el sitio.");
+});
+
+test("producto del mes: se puede cambiar desde el gestor", async ({ page }) => {
+  await page.goto("/gestor");
+  const selector = campo(page, "#g-contacto", "Producto");
+  const original = await selector.inputValue();
+  await selector.selectOption({ label: "Gouda" });
+  await page.locator("#g-contacto button", { hasText: "Guardar producto del mes" }).click();
+  await expect(aviso(page)).toHaveText("Producto del mes guardado. Ya se ve en el catálogo.");
+  await page.goto("/catalogo");
+  await expect(page.locator(".cat-9")).toHaveText("Gouda");
+
+  await page.goto("/gestor");
+  await campo(page, "#g-contacto", "Producto").selectOption(original);
+  await page.locator("#g-contacto button", { hasText: "Guardar producto del mes" }).click();
+  await expect(aviso(page)).toHaveText("Producto del mes guardado. Ya se ve en el catálogo.");
+});
+
+test("banco de fotos: subir una foto suelta, asignarla y volver a soltarla", async ({ page }) => {
+  await page.goto("/gestor");
+  const sueltasAntes = await page.locator("#g-banco .gn-banco.suelta").count();
+  await page.setInputFiles("#gb-archivo", "public/img/sardo-1.jpg");
+  await expect(aviso(page)).toHaveText("Foto agregada al banco");
+  await expect(page.locator("#g-banco .gn-banco.suelta")).toHaveCount(sueltasAntes + 1);
+
+  const nueva = page.locator("#g-banco .gn-banco.suelta").last();
+  const archivo = await nueva.locator(".gn-archivo").textContent();
+  await nueva.locator("select").selectOption({ label: "Reggianito" });
+  await expect(aviso(page)).toHaveText("Foto asignada");
+  const tarjeta = page.locator("#g-banco .gn-banco").filter({ hasText: archivo! });
+  await expect(tarjeta.locator(".gn-uso")).toHaveText("En Reggianito");
+
+  await tarjeta.locator("select").selectOption("");
+  await expect(aviso(page)).toHaveText("La foto quedó sin asignar");
+  await expect(page.locator("#g-banco .gn-banco.suelta")).toHaveCount(sueltasAntes + 1);
+});

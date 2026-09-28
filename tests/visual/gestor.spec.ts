@@ -5,9 +5,17 @@ import { ES_REFERENCIA, esperarImagenes, prepararPagina } from "./preparar";
 const gestor = { vieja: "/#gestor", nueva: "/gestor" };
 test.use({ storageState: ES_REFERENCIA ? undefined : "tests/visual/.sesion/gestor.json" });
 
-/** El botón "Salir" es nuevo (el gestor viejo no tenía sesión): se quita antes de comparar. */
+/**
+ * Lo que el gestor viejo no tenía se quita antes de comparar: el botón "Salir" y los
+ * bloques nuevos (data-nuevo: Contacto y locales, Banco de fotos). Anotados en
+ * "Diferencias visuales aprobadas" de docs/PASO A PASO.md.
+ */
 async function sinBotonSalir(page: Page) {
-  if (!ES_REFERENCIA) await page.evaluate(() => document.getElementById("g-salir")?.remove());
+  if (!ES_REFERENCIA)
+    await page.evaluate(() => {
+      document.getElementById("g-salir")?.remove();
+      document.querySelectorAll("[data-nuevo]").forEach((n) => n.remove());
+    });
 }
 
 test.describe("gestor", () => {
@@ -23,7 +31,11 @@ test.describe("gestor", () => {
   test("fotos", async ({ page }) => {
     await prepararPagina(page, gestor);
     await sinBotonSalir(page);
-    await expect(page).toHaveScreenshot("gestor-fotos.png", { fullPage: true, threshold: 0.2, maxDiffPixelRatio: 0.01 });
+    await expect(page).toHaveScreenshot("gestor-fotos.png", {
+      fullPage: true,
+      threshold: 0.2,
+      maxDiffPixelRatio: 0.01,
+    });
   });
 
   test("textos", async ({ page }) => {

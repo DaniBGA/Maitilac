@@ -21,3 +21,23 @@
 .gi-clave{width:100%;padding:11px 14px;border:1px solid rgba(94,61,34,.22);border-radius:9px;background:#fff;font-size:14px}
 .gi-error{color:#a4453a;margin:-6px 0 16px;font-weight:600}
 .gi-boton{width:100%;justify-content:center}
+
+/* Bloques nuevos (el gestor viejo no los tenía): Contacto y locales, Banco de fotos.
+   Usan los mismos componentes .g-*; esto sólo agrega lo que no existía. */
+.gn-sub{margin:22px 0 12px;font-size:20px;font-weight:600}
+.gn-local{background:#FBF9F3;border:1px solid rgba(94,61,34,.14);border-radius:13px;padding:16px 18px;margin-bottom:16px}
+.gn-horas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.gn-horas input{width:100%;padding:9px 11px;border:1px solid rgba(94,61,34,.22);border-radius:9px;background:#fff;font-size:14px}
+.gn-fotos{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.gn-foto{display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:700;color:#4a453d}
+.gn-foto .g-premio-foto{width:120px;height:90px}
+.gn-grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.gn-banco{background:#fff;border:1px solid rgba(94,61,34,.14);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.gn-banco.suelta{border:2px solid #DA8737}
+.gn-banco img{width:100%;height:120px;object-fit:cover;display:block;background:#efe9dc}
+.gn-banco-pie{padding:9px 10px 11px;display:flex;flex-direction:column;gap:6px}
+.gn-archivo{font-size:11px;color:#8a847a;font-weight:600;overflow-wrap:anywhere}
+.gn-uso{font-size:11.5px;font-weight:700;color:#617C52}
+.gn-uso.suelta{color:#C67A31}
+.gn-banco select{width:100%;padding:7px 8px;border:1px solid rgba(94,61,34,.22);border-radius:8px;background:#fff;font-size:13px}
+@media(max-width:720px){.gn-horas{grid-template-columns:1fr 1fr}}

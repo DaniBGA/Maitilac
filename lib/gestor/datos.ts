@@ -56,6 +56,22 @@ export async function leerDatosGestor(): Promise<DatosGestor> {
         .orderBy(asc(s.comboQuesos.orden)),
     ]);
 
+  const [config, locales, pdm, fotos] = await Promise.all([
+    db.select().from(s.config).limit(1),
+    db.select().from(s.locales).orderBy(asc(s.locales.orden)),
+    db.select().from(s.productoDelMes).limit(1),
+    db.select({ id: s.fotos.id, archivo: s.fotos.archivo }).from(s.fotos).orderBy(asc(s.fotos.archivo)),
+  ]);
+  const archivo = (id: string | null) => fotos.find((f) => f.id === id)?.archivo ?? "";
+  const nombreProducto = Object.fromEntries(productos.map((p) => [p.id, p.nombre]));
+  const [fotosProdIds, fotosPremios, fotosEquipo] = await Promise.all([
+    db
+      .select({ productoId: s.productoFotos.productoId, fotoId: s.productoFotos.fotoId })
+      .from(s.productoFotos),
+    db.select({ fotoId: s.premios.fotoId }).from(s.premios),
+    db.select({ fotoId: s.equipo.fotoId }).from(s.equipo),
+  ]);
+
   const anuncio = (clave: string) => {
     const a = anuncios.find((x) => x.clave === clave);
     return a ? { ver: a.ver, texto: a.texto, color: a.color } : { ver: false, texto: "", color: "marron" };
@@ -89,6 +105,40 @@ export async function leerDatosGestor(): Promise<DatosGestor> {
       presentaciones: p.presentaciones,
       quesos: quesos.filter((q) => q.comboId === p.id).map((q) => q.nombre),
       premios: p.premiosTexto,
+    })),
+    config: config[0],
+    locales: locales.map((l) => ({
+      id: l.id,
+      nombre: l.nombre,
+      direccion: l.direccion,
+      horarioSemana: l.horarioSemana,
+      horarioDomingo: l.horarioDomingo,
+      abre: l.abre,
+      cierra: l.cierra,
+      domAbre: l.domAbre ?? "",
+      domCierra: l.domCierra ?? "",
+      foto: archivo(l.fotoId),
+      fotoDetalle: archivo(l.fotoDetalleId),
+      comoLlegar: l.comoLlegar,
+      mapaUrl: l.mapaUrl,
+    })),
+    productoDelMes: {
+      productoId: pdm[0]?.productoId ?? "",
+      texto: pdm[0]?.texto ?? "",
+      foto: archivo(pdm[0]?.fotoId ?? null),
+    },
+    fotos: fotos.map((f) => ({
+      id: f.id,
+      archivo: f.archivo,
+      productos: fotosProdIds
+        .filter((r) => r.fotoId === f.id && nombreProducto[r.productoId])
+        .map((r) => nombreProducto[r.productoId]),
+      otros: [
+        fotosPremios.some((r) => r.fotoId === f.id) ? "Premios" : "",
+        fotosEquipo.some((r) => r.fotoId === f.id) ? "Equipo" : "",
+        locales.some((l) => l.fotoId === f.id || l.fotoDetalleId === f.id) ? "Locales" : "",
+        pdm[0]?.fotoId === f.id ? "Producto del mes" : "",
+      ].filter(Boolean),
     })),
   };
 }

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { CONFIG } from "@/lib/config";
 
 // Markup de referencia/index.html:478-495. Mismas clases e id (el CSS y los tests dependen de ellos).
 const SECCIONES = [
@@ -13,7 +12,7 @@ const SECCIONES = [
   { href: "/locales", texto: "Locales" },
 ];
 
-export function Header() {
+export function Header({ instagram }: { instagram: string }) {
   const ruta = usePathname();
   const [abierto, setAbierto] = useState(false);
   const cerrar = () => setAbierto(false);
@@ -44,7 +43,7 @@ export function Header() {
           <Link href="/contacto" className="btn-contacto" onClick={cerrar}>
             Contactanos
           </Link>
-          <a href={CONFIG.instagram} target="_blank" rel="noopener" aria-label="Instagram" className="ig-circle">
+          <a href={instagram} target="_blank" rel="noopener" aria-label="Instagram" className="ig-circle">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="3" y="3" width="18" height="18" rx="5"></rect>
               <circle cx="12" cy="12" r="4"></circle>

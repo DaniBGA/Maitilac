@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { CONFIG } from "@/lib/config";
+import { getConfig } from "@/lib/datos";
+
+const CONFIG = getConfig();
 
 // Footer propio de la página Nosotros, referencia/index.html:759-800. Texto tal cual.
 const Pin = () => (

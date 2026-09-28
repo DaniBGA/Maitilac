@@ -106,9 +106,11 @@
   /* Rótulos en mayúsculas */
   .canal-loc-tit{font-size:12px}
   .cd-lbl{font-size:13px}
-  #home-locales div[style*="letter-spacing:.08em"]{font-size:12px !important}
-  #home-products div[style*="letter-spacing:.07em"]{font-size:12px !important}
-  #catalogo-grid div[style*="letter-spacing:.07em"]{font-size:12px !important}
+  /* Reescritas: en el sitio viejo apuntaban a los estilos en línea
+     (div[style*="letter-spacing:.08em"] / .07em), que ahora son clases. */
+  #home-locales .lr-rotulo{font-size:12px !important}
+  #home-products .td-rotulo,#home-products .td-rotulo-locales{font-size:12px !important}
+  #catalogo-grid .tc-rotulo{font-size:12px !important}
   .g-premio-foto span{font-size:12px}
 
   /* Ninguna palabra larga puede empujar el ancho de la pantalla */

@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { CONFIG } from "@/lib/config";
+import { getConfig } from "@/lib/datos";
+
+const CONFIG = getConfig();
 
 // FOOTER_HTML de referencia/index.html:1779-1807. Se repite en Inicio, Catálogo, Locales y Contacto.
 export function FooterOscuro() {

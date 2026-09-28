@@ -2,7 +2,7 @@
 
 Guía operativa para ejecutar el [PLAN DE REFACTORIZACION.md](PLAN%20DE%20REFACTORIZACION.md) de a un paso por vez. El plan explica **qué** se construye y **por qué**; esta guía explica **cómo** y en qué orden, y sobre todo **cómo verificar que el diseño quede idéntico**.
 
-> **Estado actual:** Etapas 0 y 1 terminadas (falta subir el repo a GitHub). Próximo: **paso 2.1**. *(Actualizar esta línea al cerrar cada paso.)*
+> **Estado actual:** Etapas 0, 1 y 2 terminadas (falta subir el repo a GitHub y la revisión manual en dispositivos reales). Próximo: **Etapa 3, paso 3.1**. *(Actualizar esta línea al cerrar cada paso.)*
 
 ---
 
@@ -194,131 +194,67 @@ Para correr una parte: `pnpm test:visual layout.spec.ts`, `pnpm test:visual -g "
 
 ---
 
-## Etapa 2 — Páginas públicas con datos locales (paridad visual pura)
+## Etapa 2 — Páginas públicas con datos locales (paridad visual pura) ✅
 
-En esta etapa **no hay base de datos**: los datos salen de archivos JSON extraídos del sitio viejo. Así, si algo se ve distinto, el problema es del diseño y no de los datos. La base se conecta en la Etapa 3.
+En esta etapa **no hay base de datos**: los datos salen de `data/*.json`, extraídos del sitio viejo. Así, si algo se ve distinto, el problema es del diseño y no de los datos. La base se conecta en la Etapa 3.
 
-### Paso 2.1 — Extraer los datos del sitio viejo
+**Resultado:** las 5 páginas terminadas. La suite completa pasa contra `referencia/`: **110 tests** en los 3 anchos (páginas completas, textos, estados, navegación y consola sin errores).
 
-**Objetivo:** tener los datos de fábrica en JSON, **sin copiarlos a mano**.
+### Herramienta clave: `scripts/html_a_jsx.py`
 
-- [ ] Script `scripts/extraer-datos.ts` que abre `referencia/` con Playwright (con `localStorage` vacío) y ejecuta:
-  ```ts
-  const datos = await page.evaluate(`({ CONFIG, ANUNCIOS_BASE, COLORES, PRODUCTOS_BASE,
-    OCASIONES_BASE, HISTORIA, FOTOS_HISTORIA, FOTOS_HOY, LOCALES, PASOS, EQUIPO_BASE,
-    PREMIOS_BASE, INSTA })`);
-  ```
-  y guarda cada constante en `data/<nombre>.json`.
-- [ ] Tipos TypeScript para cada estructura en `lib/tipos.ts`.
-- [ ] Copiar `referencia/img/` y `referencia/fondo-hero.jpg` a `public/` con las mismas rutas (`/img/...`, `/fondo-hero.jpg`).
+Convierte un rango de líneas de `referencia/index.html` a JSX y pasa cada `style=""` a una clase con los mismos valores, en la capa `en-linea`:
 
-**Verificación:** los JSON tienen exactamente 12 productos, 7 ocasiones, 9 hitos, 2 locales, 9 personas, 11 premios y 6 fotos de Instagram; un test compara los textos del JSON con los que muestra `referencia/`.
+```bash
+python3 scripts/html_a_jsx.py <desde> <hasta> <prefijo> --css styles/en-linea/<pagina>.css --jsx salida.jsx
+```
 
-**Commit:** `chore: extraer datos de fábrica del sitio viejo a JSON`
+Traduce los atributos a JSX (`class`, SVG en camelCase, `rows={5}`), convierte `<a href="#" data-go>` en `<Link>` (conserva `data-go`, que el CSS usa en selectores), pone las rutas de imágenes absolutas, reproduce los espacios que HTML renderiza entre texto y elementos y escapa comillas. Los contenedores que llenaba el JavaScript viejo quedan vacíos y se reemplazan a mano por componentes.
 
-### Paso 2.2 — Componentes compartidos
+Las partes que armaba el JavaScript viejo (tarjetas, modal, carruseles…) se escribieron a mano, con sus estilos en `styles/en-linea/*-componentes.css`, copiados textual de los *template strings*.
 
-Fuente: objeto `ICO` en `index.html:1701-1709`, `tarjetaHTML()` en `index.html:1811`, `precioVisible()` en `index.html:1468`, CSS `.card`, `.chip*`, `.precio`, `.btn-*`, `.badge`, `.navimg`, `.grid-*`.
+### Paso 2.1 — Extraer los datos ✅
+- [x] `pnpm datos:extraer` (`scripts/extraer-datos.ts`): abre `referencia/index.html`, ejecuta su JavaScript y guarda las constantes en `data/*.json`. 12 productos, 7 ocasiones, 9 hitos, 2 locales, 9 personas, 11 premios, 6 fotos de Instagram.
+- [x] `lib/tipos.ts` y `lib/datos.ts` (funciones de lectura; en la Etapa 3 pasan a leer de Postgres sin cambiar las páginas).
 
-- [ ] `components/sitio/Icono.tsx` con los SVG de `ICO` copiados textualmente.
-- [ ] `lib/precio.ts` con la misma lógica de `precioVisible()` y el mismo formato de salida que hoy.
-- [ ] `components/sitio/TarjetaProducto.tsx` (`'use client'` sólo por el carrusel de fotos) reproduciendo `tarjetaHTML()` **completa**, incluidos los estilos armados en el template string.
-- [ ] Portar CSS de tarjetas, grillas y botones.
-- [ ] Reescribir los selectores `div[style*=…]` de `index.html:450-452` para que apunten a las clases nuevas.
+### Paso 2.2 — Componentes compartidos ✅
+- [x] Íconos de `ICO`, `AbrirProducto`/`BotonDetalles`, `AbiertoAhora` (arranca vacío y se completa en el navegador, como el viejo; refresca cada minuto), `lib/util.ts`, `lib/horarios.ts`, `lib/whatsapp.ts`.
+- [x] Los 3 selectores `div[style*=…]` del responsive reescritos. El de `#catalogo-grid` no coincidía con ningún elemento en el sitio viejo: se documentó y no se portó.
 
-**Verificación:** página de prueba con las 12 tarjetas en grilla; se compara contra una captura de referencia de la grilla del catálogo en los 3 anchos.
+### Paso 2.3 — Inicio ✅
+Anuncios con color y visibilidad desde los datos, hero, cifras, destacados, historia, locales con "Abierto ahora" e Instagram.
 
-**Commit:** `feat: componentes compartidos (iconos, tarjeta de producto, precio)`
+### Paso 2.4 — Nosotros ✅
+Relato, línea de tiempo (globos con CSS, año activo), carruseles de fotos (0,5 px por cuadro en sentidos opuestos, pausa con mouse o toque), proceso, cadena, equipo, premios (0,6 px por cuadro) y cluster. Equipo y premios se ocultan si no hay elementos visibles.
 
-### Paso 2.3 — Página de Inicio
+### Paso 2.5 — Catálogo y modal ✅
+- [x] Filtros (activo, inactivo, apagado sin productos; tocar el activo lo apaga), grilla y tarjetas con flechas de fotos.
+- [x] Producto del mes **fijo como en el sitio viejo** (pasa a ser dinámico en la Etapa 3).
+- [x] Modal con rutas interceptadas: `app/(sitio)/@modal/(.)catalogo/[slug]` lo abre sobre la página actual (la URL cambia, "atrás" lo cierra). Entrando directo a `/catalogo/<slug>` se ve el catálogo con el modal abierto: **no hizo falta diseñar una página nueva**. Al cambiar de foto la caja del modal se recrea, como en el viejo (vuelve arriba y repite la animación).
 
-Fuente: markup `index.html:497-629`; `pintarAnuncios()` 1746, `pintarDestacados()` 1844, `pintarLocalesHome()` 1897, `actualizarAbierto()` 1934; Instagram con `INSTA`.
+### Paso 2.6 — Locales ✅
+Direcciones y horarios tal como están escritos en el HTML viejo; se unifican con los datos en la Etapa 3.
 
-Construir y verificar **sección por sección**, en este orden:
+### Paso 2.7 — Contacto ✅
+Pestañas, texto de ayuda, "Pedir presupuesto mayorista" y mensaje de WhatsApp. Un test compara el enlace generado contra el del sitio viejo: es idéntico carácter por carácter.
 
-- [ ] Barra de anuncio + badges del hero (colores de `COLORES`, visibilidad con `ver`).
-- [ ] Hero: foto de fondo, velo, textos; en celular, `object-position: center 72%` y el degradado propio.
-- [ ] Cifras (texto tal cual, incluido "8 Variedades").
-- [ ] Productos destacados (`.grid-centrada`, centrado si la fila queda incompleta).
-- [ ] Nuestra Historia (bloque resumen).
-- [ ] Nuestros Locales (resumen) con `<AbiertoAhora>`: la misma lógica que `actualizarAbierto()` y refresco cada 60 s.
-- [ ] Seguinos en Instagram.
-- [ ] Footer oscuro.
-- [ ] Tests de estado: hover en tarjeta; flechas del carrusel de una tarjeta (foto 2).
+### Paso 2.8 — Enlaces viejos y cierre ✅
+- [x] `/#nosotros`, `/#catalogo`, etc. redirigen a la página nueva; `/#gestor` → `/gestor`.
+- [x] Suite completa en verde. Las direcciones inexistentes dan 404.
+- [ ] **Revisión manual lado a lado en un celular y una tablet reales** (pendiente, la hace una persona).
 
-**Verificación:** `pnpm test:visual` pasa para `inicio` en los 3 anchos (página completa y estados); `textos.spec` pasa para `inicio`.
+### Hallazgos del sitio viejo (se mantuvieron por paridad o se anotaron)
 
-**Commit:** un commit por sección, ej. `feat(inicio): hero y barra de anuncio`
+| Hallazgo | Qué se hizo |
+|---|---|
+| "Ver Detalles" en el Inicio no abría nada y bloqueaba el scroll (el modal estaba dentro del catálogo, oculto) | **Corregido**: abre el detalle. Anotado en *Diferencias visuales aprobadas*, pendiente de aprobación |
+| En Locales, "Abierto ahora" de Maipú queda siempre vacío (busca "maipu" sin tilde en "Local Maipú") | Se mantiene igual. Backlog de la Etapa 7 |
+| "Abierto ahora" usaba la hora del dispositivo | Usa la hora de Argentina (plan, P11). Para quien está en Argentina no cambia nada |
+| Productos sin fotos tenían `<img src="">` | Se omite el atributo (React no admite `src` vacío); se ve igual |
 
-### Paso 2.4 — Página Nosotros
-
-Fuente: markup `index.html:631-803`; `pintarHistoria()` 1959, `pintarFotosHistoria()` 1976 y `moverCarrusel()` 2004, `pintarEquipo()` 2050, `pintarPremios()` 2072 y `girar()` 2105; CSS de línea de tiempo `index.html:76-128` y de cadena `index.html:130-150`.
-
-- [ ] Encabezado y relato (`.tl-relato`, `.tl-lema`, `.tl-pregunta`, `.tl-destacado`, `.tl-cierre`, `.tl-ayuda`), texto tal cual.
-- [ ] Línea de tiempo: años, puntos, año activo, **globos al pasar el mouse** (los dos últimos abren hacia arriba) y el cambio de panel al hacer clic.
-- [ ] Los dos carruseles automáticos en sentidos opuestos, con la misma velocidad que `moverCarrusel()`. Pausa al pasar el mouse si el viejo la tiene.
-- [ ] Proceso productivo (`PASOS`).
-- [ ] Cadena de producción: la cinta SVG de fondo copiada textual, los 6 pasos con sus desfases (`nth-child`), el hover que los levanta y las 2 columnas en celular.
-- [ ] Equipo (`.grid-centrada-3`); los que no tienen foto muestran el placeholder rayado con el nombre.
-- [ ] Premios: carrusel con la misma animación de `girar()`; la sección desaparece si no hay premios visibles.
-- [ ] Cluster Quesero y footer claro.
-- [ ] Tests de estado: globo de un año del medio, globo del último año, otro año seleccionado, hover en un paso de la cadena.
-
-**Verificación:** `pnpm test:visual` y `textos.spec` pasan para `nosotros`; revisión a ojo de la velocidad de los carruseles, lado a lado con `referencia/`.
-
-**Commit:** un commit por sección.
-
-### Paso 2.5 — Página Catálogo y modal de producto
-
-Fuente: markup `index.html:804-848`; `contarOcasion()` 2116, `pintarFiltros()` 2120, `pintarCatalogo()` 2136, `abrirModal()`/`cerrarModal()`/`pintarModal()` 2173-2247 y los manejadores de teclado.
-
-- [ ] Encabezado oscuro del catálogo.
-- [ ] Producto del mes: **por ahora con el mismo contenido fijo que hoy** (Holanda, `$4800`, `holanda-1.jpg`). Pasa a ser dinámico en la Etapa 3, sin cambiar el diseño.
-- [ ] Filtros por ocasión: activo, inactivo, deshabilitado (gris, sin clic) cuando no tienen productos visibles; mismo comportamiento al tocar dos veces el mismo filtro.
-- [ ] Grilla (`#catalogo-grid`, `.grid-4`).
-- [ ] Modal como *intercepting route* (`app/(sitio)/catalogo/@modal/(.)[slug]`): mismo markup que `pintarModal()`, galería con flechas y teclas ← → Esc, bloqueo del scroll del `body`, cierre al hacer clic en el fondo, botón de WhatsApp con el mismo mensaje prearmado.
-- [ ] Página `/catalogo/[slug]` (nueva, no existe en el sitio viejo): reutiliza el contenido del modal dentro del layout normal. **Anotarla en la tabla de diferencias aprobadas.**
-- [ ] Tests de estado: filtro "Sale picadita" activo, modal de Gouda abierto (foto 1 y foto 2), modal en celular.
-
-**Verificación:** `pnpm test:visual` y `textos.spec` pasan para `catalogo` y sus estados; con el modal abierto, "atrás" en el navegador lo cierra.
-
-**Commit:** un commit por bloque (filtros, grilla, modal).
-
-### Paso 2.6 — Página Locales
-
-Fuente: markup `index.html:849-954`.
-
-- [ ] Las dos tarjetas de local (Maipú y Avellaneda) con `<AbiertoAhora>`.
-- [ ] Indicaciones generales.
-- [ ] En esta etapa, direcciones y horarios **tal como están escritos en el HTML**; se unifican con los datos de `LOCALES` en la Etapa 3.
-
-**Verificación:** `pnpm test:visual` y `textos.spec` pasan para `locales`.
-
-**Commit:** `feat(locales): página de locales`
-
-### Paso 2.7 — Página Contacto
-
-Fuente: markup `index.html:955-1105`; `pintarTabs()` 2248 y el `submit` del formulario (sección "Contacto: pestañas y envío por WhatsApp").
-
-- [ ] Las tres columnas (`.contacto-grid`, formulario al medio en escritorio y abajo en celular).
-- [ ] Canales "Compras en el local" y "Compras por mayor", y redes sociales.
-- [ ] `<FormContacto>`: pestañas con los mismos estilos, texto de ayuda según la pestaña, "Pedir presupuesto mayorista" que cambia la pestaña y hace scroll, y armado del mensaje de WhatsApp **idéntico** al actual, al número que corresponde.
-- [ ] Tests de estado: pestaña "Compra por mayor" activa. Test funcional: el enlace de WhatsApp generado es igual en el viejo y en el nuevo para los mismos datos.
-
-**Verificación:** `pnpm test:visual`, `textos.spec` y el test del mensaje de WhatsApp pasan.
-
-**Commit:** `feat(contacto): página de contacto y formulario por WhatsApp`
-
-### Paso 2.8 — Enlaces viejos y cierre de la etapa
-
-- [ ] Script en el layout que redirige los hashes viejos: `/#home` → `/`, `/#nosotros` → `/nosotros`, etc.; `/#gestor` → `/gestor`.
-- [ ] Todos los `data-go` del sitio viejo pasan a `<Link href>`; ningún enlace interno usa `#`.
-- [ ] Pasada completa: `pnpm test:visual` **entero** en verde.
-- [ ] Revisión manual lado a lado (`referencia/` y sitio nuevo) en un celular real y en una tablet: scroll, toques, menú, modal, carruseles.
-
-**Verificación:** suite completa en verde y revisión manual sin diferencias. **Recién ahí se pasa a la Etapa 3.**
-
-**Commit:** `feat: redirección de enlaces viejos; cierre de paridad visual`
+### Notas técnicas de esta etapa
+- Con Next en modo desarrollo, los errores de consola muestran un aviso flotante que tapa las capturas. Por eso existe el test "sin errores en consola": si falla, arreglar el error, no el test.
+- Los tests preparan la página sin tocar el DOM antes de que React hidrate (las imágenes *lazy* se cargan recorriendo la página con scroll).
+- Si una corrida de Playwright se corta a mitad de camino, puede quedar un servidor colgado en el 3000 o el 4500: `fuser -k 3000/tcp 4500/tcp`.
 
 ---
 
@@ -598,6 +534,7 @@ Ordenado por valor para el cliente. Se reordena según lo que se decida en cada 
 | 8 | Convertir el CSS portado a utilidades de Tailwind (sin cambio visual) | Estrategia de estilos | Opcional |
 | 9 | Mejoras de accesibilidad que cambian el diseño (contraste, tamaños) | Paso 6.3 | Según revisión |
 | 10 | Footer claro de Nosotros: en tablet y celular queda en 4 columnas apretadas (su grilla en línea le gana al responsive del sitio viejo) | Paso 1.5 | Proponer al cliente |
+| 11 | Locales: "Abierto ahora" de Maipú nunca aparece (la búsqueda por "maipu" sin tilde no encuentra "Local Maipú") | Paso 2.6 | Proponer al cliente |
 
 ---
 
@@ -607,8 +544,9 @@ Toda diferencia entre el sitio nuevo y `referencia/` tiene que estar en esta tab
 
 | Fecha | Dónde | Diferencia | Motivo | Aprobó |
 |---|---|---|---|---|
-| — | `/catalogo/[slug]` | Página nueva, no existe en el sitio viejo | URL propia por producto (SEO, compartir) | Pendiente |
 | — | Gestor → Config y Locales | Pantalla nueva | Locales y datos de contacto editables (plan P5) | Pendiente |
 | — | Footer público | Se quita el enlace "Gestor del catálogo" | Seguridad (plan P2) | Pendiente |
 | — | Gestor → "Exportar" | Pasa a llamarse "Descargar copia de seguridad" | Ahora es un backup, ya no un archivo para pegar en el código | Pendiente |
 | — | Gestor → acceso | Pantalla de login | Seguridad (plan P2) | Pendiente |
+| 28/09/2026 | Inicio → "Ver Detalles" | Abre el detalle del producto (en el sitio viejo no hacía nada y bloqueaba el scroll) | Corrección de un error | Pendiente |
+| — | `/catalogo/[slug]` | Entrando directo se ve el catálogo con el detalle abierto | URL propia por producto (SEO, compartir) | Pendiente |

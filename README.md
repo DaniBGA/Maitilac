@@ -5,7 +5,7 @@ Sitio web de Maitilac (quesos artesanales de Tandil), en migración desde un ún
 - **Plan** (qué se construye y por qué): [docs/PLAN DE REFACTORIZACION.md](docs/PLAN%20DE%20REFACTORIZACION.md)
 - **Paso a paso** (cómo, en qué orden y estado actual): [docs/PASO A PASO.md](docs/PASO%20A%20PASO.md)
 
-> **Estado:** etapas 0 y 1 terminadas: proyecto base, header, menú móvil, footers y tests visuales. Las páginas todavía están vacías y se construyen en la Etapa 2. Base de datos y gestor, en etapas siguientes.
+> **Estado:** etapas 0, 1 y 2 terminadas: las 5 páginas públicas (Inicio, Nosotros, Catálogo con detalle de producto, Locales y Contacto) se ven igual que el sitio viejo, con los datos en `data/*.json`. Base de datos y gestor, en etapas siguientes.
 
 ---
 
@@ -48,6 +48,7 @@ Abrir **http://localhost:3000**. Los cambios se ven al guardar, sin recargar.
 | Inicio | http://localhost:3000/ |
 | Nosotros | http://localhost:3000/nosotros |
 | Catálogo | http://localhost:3000/catalogo |
+| Detalle de producto | http://localhost:3000/catalogo/gouda |
 | Locales | http://localhost:3000/locales |
 | Contacto | http://localhost:3000/contacto |
 
@@ -106,7 +107,7 @@ Saca las capturas **desde `referencia/`** (el sitio viejo) y las guarda en `test
 
 > ⚠️ **Nunca** se generan referencias desde el sitio nuevo para "hacer pasar" un test. Si una diferencia es intencional, se anota en la tabla *Diferencias visuales aprobadas* de [docs/PASO A PASO.md](docs/PASO%20A%20PASO.md).
 
-> Mientras la Etapa 2 no esté terminada, **es normal que fallen los tests de páginas completas**: las páginas todavía están vacías. Hoy tienen que pasar los de `layout.spec.ts`.
+> Hoy **tiene que pasar toda la suite**. Si falla el test "sin errores en consola", hay que arreglar el error de la página, no el test.
 
 ---
 
@@ -122,6 +123,7 @@ Saca las capturas **desde `referencia/`** (el sitio viejo) y las guarda en `test
 | `pnpm ref:servir` | Sitio viejo de referencia (http://localhost:4500) |
 | `pnpm ref:capturar` | Genera las capturas de referencia desde el sitio viejo |
 | `pnpm test:visual` | Compara el sitio nuevo contra las capturas de referencia |
+| `pnpm datos:extraer` | Vuelve a extraer los datos del sitio viejo a `data/*.json` |
 
 Chequeo de tipos: `pnpm exec tsc --noEmit`.
 

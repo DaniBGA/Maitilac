@@ -24,3 +24,5 @@ Thumbs.db
 .pnp.*
 *.pem
 .pnpm-debug.log*
+subidas/
+tests/visual/.sesion/

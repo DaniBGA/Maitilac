@@ -16,14 +16,18 @@
     "db:generar": "drizzle-kit generate",
     "db:migrar": "drizzle-kit migrate",
     "db:importar": "tsx --env-file=.env db/importar/index.ts",
-    "db:estudio": "drizzle-kit studio"
+    "db:estudio": "drizzle-kit studio",
+    "gestor:usuario": "tsx --env-file=.env scripts/crear-usuario.ts"
   },
   "dependencies": {
+    "better-auth": "^1.7.6",
     "drizzle-orm": "^0.45.3",
     "next": "16.3.6",
     "postgres": "^3.4.9",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.4"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

@@ -38,6 +38,8 @@
 @import "../styles/en-linea/catalogo-componentes.css" layer(en-linea);
 @import "../styles/en-linea/locales.css" layer(en-linea);
 @import "../styles/en-linea/contacto.css" layer(en-linea);
+@import "../styles/en-linea/gestor.css" layer(en-linea);
+@import "../styles/en-linea/gestor-componentes.css" layer(en-linea);
 
 /* ---------- Tipografías (referencia/index.html:19-22) ---------- */
 @font-face {

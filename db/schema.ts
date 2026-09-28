@@ -11,7 +11,6 @@ import {
   boolean,
   check,
   integer,
-  jsonb,
   numeric,
   pgTable,
   primaryKey,
@@ -30,13 +29,10 @@ const actualizado = () =>
 /** Inventario único de fotos: es el "Banco de fotos" del gestor (registro §24). */
 export const fotos = pgTable("fotos", {
   id: uuid("id").primaryKey().defaultRandom(),
-  /** Ruta del archivo. Por ahora, la de public/ ("img/gouda-1.jpg"). */
+  /** Ruta del archivo: "img/gouda-1.jpg" (public/) o "fotos/<uuid>.jpg" (subida desde el gestor).
+   *  Las versiones AVIF/WebP las genera el optimizador de Next al pedirlas (components/sitio/Foto.tsx). */
   archivo: text("archivo").notNull().unique(),
-  /** Variantes AVIF/WebP por ancho (Etapa 6). */
-  variantes: jsonb("variantes"),
   alt: text("alt"),
-  ancho: integer("ancho"),
-  alto: integer("alto"),
   creadoEn: creado(),
 });
 

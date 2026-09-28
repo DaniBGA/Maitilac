@@ -1,7 +1,8 @@
 import type { Producto } from "@/lib/tipos";
-import { precioVisible, ruta, slug } from "@/lib/util";
+import { precioVisible, slug } from "@/lib/util";
 import { BotonDetalles } from "../BotonDetalles";
 import { IcoInfo, IcoPin } from "../Icono";
+import { Foto } from "../Foto";
 
 /** Maridajes que entran en un renglón, con la misma regla que el sitio viejo. */
 function maridajesVisibles(comida: string[]) {
@@ -23,8 +24,9 @@ export function TarjetaDestacado({ p }: { p: Producto }) {
   return (
     <div className="card">
       <div className="td-foto">
-        <img
-          src={p.photos[0] ? ruta(p.photos[0]) : undefined}
+        <Foto
+          src={p.photos[0] ?? ""}
+          sizes="(max-width:720px) 90vw, (max-width:1024px) 46vw, 280px"
           alt={p.nombre}
           loading="lazy"
           className="td-img"

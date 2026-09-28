@@ -1,15 +1,21 @@
 import Link from "next/link";
 import type { Local } from "@/lib/tipos";
-import { ruta } from "@/lib/util";
 import { AbiertoAhora } from "../AbiertoAhora";
 import { IcoPin } from "../Icono";
+import { Foto } from "../Foto";
 
 // Tarjeta de local del Inicio: pintarLocalesHome() de referencia/index.html:1897-1926.
 export function LocalResumen({ l }: { l: Local }) {
   return (
     <div className="lr-card">
       {l.foto ? (
-        <img src={ruta(l.foto)} alt={`Frente del ${l.nombre}`} loading="lazy" className="lr-img" />
+        <Foto
+          src={l.foto}
+          sizes="(max-width:720px) 90vw, (max-width:1024px) 46vw, 500px"
+          alt={`Frente del ${l.nombre}`}
+          loading="lazy"
+          className="lr-img"
+        />
       ) : (
         <div className="ph lr-ph" data-ph={`foto — fachada ${l.nombre}`}></div>
       )}

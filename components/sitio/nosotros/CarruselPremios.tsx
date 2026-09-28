@@ -2,14 +2,14 @@
 
 import { useEffect, useRef } from "react";
 import type { Premio } from "@/lib/tipos";
-import { ruta } from "@/lib/util";
 import { IcoCopa } from "../Icono";
+import { Foto } from "../Foto";
 
 function Tarjeta({ a }: { a: Premio }) {
   return (
     <div className="pr-card">
       {a.foto ? (
-        <img src={ruta(a.foto)} alt={`Diploma ${a.titulo} ${a.anio}`} loading="lazy" className="pr-img" />
+        <Foto src={a.foto} sizes="300px" alt={`Diploma ${a.titulo} ${a.anio}`} loading="lazy" className="pr-img" />
       ) : (
         <div className="ph pr-ph" data-ph={`foto — ${a.titulo}`}></div>
       )}

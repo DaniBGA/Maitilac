@@ -1,9 +1,9 @@
 import { FooterOscuro } from "@/components/sitio/FooterOscuro";
 import { getOcasiones, getProductoDelMes, getProductosVisibles } from "@/lib/datos";
-import { ruta } from "@/lib/util";
 import { AbrirProducto } from "../AbrirProducto";
 import { Catalogo } from "./Catalogo";
 import { connection } from "next/server";
+import { Foto } from "../Foto";
 
 // Página del Catálogo: markup de referencia/index.html:804-847, convertido con
 // scripts/html_a_jsx.py (estilos en styles/en-linea/catalogo.css). La usan /catalogo
@@ -27,7 +27,12 @@ export async function PaginaCatalogo() {
         <section className="sec-pad cat-4">
           <div className="split cat-5">
             <div className="cat-6">
-              <img className="cat-7" src={ruta(pm.foto)} alt={pm.nombre} />
+              <Foto
+                className="cat-7"
+                src={pm.foto}
+                sizes="(max-width:720px) 67vw, (max-width:1024px) 85vw, 480px"
+                alt={pm.nombre}
+              />
             </div>
             <div>
               <span className="cat-8">Producto del Mes</span>

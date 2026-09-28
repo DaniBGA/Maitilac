@@ -301,7 +301,7 @@ Criterio de la etapa: **los tests visuales tienen que seguir exactamente igual q
 
 *Necesita el dominio (D1c) y el repo en GitHub. Se hace al final, después de la Etapa 6 (decisión del 28/09/2026).*
 
-*Pendientes anotados durante la Etapa 5:* Caddy tiene que servir `/fotos` desde el volumen de `FOTOS_DIR`; en el build de la imagen conviene pasar un `BETTER_AUTH_SECRET` de relleno (si no, Better Auth avisa en el log); Next copia `.env` dentro de `standalone`, pero `.dockerignore` excluye `.env*`, así que las variables van por el entorno del contenedor.
+*Pendientes anotados durante las etapas 5 y 6:* la caché de imágenes optimizadas (`.next/cache/images`) conviene que viva en un volumen, para no regenerarlas en cada deploy; Caddy tiene que pasar el encabezado `Accept` (lo hace por defecto) para que el optimizador elija AVIF o WebP; Caddy tiene que servir `/fotos` desde el volumen de `FOTOS_DIR`; en el build de la imagen conviene pasar un `BETTER_AUTH_SECRET` de relleno (si no, Better Auth avisa en el log); Next copia `.env` dentro de `standalone`, pero `.dockerignore` excluye `.env*`, así que las variables van por el entorno del contenedor.
 
 ### Paso 4.1 — Preparar el VPS
 
@@ -431,14 +431,18 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
 
 Las mejoras de esta etapa tienen que ser **invisibles**. Si alguna cambia el diseño (por ejemplo, un contraste que no llega a AA), no se aplica acá: se anota como propuesta para la Etapa 7.
 
-### Paso 6.1 — Imágenes optimizadas
+### Paso 6.1 — Imágenes optimizadas ✅
 
-- [ ] `lib/imagenes.ts` con sharp: genera variantes AVIF/WebP en 400, 800 y 1600 px.
-- [ ] Script que genera las variantes de todas las fotos ya cargadas.
-- [ ] `<Foto>` con `<picture>`, `srcset` y `sizes`, **con los mismos estilos y encuadre** que el `<img>` actual; `loading="lazy"` en todas salvo el hero.
-- [ ] Las subidas nuevas del gestor pasan a generar variantes.
+- [x] ~~`lib/imagenes.ts` y script de variantes~~ → **se usa el optimizador de imágenes de Next**: cubre también las fotos subidas, no suma archivos ni scripts y el markup queda igual. Genera AVIF o WebP según el navegador, del ancho que pide el `srcset`, y los guarda en `.next/cache/images`. Configuración en `next.config.ts` (`images`): anchos 400, 800, 1200, 1600 y 2000 (más 120 y 240 para las fotos chicas), calidad 75, sólo rutas `/img/**`, `/fotos/**` y `/fondo-hero.jpg`.
+- [x] `components/sitio/Foto.tsx`: el mismo `<img>` de antes (clase, alt, `loading`, encuadre) con `srcSet` y `sizes` de `getImageProps`. Cada foto tiene su `sizes`, medido en los tres anchos.
+- [x] Sólo para las fotos con el tamaño fijado por CSS (medido en el navegador: se cambió cada imagen por una de 1×1 y se comprobó que la caja no cambia). Los logos, el logo del Cluster y las ilustraciones de la cadena toman su tamaño del archivo: siguen como `<img>` común.
+- [x] Las fotos subidas desde el gestor pasan por el mismo optimizador, sin nada extra.
+- [x] `loading` quedó como en el sitio viejo (el hero y las fotos de arriba de todo, sin `lazy`). El hero suma `fetchPriority="high"`.
+- [x] Se sacaron de la tabla `fotos` las columnas `variantes`, `ancho` y `alto`, que eran para el plan anterior (migración `0003_fotos_sin_variantes`).
 
-**Verificación:** test visual con fotos enmascaradas: estricto y en verde. Test sin máscara: dentro de la tolerancia de fotos. Revisión a ojo de 5 fotos grandes.
+**Resultado:** la foto de una tarjeta pasa de 225 KB (JPG) a 12 KB (AVIF, 400 px); el Holanda grande, de 566 KB a 51 KB (AVIF, 800 px). En producción, la primera vez que se pide cada versión tarda cerca de 1 s en generarse; después sale de la caché en milisegundos.
+
+**Verificación:** suite completa en verde, con el test "diseño" (fotos enmascaradas, estricto) y el test "fotos" (sin máscara, tolerancia de recompresión). Revisión a ojo, a doble densidad, del hero, el producto del mes, una tarjeta, la foto de un local y la del tambo: iguales al sitio viejo.
 
 ### Paso 6.2 — SEO
 

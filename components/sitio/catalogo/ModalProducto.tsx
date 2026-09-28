@@ -3,8 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import type { Producto } from "@/lib/tipos";
-import { indiceCircular, precioVisible, ruta } from "@/lib/util";
+import { indiceCircular, precioVisible } from "@/lib/util";
 import { IcoDer, IcoIzq } from "../Icono";
+import { Foto } from "../Foto";
 
 /**
  * Modal de detalle de producto: #modal y pintarModal() de referencia/index.html:844
@@ -60,7 +61,7 @@ export function ModalProducto({
           </svg>
         </button>
         <div className="md-foto">
-          <img src={p.photos[i] ? ruta(p.photos[i]) : undefined} alt={p.nombre} className="md-img" />
+          <Foto src={p.photos[i] ?? ""} sizes="(max-width:720px) 84vw, 480px" alt={p.nombre} className="md-img" />
           {total > 1 ? (
             <>
               <button

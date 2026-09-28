@@ -3,9 +3,9 @@ import { FooterOscuro } from "@/components/sitio/FooterOscuro";
 import { LocalResumen } from "@/components/sitio/inicio/LocalResumen";
 import { TarjetaDestacado } from "@/components/sitio/inicio/TarjetaDestacado";
 import { getAnuncios, getColor, getConfig, getInsta, getLocales, getProductosDestacados } from "@/lib/datos";
-import { ruta } from "@/lib/util";
 import { connection } from "next/server";
 import { Pagina } from "@/components/sitio/Pagina";
+import { Foto } from "@/components/sitio/Foto";
 
 // Página de Inicio: markup de referencia/index.html:497-628, convertido con
 // scripts/html_a_jsx.py (estilos en styles/en-linea/inicio.css). Las partes que
@@ -54,10 +54,12 @@ async function InicioContenido() {
       <section className="hero ini-3">
         {/* Foto de fondo de la portada. El archivo está junto a este index.html.
                Para cambiarla: reemplazá "fondo-hero.jpg" por otra foto con el mismo nombre. */}
-        <img
+        <Foto
           className="hero-img ini-4"
           src="/fondo-hero.jpg"
+          sizes="100vw"
           alt="Quesos artesanales Maitilac sobre tabla de madera"
+          fetchPriority="high"
         />
         <div className="hero-veil ini-5"></div>
         <div className="hero-inner ini-6">
@@ -214,9 +216,10 @@ async function InicioContenido() {
       <section className="ini-33">
         <div className="split sec-pad ini-34">
           <div className="ini-35">
-            <img
+            <Foto
               className="ini-36"
               src="/img/tradicion-que-se-hereda.jpg"
+              sizes="(max-width:720px) 90vw, (max-width:1024px) 94vw, 510px"
               alt="La familia Maitia en el stand de Maitilac"
               loading="lazy"
             />
@@ -300,7 +303,14 @@ async function InicioContenido() {
           <div className="grid-6" id="home-insta">
             {insta.map((i) =>
               i.foto ? (
-                <img key={i.foto} src={ruta(i.foto)} alt={i.alt || ""} loading="lazy" className="ig-img" />
+                <Foto
+                  key={i.foto}
+                  src={i.foto}
+                  sizes="(max-width:720px) 90vw, (max-width:1024px) 31vw, 180px"
+                  alt={i.alt || ""}
+                  loading="lazy"
+                  className="ig-img"
+                />
               ) : (
                 <div key={i.alt} className="ph ig-ph" data-ph={i.alt || ""}></div>
               ),

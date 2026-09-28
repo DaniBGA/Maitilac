@@ -11,9 +11,9 @@ import {
   getPasos,
   getPremiosVisibles,
 } from "@/lib/datos";
-import { ruta } from "@/lib/util";
 import { connection } from "next/server";
 import { Pagina } from "@/components/sitio/Pagina";
+import { Foto } from "@/components/sitio/Foto";
 
 // Página Nosotros: markup de referencia/index.html:631-801, convertido con
 // scripts/html_a_jsx.py (estilos en styles/en-linea/nosotros.css). Las partes que
@@ -105,15 +105,17 @@ async function NosotrosContenido() {
             </div>
           </div>
           <div className="nos-13">
-            <img
+            <Foto
               className="nos-14"
               src="/img/proceso-tambo.jpg"
+              sizes="(max-width:720px) 90vw, (max-width:1024px) 94vw, 540px"
               alt="Vacas Holando en el tambo"
               loading="lazy"
             />
-            <img
+            <Foto
               className="nos-14"
               src="/img/proceso-fabrica.jpg"
+              sizes="(max-width:720px) 90vw, (max-width:1024px) 94vw, 540px"
               alt="Elaboración de quesos en la fábrica"
               loading="lazy"
             />
@@ -193,7 +195,7 @@ async function NosotrosContenido() {
           {equipo.map((m) => (
             <div key={m.nombre} className="eq-card">
               {m.foto ? (
-                <img src={ruta(m.foto)} alt={m.nombre} loading="lazy" className="eq-foto" />
+                <Foto src={m.foto} sizes="104px" alt={m.nombre} loading="lazy" className="eq-foto" />
               ) : (
                 <div className="ph eq-ph" data-ph={`retrato — ${m.nombre}`}></div>
               )}

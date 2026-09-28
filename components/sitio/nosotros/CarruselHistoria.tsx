@@ -1,14 +1,21 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ruta } from "@/lib/util";
+import { Foto } from "../Foto";
 
 /** Una fila de fotos: ruta de imagen, o texto → recuadro de "foto pendiente". Se duplica para que el desplazamiento no tenga corte. */
 function Fila({ lista, alt }: { lista: string[]; alt: string }) {
   const items = [...lista, ...lista];
   return items.map((f, k) =>
     /^img\//.test(f) ? (
-      <img key={k} src={ruta(f)} alt={alt} loading="lazy" className="tl-foto tl-foto-img" />
+      <Foto
+        key={k}
+        src={f}
+        sizes="(max-width:720px) 230px, 340px"
+        alt={alt}
+        loading="lazy"
+        className="tl-foto tl-foto-img"
+      />
     ) : (
       <div key={k} className="ph tl-foto" data-ph={`foto — ${f}`}></div>
     ),

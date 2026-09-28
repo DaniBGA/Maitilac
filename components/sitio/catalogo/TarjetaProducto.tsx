@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import type { Producto } from "@/lib/tipos";
-import { indiceCircular, precioVisible, ruta, slug } from "@/lib/util";
+import { indiceCircular, precioVisible, slug } from "@/lib/util";
 import { BotonDetalles } from "../BotonDetalles";
 import { IcoDer, IcoIzq } from "../Icono";
+import { Foto } from "../Foto";
 
 // Tarjeta del catálogo: tarjetaHTML(p, 220) de referencia/index.html:1811-1841,
 // con flechas para pasar las fotos si tiene más de una.
@@ -16,7 +17,7 @@ export function TarjetaProducto({ p }: { p: Producto }) {
   return (
     <div className="card">
       <div className="tc-foto">
-        <img src={foto ? ruta(foto) : undefined} alt={p.nombre} loading="lazy" className="tc-img" />
+        <Foto src={foto} sizes="(max-width:720px) 90vw, (max-width:1024px) 46vw, 280px" alt={p.nombre} loading="lazy" className="tc-img" />
         {p.badge ? <span className="badge">{p.badge}</span> : null}
         {total > 1 ? (
           <>

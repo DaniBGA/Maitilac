@@ -126,7 +126,7 @@ Todo el sitio **y** el panel de administración viven en un único archivo:
 | Componentes del gestor | ~~shadcn/ui~~ | *No se usó (Etapa 5):* el gestor se armó con el mismo markup del gestor viejo (clases `.g-*`). La revisión de foco y teclado del panel lateral queda para el Paso 6.3. |
 | Reordenar | **dnd-kit** | Arrastrar y soltar en lugar de las flechas ▲▼, como mejora de la Etapa 7 (durante la paridad se mantienen las flechas). Las flechas se conservan como alternativa accesible por teclado. |
 | Estilos | **Tailwind CSS 4** (sin preflight) + tokens CSS | La paleta y las tipografías actuales pasan a `@theme` (ver 4.6). Primero se porta el CSS viejo casi textual y los 371 estilos en línea pasan a clases con los mismos valores; convertirlos a utilidades es opcional y posterior. Detalle en `PASO A PASO.md`, "Estrategia de estilos". |
-| Imágenes | **sharp** | Al subir una foto se generan variantes AVIF/WebP en 3 tamaños, guardadas en disco (resuelve P3 y P10). |
+| Imágenes | **sharp** + optimizador de Next | sharp reduce cada foto subida a 1000 px. Las versiones AVIF/WebP por ancho las genera el optimizador de imágenes de Next al pedirlas y las guarda en caché (resuelve P3 y P10). *Cambio de la Etapa 6: en lugar de guardar variantes en disco y en la base.* |
 | Infraestructura | **Docker Compose** (app + Postgres + Caddy) sobre Ubuntu 24.04 | Entorno idéntico en local y en el VPS. **Caddy** hace de proxy con HTTPS automático (Let's Encrypt) y sirve las fotos directamente con caché larga. |
 | CI/CD | **GitHub Actions** | Tests → build de la imagen Docker → deploy por SSH al VPS (`docker compose pull && up -d`), con migraciones automáticas al arrancar. |
 | Tests | **Vitest** + **Playwright** | Unitarios para la lógica pura (horarios, precios, filtros) y e2e con comparación de capturas para verificar la paridad. |
@@ -176,9 +176,8 @@ Esquema en notación resumida; se implementa en `db/schema.ts` con Drizzle.
 ```sql
 -- Inventario único de fotos = el "Banco de fotos" (resuelve registro §24)
 fotos (
-  id uuid pk, archivo text not null,       -- ruta relativa dentro del volumen /data/fotos
-  variantes jsonb,                         -- {"400": {"avif": "...", "webp": "..."}, "800": …, "1600": …}
-  alt text, ancho int, alto int,
+  id uuid pk, archivo text not null,       -- "img/…" (public/) o "fotos/<uuid>.jpg" (volumen de fotos)
+  alt text,                                -- las versiones AVIF/WebP las genera Next (Etapa 6)
   creado_en timestamptz default now()
 )
 
@@ -422,7 +421,7 @@ Cada fase termina en algo desplegable y verificable. No se avanza a la siguiente
 - Todas las páginas y componentes públicos de la sección 5.
 - Modal como intercepting route y páginas `/catalogo/[slug]`.
 - Redirección de los hashes viejos.
-- `<Foto>` con `<picture>`, `srcset` sobre las variantes AVIF/WebP y `loading="lazy"` en todas salvo el hero.
+- `<Foto>`: el mismo `<img>` con `srcset`/`sizes` del optimizador de Next (AVIF/WebP). *Hecho en la Etapa 6.*
 - Caché con `'use cache'` + `cacheTag`.
 
 **Aceptación:** comparación visual contra las capturas de la fase 0 sin diferencias relevantes; checklist de paridad pública (1.3) completo; Lighthouse móvil ≥ 90.

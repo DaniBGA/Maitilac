@@ -4,9 +4,10 @@ import { FooterOscuro } from "@/components/sitio/FooterOscuro";
 import { getLocales } from "@/lib/datos";
 import { buscarLocalComoSitioViejo } from "@/lib/horarios";
 import type { Local } from "@/lib/tipos";
-import { ruta, slug } from "@/lib/util";
+import { slug } from "@/lib/util";
 import { connection } from "next/server";
 import { Pagina } from "@/components/sitio/Pagina";
+import { Foto } from "@/components/sitio/Foto";
 
 /**
  * Cartel "Abierto ahora". Reproduce la búsqueda por clave del sitio viejo
@@ -21,12 +22,13 @@ function AbiertoLocal({ local, locales }: { local: Local; locales: Local[] }) {
   return <AbiertoAhora local={encontrado} className="loc-11" />;
 }
 
-function Foto({ l }: { l: Local }) {
+function FotoLocal({ l }: { l: Local }) {
   return (
     <a className="loc-18" href={l.mapaUrl} target="_blank" rel="noopener" title="Ver en el mapa">
-      <img
+      <Foto
         className="loc-19"
-        src={ruta(l.fotoDetalle)}
+        src={l.fotoDetalle}
+        sizes="(max-width:720px) 90vw, (max-width:1024px) 94vw, 540px"
         alt={l.fotoDetalleAlt}
         loading="lazy"
         style={{ objectPosition: l.encuadreDetalle }}
@@ -118,11 +120,11 @@ async function LocalesContenido() {
               {i % 2 === 0 ? (
                 <>
                   <Datos l={l} locales={locales} />
-                  <Foto l={l} />
+                  <FotoLocal l={l} />
                 </>
               ) : (
                 <>
-                  <Foto l={l} />
+                  <FotoLocal l={l} />
                   <Datos l={l} locales={locales} />
                 </>
               )}

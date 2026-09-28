@@ -2,7 +2,7 @@
 
 Guía operativa para ejecutar el [PLAN DE REFACTORIZACION.md](PLAN%20DE%20REFACTORIZACION.md) de a un paso por vez. El plan explica **qué** se construye y **por qué**; esta guía explica **cómo** y en qué orden, y sobre todo **cómo verificar que el diseño quede idéntico**.
 
-> **Estado actual:** Etapas 0 a 3 terminadas (falta subir el repo a GitHub y la revisión manual en dispositivos reales). Próximo: **Etapa 4** (servidor) o **Etapa 5** (gestor); ver la nota al principio de la Etapa 4. *(Actualizar esta línea al cerrar cada paso.)*
+> **Estado actual:** Etapas 0 a 3 terminadas y Etapa 5 (gestor) terminada salvo el Paso 5.10: falta aprobar que se quite el enlace del footer, crear los usuarios de D2 y la prueba en un celular con el sitio publicado. También falta subir el repo a GitHub y la revisión manual en dispositivos reales. Próximo: **Etapa 6**. La **Etapa 4** (servidor) queda para el final (decisión del 28/09/2026). *(Actualizar esta línea al cerrar cada paso.)*
 
 ---
 
@@ -299,7 +299,9 @@ Criterio de la etapa: **los tests visuales tienen que seguir exactamente igual q
 
 ## Etapa 4 — Servidor y publicación de prueba
 
-*Necesita el dominio (D1c) y el repo en GitHub. Si todavía no están, se puede hacer antes la Etapa 5 (gestor): no depende del servidor.*
+*Necesita el dominio (D1c) y el repo en GitHub. Se hace al final, después de la Etapa 6 (decisión del 28/09/2026).*
+
+*Pendientes anotados durante la Etapa 5:* Caddy tiene que servir `/fotos` desde el volumen de `FOTOS_DIR`; en el build de la imagen conviene pasar un `BETTER_AUTH_SECRET` de relleno (si no, Better Auth avisa en el log); Next copia `.env` dentro de `standalone`, pero `.dockerignore` excluye `.env*`, así que las variables van por el entorno del contenedor.
 
 ### Paso 4.1 — Preparar el VPS
 
@@ -363,75 +365,65 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
 
 ---
 
-## Etapa 5 — Gestor
+## Etapa 5 — Gestor (casi terminada)
 
-**El gestor también conserva su diseño actual** (las clases `.g-*` de `index.html:211-342`). De shadcn/ui se usan sólo las piezas de comportamiento (diálogo, panel lateral, foco accesible), con los estilos del gestor viejo. Antes de cada pantalla se generan sus capturas de referencia desde `referencia/#gestor`.
+**El gestor también conserva su diseño actual** (las clases `.g-*` de `index.html:211-342`). Antes de cada pantalla se generan sus capturas de referencia desde `referencia/#gestor`.
 
-### Paso 5.1 — Login y protección
+*Se hizo antes que la Etapa 4 (decisión del 28/09/2026): no depende del servidor.*
 
-- [ ] Better Auth con email y contraseña y el registro público desactivado; tablas generadas por su CLI y migración.
-- [ ] Script `pnpm gestor:crear-usuario <email>` (según la documentación vigente de Better Auth para crear usuarios con el registro desactivado).
-- [ ] `/gestor/login` con los colores y tipografías del gestor.
-- [ ] `app/gestor/layout.tsx` verifica la sesión y, si no hay, redirige al login.
-- [ ] Helper `requerirSesion()` que **cada** Server Action llama en su primera línea.
-- [ ] Límite de intentos de login.
+### Paso 5.1 — Login y protección ✅
 
-**Verificación:** sin sesión, `/gestor` redirige al login; test automatizado que llama a una Server Action sin sesión y recibe error.
+- [x] Better Auth con email y contraseña y el registro público desactivado; tablas generadas por su CLI (`db/esquema-auth.ts`) y migración `0002_login_gestor`.
+- [x] Script `pnpm gestor:usuario <email> "<Nombre>"`: crea el usuario o, si ya existe, le cambia la contraseña. La pide por teclado (mínimo 10 caracteres) o la toma de la variable `CLAVE`.
+- [x] `/gestor/ingresar` con los colores y tipografías del gestor.
+- [x] Sin sesión, `/gestor` redirige al login: `proxy.ts` (el *middleware* de Next 16) lo hace de forma optimista y la página vuelve a verificar la sesión (`exigirSesionPagina()`).
+- [x] `requerirSesion()` en **cada** Server Action (`lib/gestor/acciones.ts`, a través de `accion()`), y la ruta de la copia de seguridad devuelve 401 sin sesión.
+- [x] Límite de intentos de login: 5 por minuto, sólo en producción (en desarrollo molestaría a los tests).
+- [x] Sesión de 7 días. Botón **"Salir"** en el encabezado.
 
-**Commit:** `feat(gestor): login y protección de rutas y acciones`
+**Verificación:** tests funcionales "sin sesión" (redirige y la copia da 401), "con datos incorrectos no entra" y "si se pierde la sesión, las acciones no guardan nada".
 
-### Paso 5.2 — Estructura y estilos del gestor
+### Paso 5.2 — Estructura y estilos del gestor ✅
 
-Fuente: markup `index.html:1106-1279`; `gAvisar()` 2316.
+- [x] CSS `.g-*` portado textual a `styles/sitio/gestor.css`; los `style=""` del gestor viejo, en `styles/en-linea/gestor.css` (conversor) y `gestor-componentes.css`.
+- [x] Encabezado marrón con "Nuevo producto", "Exportar", "Ver el catálogo" y "Salir" (nuevo).
+- [x] Aviso flotante (`#g-aviso`) con los mismos textos que el gestor viejo cuando la acción es la misma.
+- [x] Test visual del gestor completo en los tres anchos contra `referencia/#gestor`.
 
-- [ ] Portar el CSS `.g-*` a `styles/gestor.css`.
-- [ ] Encabezado marrón (`.g-hdr`) con los botones "Nuevo producto", "Exportar" (pasa a ser "Descargar copia de seguridad") y "Ver el sitio".
-- [ ] Aviso flotante (`.g-aviso`) con los mismos textos que hoy.
-- [ ] Test visual del encabezado y del gestor vacío contra la referencia.
+### Pasos 5.3 a 5.9 — Pantallas ✅
 
-**Commit:** `feat(gestor): estructura y estilos`
+| Paso | Pantalla | Estado |
+|---|---|---|
+| 5.3 | Anuncios | ✅ Texto, visibilidad, color y vista previa en vivo |
+| 5.4 | Contacto y locales | ✅ **Bloque nuevo** al final del gestor: WhatsApp (local y mayorista), teléfono, email, Instagram y Facebook; **producto del mes** (producto, texto y foto); de cada local: nombre, dirección, horarios como se muestran, horas para "Abierto ahora", las dos fotos, "Cómo llegar" y enlace al mapa |
+| 5.5 | Premios | ✅ Edición en línea, foto, ocultar, ordenar, agregar, eliminar y "Restaurar premios" |
+| 5.6 | Equipo | ✅ Igual que premios, con foto redonda |
+| 5.7 | Ocasiones | ✅ Renombrar, mostrar/ocultar, marcar quesos, contador, "Apagado — sin quesos visibles" |
+| 5.8 | Productos | ✅ Buscador, filtros, panel lateral, destacar, ocultar, ordenar, eliminar (borrado lógico) y "Restaurar original" |
+| 5.9 | Banco de fotos | ✅ **Bloque nuevo** (la copia congelada del sitio viejo no lo tiene; ver registro §24): todas las fotos con su uso, filtro "Sin asignar", subir varias a la vez, asignar a un producto (se saca de donde estaba), crear un producto desde una foto |
 
-### Paso 5.3 a 5.9 — Pantallas, una por paso
+- [x] Ordenar con las flechas ▲▼ / ◀▶, igual que hoy. Arrastrar y soltar queda para la Etapa 7.
+- [x] Subida de fotos: `sharp` las reduce a 1000 px (JPG) como `gAchicar()`, se guardan en `FOTOS_DIR` y se registran en `fotos`. JPG, PNG o WebP de hasta 15 MB. Las variantes AVIF/WebP llegan en la Etapa 6.
+- [x] Una foto subida desde un producto aparece sola en el Banco; al quitarla del producto queda "Sin asignar" (lo que pedía el registro, "Pendientes").
 
-Para **cada** pantalla, el mismo ciclo:
-
-1. Generar capturas de referencia de ese bloque desde `referencia/#gestor`.
-2. Construir la pantalla con el mismo markup y clases.
-3. Server Action por operación, con `requerirSesion()`, validación Zod, escritura en la base e invalidación de la caché de esa entidad.
-4. Test visual del bloque + test funcional: editar, guardar y ver el cambio en el sitio público.
-
-| Paso | Pantalla | Fuente en `index.html` | Detalle |
-|---|---|---|---|
-| 5.3 | Anuncios | 2329–2394 | Texto, visibilidad, color, vista previa en vivo, cartel apagado descolorido |
-| 5.4 | Config y Locales | *(nueva)* | WhatsApp, email, redes, direcciones y horarios. No existe en el gestor viejo: **anotar en diferencias aprobadas** |
-| 5.5 | Premios | 2554–2632 | Edición en línea (se guarda al salir del campo), foto, ocultar, ordenar, agregar, eliminar |
-| 5.6 | Equipo | 2633–2708 | Igual que premios, con foto redonda |
-| 5.7 | Ocasiones | 2431–2553 | Renombrar, activar, marcar productos, contador, estado "Apagado — sin quesos visibles" |
-| 5.8 | Productos | 2709–2973 | Lista, buscador, filtros, panel lateral, destacar, producto del mes, ocultar, ordenar, eliminar (borrado lógico) |
-| 5.9 | Banco de fotos | *(registro §24)* | Todas las fotos, a qué productos pertenecen, "sin asignar", asignar y crear producto desde una foto |
-
-- [ ] 5.3 Anuncios
-- [ ] 5.4 Config y Locales
-- [ ] 5.5 Premios
-- [ ] 5.6 Equipo
-- [ ] 5.7 Ocasiones
-- [ ] 5.8 Productos
-- [ ] 5.9 Banco de fotos
-
-**Ordenar:** en esta etapa se mantienen **las flechas ▲▼ / ◀▶ igual que hoy** (paridad). Arrastrar y soltar se agrega en la Etapa 7.
-
-**Subida de fotos:** en esta etapa, la foto se guarda en el volumen de fotos reducida a 1000 px (como `gAchicar()`) y se registra en `fotos`. Las variantes AVIF/WebP llegan en la Etapa 6.
+**Verificación:** 13 tests funcionales en `tests/visual/gestor-funcional.spec.ts`. Cada uno edita desde el gestor, comprueba el cambio en la página pública y deja todo como estaba: anuncios, ocultar un producto, precio, subir y quitar una foto, ocultar un premio, copia de seguridad, email en el footer, horario de un local, producto del mes y banco de fotos, más los tres de login y sesión. Filtros y equipo todavía no tienen test funcional propio (sólo el visual del gestor): se suman en el Paso 6.4.
 
 ### Paso 5.10 — Copia de seguridad y cierre del gestor
 
-- [ ] "Descargar copia de seguridad": JSON con **todas** las tablas, incluido el equipo.
-- [ ] Quitar el enlace "Gestor del catálogo" del footer público. **Anotar en diferencias aprobadas.**
-- [ ] Crear los usuarios de D2 en el VPS.
-- [ ] Prueba de punta a punta: una persona edita desde una computadora y el cambio se ve **al instante** en un celular.
+- [x] "Exportar" descarga `maitilac-copia-AAAA-MM-DD.json` con **todas** las tablas, incluido el equipo (el export viejo no lo traía).
+- [ ] Quitar el enlace "Gestor del catálogo" del footer público. **Pendiente de aprobación** (ver *Diferencias visuales aprobadas*). Hoy sigue y lleva al login.
+- [ ] Crear los usuarios de D2 en el VPS (faltan los emails; mientras tanto se usa el usuario de prueba de `.env`).
+- [ ] Prueba de punta a punta: una persona edita desde una computadora y el cambio se ve **al instante** en un celular. Necesita el sitio publicado (Etapa 4). En local ya está probado con los tests funcionales.
 
-**Verificación:** checklist de paridad del gestor (sección 1.3 del plan) completo.
-
-**Commit:** `feat(gestor): copia de seguridad; cierre de la etapa`
+### Notas técnicas de esta etapa
+- **Diferencias con el plan:** no se usaron Zod, React Hook Form ni shadcn/ui. El gestor se armó con el mismo markup del gestor viejo, y cada acción valida lo suyo antes de tocar la base: campos obligatorios, nombres repetidos, formato de horas (HH:MM), email y precio. Si más adelante los formularios crecen, se puede sumar Zod sin cambiar las pantallas.
+- **Precio:** el gestor acepta "$4500", "4.500", "Desde $8500", "$4500,50" o "Consultar". Se guarda como número + prefijo y en el sitio se muestra con el mismo formato que antes.
+- **Bloques nuevos** (Contacto y locales, Banco de fotos) llevan `data-nuevo`: el test visual los quita antes de comparar con el gestor viejo, igual que el botón "Salir".
+- **Tests:** el `globalSetup` (`tests/visual/preparar-bd.ts`) reimporta los datos de fábrica y crea el usuario de prueba; el proyecto `sesion` inicia sesión una vez; `gestor-funcional` corre al final y de a uno. Los tests que abren el modal reanudan el reloj falso (`page.clock.resume()`): con el reloj pausado, React no termina de mostrar el contenido de un `Suspense`.
+- **Caché y reimportación:** la reimportación no pasa por el gestor, así que no invalida la caché. Playwright levanta el servidor **antes** del `globalSetup`, y por eso comprueba que esté listo con `/api/auth/ok` (una ruta que no lee datos). Si `pnpm dev` ya estaba abierto con datos editados, hay que reiniciarlo antes de correr los tests.
+- **Fotos subidas:** en desarrollo las sirve `app/fotos/[...ruta]/route.ts` desde `FOTOS_DIR` (por defecto `./subidas`, ignorada en git). En producción las va a servir Caddy desde el volumen (Etapa 4).
+- **Contacto:** la lista "Nuestros locales" ahora sale de la base (antes estaba escrita a mano y no seguía los cambios del gestor). Muestra la dirección hasta la primera coma, como el sitio viejo ("Maipú 1135"). Los canales de esa página siguen fijos: backlog 12.
+- `proxy.ts` sólo redirige pedidos GET: los POST de las Server Actions pasan siempre, y es la acción la que rechaza si no hay sesión.
 
 ---
 
@@ -462,8 +454,8 @@ Las mejoras de esta etapa tienen que ser **invisibles**. Si alguna cambia el dis
 
 ### Paso 6.4 — Tests finales
 
-- [ ] Vitest: `horarios`, `precio`, conteo de ocasiones, slugs y esquemas Zod.
-- [ ] Playwright funcional: navegación, filtros, modal, mensaje de WhatsApp y edición en el gestor.
+- [ ] Vitest: `horarios`, `precio` (incluido `leerPrecioEscrito`), conteo de ocasiones y slugs.
+- [ ] Playwright funcional: navegación, filtros, modal y mensaje de WhatsApp. Del gestor ya hay 13 (Etapa 5); faltan filtros y equipo.
 - [ ] Suite visual completa en verde en CI.
 
 ### Paso 6.5 — Documentación
@@ -513,6 +505,7 @@ Ordenado por valor para el cliente. Se reordena según lo que se decida en cada 
 | 9 | Mejoras de accesibilidad que cambian el diseño (contraste, tamaños) | Paso 6.3 | Según revisión |
 | 10 | Footer claro de Nosotros: en tablet y celular queda en 4 columnas apretadas (su grilla en línea le gana al responsive del sitio viejo) | Paso 1.5 | Proponer al cliente |
 | 11 | Locales: "Abierto ahora" de Maipú nunca aparece (la búsqueda por "maipu" sin tilde no encuentra "Local Maipú") | Paso 2.6 | Proponer al cliente |
+| 12 | Contacto: los canales (WhatsApp y teléfono del local, los dos WhatsApp y los dos mails mayoristas) siguen escritos en la página y no cambian desde el gestor. La configuración tiene un solo WhatsApp mayorista (el 2494 610999, que recibe el formulario) y el email info@maitilac.com; la página muestra también 2494 650236, ventas1@maitilac.com y ventas2@gmail.com | Etapa 5 | Consultar al cliente |
 
 ---
 
@@ -522,9 +515,11 @@ Toda diferencia entre el sitio nuevo y `referencia/` tiene que estar en esta tab
 
 | Fecha | Dónde | Diferencia | Motivo | Aprobó |
 |---|---|---|---|---|
-| — | Gestor → Config y Locales | Pantalla nueva | Locales y datos de contacto editables (plan P5) | Pendiente |
+| — | Gestor → Contacto y locales | Bloque nuevo al final: contacto, producto del mes y locales | Datos que estaban escritos a mano en el HTML pasan a ser editables (plan P5) | Pendiente |
+| — | Gestor → Banco de fotos | Bloque nuevo al final (la copia congelada del sitio viejo no lo tiene) | Registro §24 y pedido del cliente del 06/08/2026 | Pendiente |
+| — | Gestor → encabezado | Botón "Salir" | Cerrar la sesión del login | Pendiente |
 | — | Footer público | Se quita el enlace "Gestor del catálogo" | Seguridad (plan P2) | Pendiente |
-| — | Gestor → "Exportar" | Pasa a llamarse "Descargar copia de seguridad" | Ahora es un backup, ya no un archivo para pegar en el código | Pendiente |
+| — | Gestor → "Exportar" | Mismo botón y mismo texto; descarga `maitilac-copia-AAAA-MM-DD.json` con todas las tablas (incluido el equipo) en lugar de `catalogo-maitilac.txt`. El nombre del botón se dejó igual por paridad; el cartelito al pasar el mouse lo explica | Ahora es un backup, ya no un archivo para pegar en el código | Pendiente |
 | — | Gestor → acceso | Pantalla de login | Seguridad (plan P2) | Pendiente |
 | 28/09/2026 | Inicio → "Ver Detalles" | Abre el detalle del producto (en el sitio viejo no hacía nada y bloqueaba el scroll) | Corrección de un error | Pendiente |
 | — | `/catalogo/[slug]` | Entrando directo se ve el catálogo con el detalle abierto | URL propia por producto (SEO, compartir) | Pendiente |

@@ -6,35 +6,33 @@ Guía para administrar el contenido del sitio sin tocar código.
 
 ## Cómo entrar
 
-1. Abrí el sitio.
-2. Bajá hasta el pie de página.
-3. A la derecha del "© 2026 Maitilac" hay un enlace en gris tenue: **"Gestor del catálogo"**.
+1. Abrí la dirección del sitio y agregale **/gestor** al final (por ejemplo, `maitilac.com/gestor`).
+2. Escribí tu **email** y tu **contraseña** y apretá **"Ingresar"**.
 
-No pide usuario ni contraseña. Para volver al sitio, el botón **"Ver el catálogo"** arriba a la derecha.
+Cada persona tiene su propio usuario. No hay forma de registrarse desde el sitio: los usuarios los crea quien mantiene el sitio, que también puede ponerte una contraseña nueva si te la olvidás.
+
+- La sesión dura **7 días** en esa computadora o celular. Después pide ingresar de nuevo.
+- Después de **5 intentos fallidos** hay que esperar un minuto para volver a probar.
+- Para cerrar la sesión: botón **"Salir"**, arriba a la derecha. Conviene usarlo en computadoras compartidas.
+- Para ir al sitio: botón **"Ver el catálogo"**.
 
 ---
 
-## Antes de empezar: cómo se guardan los cambios
+## Cómo se guardan los cambios
 
-Los cambios se guardan **en el navegador de la computadora donde los hacés** y se ven al instante en el sitio.
+Cada cambio se guarda **en el servidor** y se ve **al instante** en el sitio, para todo el mundo y en cualquier dispositivo. No hace falta exportar nada ni avisarle a nadie.
 
-**Qué significa esto en la práctica:**
+Después de cada acción aparece un aviso abajo que confirma lo que pasó, por ejemplo: *"Guardado. Ya se ve en el catálogo."*. Si algo no se pudo guardar, el aviso lo dice (por ejemplo: *"No se pudo guardar. Probá de nuevo en un momento."*).
 
-- Si editás desde tu computadora, los cambios se ven en tu computadora.
-- **No se ven en el celular ni en otra computadora**, aunque el sitio esté publicado.
-- Si borrás los datos de navegación del navegador, se pierden.
-
-**Para que los cambios queden definitivos**, usá el botón **"Exportar"** arriba a la derecha: descarga un archivo de texto con todo el contenido, que se incorpora al sitio de forma permanente.
-
-> Para que los cambios se publiquen solos y los vea todo el mundo, haría falta conectar el sitio a una base de datos. Es un paso posterior.
+> Si el aviso dice **"Tenés que iniciar sesión para hacer cambios."**, la sesión se venció y el cambio **no** se guardó. Actualizá la página, ingresá de nuevo y repetilo.
 
 ---
 
 ## Cambiar el orden
 
-Las listas de **categorías**, **premios**, **equipo** y **productos** se pueden reordenar con las **flechas** que están a la izquierda de cada fila (▲ para subir, ▼ para bajar).
+Las listas de **filtros**, **premios**, **equipo** y **productos** se reordenan con las **flechas** que están a la izquierda de cada fila (▲ para subir, ▼ para bajar).
 
-En las tarjetas de producto las flechas están **abajo a la izquierda de la foto**, y son horizontales (◀ ▶).
+En las tarjetas de producto las flechas están **abajo a la izquierda de la foto** y son horizontales (◀ ▶).
 
 El orden que ves en el gestor es el mismo que se ve en el sitio.
 
@@ -54,9 +52,9 @@ Primer bloque del gestor. Son los tres carteles que se ven arriba de todo en el 
 
 De cada uno podés:
 
-- **Cambiar el texto** — se escribe en el campo de abajo.
-- **Encenderlo o apagarlo** — con la tilde. Al apagarlo desaparece de la portada **pero el texto queda guardado** para volver a usarlo. Útil para promociones que van y vienen.
-- **Elegir el color** — tres opciones: marrón, naranja y verde. Son los colores de la marca, así cualquier combinación queda bien.
+- **Cambiar el texto**, en el campo de abajo.
+- **Encenderlo o apagarlo** con la tilde. Al apagarlo desaparece de la portada **pero el texto queda guardado** para volver a usarlo. Sirve para promociones que van y vienen.
+- **Elegir el color** entre marrón, naranja y verde, los colores de la marca.
 
 Cada cartel tiene una **vista previa** que muestra cómo va a quedar mientras escribís. Si está apagado, se ve descolorido.
 
@@ -64,55 +62,35 @@ Al terminar: botón **"Guardar anuncios"**.
 
 ---
 
-## 2. Categorías
-
-Son las etiquetas que agrupan los productos: FRESCOS, MADUROS, PASTA HILADA, etc.
-
-| Acción | Cómo |
-|---|---|
-| **Mostrar u ocultar** | La casilla verde de la izquierda |
-| **Cambiar el nombre** | Clic sobre el nombre y escribí encima |
-| **Eliminar** | Botón "Eliminar" |
-| **Agregar** | Botón naranja "Agregar categoría" arriba |
-
-**Importante sobre ocultar:** al destildar una categoría, **todos sus productos dejan de verse en el sitio**. Es una forma rápida de sacar una línea entera sin tocar producto por producto.
-
-Al lado de cada categoría dice cuántos productos la usan.
-
-Si eliminás una categoría, sus productos quedan sin categoría (no se borran) y la etiqueta simplemente no aparece en la tarjeta.
-
----
-
-## 3. Buscá por ocasión (los filtros del catálogo)
+## 2. Buscá por ocasión (los filtros del catálogo)
 
 Son los botones que se ven arriba del catálogo: "Sale picadita", "Va a la parrilla", "A rallar se ha dicho"...
 
-De cada filtro podés:
-
 | Acción | Cómo |
 |---|---|
-| **Cambiar el nombre** | Clic sobre el nombre y escribí encima |
+| **Cambiar el nombre** | Clic sobre el nombre, escribí encima y hacé clic afuera. Se guarda solo |
+| **Mostrar u ocultar** | La casilla de la izquierda |
 | **Elegir qué quesos muestra** | Las pastillas de abajo. Clic para marcar o desmarcar; las marcadas quedan naranjas |
-| **Cambiar el orden** | Las flechas ▲▼ de la izquierda |
-| **Eliminar** | Botón "Eliminar". Los quesos no se borran: sólo desaparece el botón del catálogo |
-| **Agregar** | Botón naranja "Agregar filtro" arriba |
+| **Cambiar el orden** | Las flechas ▲▼ |
+| **Eliminar** | Botón "Eliminar" (pide confirmación). Los quesos no se borran: sólo desaparece el botón del catálogo |
+| **Agregar** | Botón naranja "Agregar filtro", arriba |
 
 Al lado del nombre dice **cuántos quesos se ven hoy en el sitio** con ese filtro.
 
 Si un filtro queda **sin ningún queso visible**, el aviso se pone rojo y dice "Apagado — sin quesos visibles". En el sitio ese botón se ve gris y no se puede apretar. Puede pasar por dos motivos: no marcaste ningún queso, o los que marcaste están ocultos.
 
-> **Ya no hace falta avisar cuando renombrás un queso.** Antes los filtros lo buscaban por su nombre y se rompían al cambiarlo. Ahora se actualizan solos: al guardar te avisa "Los filtros se actualizaron solos". Lo mismo al eliminar un producto, que sale solo de los filtros donde estaba.
+Si le cambiás el nombre a un queso, los filtros lo siguen reconociendo: no hay que tocar nada.
 
 ---
 
-## 4. Premios
+## 3. Premios
 
 Los que se ven en el carrusel de la página Nosotros.
 
-De cada premio podés cambiar los cuatro datos, escribiendo directamente en los campos:
+De cada premio podés cambiar cuatro datos, escribiendo directamente en los campos:
 
 - **Año**
-- **Tipo de premio** — Oro, Plata, Gran Campeón...
+- **Tipo de premio**: Oro, Plata, Gran Campeón...
 - **Concurso**
 - **Quesos premiados**
 
@@ -122,31 +100,35 @@ Se guardan solos al salir del campo.
 
 **Ocultar:** la casilla verde. Si ocultás todos los premios, **la sección entera desaparece** de la página Nosotros.
 
-**Eliminar y agregar:** botón "Eliminar" en cada uno, y "Agregar premio" arriba. El premio nuevo aparece primero de la lista.
+**Eliminar y agregar:** botón "Eliminar" en cada uno (pide confirmación) y "Agregar premio" arriba. El premio nuevo aparece primero en la lista.
+
+**Restaurar premios:** vuelve a la lista original, con las fotos de los diplomas. Pide confirmación y descarta los cambios hechos en premios.
 
 ---
 
-## 5. Nuestro Equipo
+## 4. Nuestro Equipo
 
 Las personas que aparecen en la página Nosotros.
 
 De cada una podés cambiar:
 
 - **Nombre**
-- **Cargo** — "Gerente General", "Maestro Quesero"...
-- **Profesión o área** — "Ing. Agrónoma", "Planta"...
+- **Cargo**: "Gerente General", "Maestro Quesero"...
+- **Profesión o área**: "Ing. Agrónoma", "Planta"...
+
+Se guardan solos al salir del campo.
 
 **Foto:** clic sobre el círculo de la izquierda. Si no hay foto, en el sitio se ve un círculo rayado con el nombre.
 
 **Ocultar:** la casilla verde. La persona deja de verse sin borrarse. Si ocultás a todos, la sección desaparece.
 
-**Eliminar y agregar:** botón "Eliminar", y "Agregar persona" arriba. La persona nueva se suma al final.
+**Eliminar y agregar:** botón "Eliminar" (pide confirmación) y "Agregar persona" arriba. La persona nueva se suma al final.
 
-**Sobre el orden:** las tarjetas aparecen en el sitio en el mismo orden que en el gestor. Si la última fila queda incompleta, las tarjetas se centran solas.
+Las tarjetas aparecen en el sitio en el mismo orden que en el gestor. Si la última fila queda incompleta, se centran solas.
 
 ---
 
-## 6. Productos
+## 5. Productos
 
 El bloque más grande. Arriba tenés un buscador por nombre y tres filtros: **Todos**, **En el sitio** y **Ocultos**.
 
@@ -154,11 +136,9 @@ El bloque más grande. Arriba tenés un buscador por nombre y tres filtros: **To
 
 Botón **"Sacar del sitio"** en cada tarjeta.
 
-El producto **no se borra**: queda guardado con todos sus datos y deja de verse en el sitio. Con "Poner en el sitio" vuelve a aparecer.
+El producto **no se borra**: queda guardado con todos sus datos y deja de verse en el sitio. Con **"Poner en el sitio"** vuelve a aparecer.
 
 Sirve para faltantes de stock o productos de temporada.
-
-> Distinto de **"Eliminar"** (dentro de Editar), que borra el producto para siempre y pide confirmación.
 
 ### Editar un producto
 
@@ -166,22 +146,23 @@ Botón **"Editar"**. Se abre un panel lateral con todos los campos:
 
 | Campo | Para qué |
 |---|---|
-| **Mostrar en el sitio** | Igual que "Sacar del sitio" |
+| **Mostrar en el sitio** | Lo mismo que "Sacar del sitio" |
 | **★ Producto destacado** | Lo muestra en la portada (ver más abajo) |
 | **Nombre** | |
-| **Categoría** | De la lista de categorías. También podés dejarlo "Sin categoría" |
 | **Tipo** | "Pasta Semidura con Ojos", etc. |
 | **Descripción** | Una o dos líneas |
-| **Precio** y **Unidad** | El precio va como texto: podés poner "$4500" o "Consultar" |
+| **Precio** y **Unidad** | Por ejemplo "$4500", "4.500", "Desde $8500" o "Consultar". En el sitio se muestra siempre con el mismo formato ("$4500") |
 | **Mostrar el precio en el sitio** | Si lo destildás, en el sitio dice "Consultar" en lugar del precio. El precio queda guardado |
-| **Presentación** | Entero, Trozado, Feteado. Marcá las que apliquen |
+| **Presentación** | Entero, Trozado, Feteado. Marcá las que correspondan |
 | **Quesos incluidos** | Sólo para combos y picadas |
 | **Etiqueta destacada** | "Nuevo", "Producto del Mes"... Se ve como cartelito naranja sobre la foto |
 | **Maridaje comida / bebida** | Separados con comas |
 | **Premios** | El texto que aparece en el detalle |
-| **Fotos** | Se suben con "Subir foto". Se achican solas |
+| **Fotos** | Se suben con "Subir foto" y se quitan con la × de cada una |
 
-Al terminar: **"Guardar cambios"**.
+Al terminar: **"Guardar cambios"**. Hasta que no lo apretás, no cambia nada en el sitio (tampoco las fotos).
+
+Para cargar un producto desde cero: botón **"Nuevo producto"**, arriba de todo.
 
 ### Productos destacados
 
@@ -189,26 +170,83 @@ La casilla **"★ Producto destacado"** hace que el producto aparezca en la port
 
 - En la lista del gestor, los destacados llevan una **estrella naranja** arriba a la izquierda de la foto.
 - Si no hay ninguno marcado, la sección "Productos Destacados" **desaparece** de la portada.
-- Un producto destacado **que esté oculto** (o cuya categoría esté oculta) tampoco aparece.
+- Un producto destacado **que esté oculto** tampoco aparece.
 - **No hay límite de cantidad.** Si la última fila queda incompleta, las tarjetas se centran solas.
 
 ### Fotos de producto
 
 Si un producto tiene **más de una foto**, en el catálogo aparecen flechitas para pasar entre ellas.
 
-> Para acomodar fotos que quedaron en el producto equivocado conviene usar el **Banco de fotos** (bloque 7): se ven todas juntas y se cambian de producto sin abrir cada ficha.
+Las fotos pueden ser JPG, PNG o WebP, de hasta 15 MB. Se achican solas.
+
+Una foto que quitás de un producto **no se borra**: queda en el **Banco de fotos** (bloque 7) como "Sin asignar", por si la querés usar en otro. Lo mismo pasa si subís una foto y cerrás el panel sin guardar.
+
+### Eliminar un producto
+
+Dentro de **Editar**, botón **"Eliminar"**. Pide confirmación y el producto desaparece del gestor y del sitio.
+
+> Si sólo querés que no se vea por un tiempo, usá **"Sacar del sitio"**. Si eliminaste uno sin querer, avisale a quien mantiene el sitio: queda guardado y se puede recuperar.
 
 ### Restaurar original
 
-Botón gris arriba, al lado de los filtros. Descarta todos los cambios de productos y vuelve a los originales. **Pide confirmación.** No afecta a anuncios, categorías, premios ni equipo.
+Botón gris arriba, al lado de los filtros. Vuelve a los productos originales **y también** a los filtros de "Buscá por ocasión" y al producto del mes originales. **Pide confirmación.** No afecta a anuncios, premios, equipo, contacto ni locales. Las fotos que hayas subido no se borran: quedan en el Banco de fotos.
+
+---
+
+## 6. Contacto y locales
+
+Bloque nuevo: en el gestor anterior estos datos no se podían cambiar.
+
+### Datos de contacto
+
+| Campo | Dónde se usa |
+|---|---|
+| **WhatsApp del local** | Recibe los mensajes del formulario de Contacto (pestaña "Compra en el local") y los del botón "Consultar por WhatsApp" de cada producto |
+| **WhatsApp de compras por mayor** | Recibe los mensajes del formulario de Contacto (pestaña "Compra por mayor") |
+| **Teléfono** | El pie de página |
+| **Email** | El pie de página |
+| **Instagram** y **Facebook** | Los enlaces a las redes (encabezado, pie de página y sección de Instagram del Inicio) |
+
+Los WhatsApp van **con código de país y de área, sin espacios** (ejemplo: 542494538291). Para Instagram y Facebook, la dirección completa de la página.
+
+Al terminar: botón **"Guardar contacto"**.
+
+> **Ojo:** la lista de canales que se ve en la página Contacto (los números y los mails de compras en el local y por mayor) todavía **no** cambia desde acá. Está anotado para resolverlo.
+
+### Producto del mes
+
+El bloque grande que se ve arriba de todo en el catálogo.
+
+- **Producto:** el nombre, el precio y la unidad salen del producto elegido. Con **"— No mostrar el bloque —"** el bloque desaparece del catálogo.
+- **Texto:** la frase que acompaña al producto.
+- **Foto:** clic sobre la foto para cambiarla. Se guarda en el momento.
+
+Al terminar: botón **"Guardar producto del mes"**.
+
+### Locales
+
+Un recuadro por local, con:
+
+| Campo | Para qué |
+|---|---|
+| **Nombre** y **Dirección** | Como se muestran en el sitio |
+| **Horario de lunes a sábado** y **de domingo** | El texto que se ve, tal cual (por ejemplo "8:30 a 21:00 hs"). El de domingo va vacío si ese día está cerrado |
+| **Horarios para el cartel "Abierto ahora"** | Las horas de apertura y cierre que usa el sitio para mostrar si el local está abierto en este momento. Las de domingo, vacías si ese día está cerrado |
+| **Cómo llegar** | El texto de la página Locales |
+| **Enlace al mapa** | La dirección del mapa que se abre desde la página Locales |
+| **Foto del Inicio** y **Foto de la página Locales** | Clic para cambiarlas. Se guardan en el momento |
+
+Al terminar: botón **"Guardar local"** del recuadro de ese local.
+
+Los cambios se ven en el Inicio, en la página Locales y en la lista de locales de la página Contacto.
+
+> Si cambiás el horario, acordate de cambiar **las dos cosas**: el texto que se ve y las horas del cartel "Abierto ahora".
 
 ---
 
 ## 7. Banco de fotos
 
-Último bloque del gestor, debajo de Productos.
-
-Muestra **todas las fotos** que están cargadas en la carpeta del sitio, sin importar a qué producto pertenezcan. Debajo de cada una hay un desplegable para elegir el producto al que corresponde.
+Último bloque del gestor. Muestra **todas las fotos** del sitio, sin importar dónde se usen. Debajo de cada una hay un desplegable para elegir el producto al que corresponde.
 
 ### Para qué sirve
 
@@ -217,66 +255,76 @@ Para corregir fotos mal asignadas sin tener que abrir producto por producto. Ele
 ### Cómo se lee
 
 - Debajo de cada foto está el **nombre del archivo**, para poder cruzarlo con una lista o un chat.
-- Las fotos que **no están en ningún producto** salen con **borde naranja**.
-- Las que sí están llevan un cartelito arriba: "En 1 producto", "En 2 productos"...
+- Las fotos que **no se usan en ningún lado** salen con **borde naranja** y dicen "Sin asignar".
+- Las demás dicen dónde están: "En Gouda", "En 2 productos", "Premios", "Equipo", "Locales" o "Producto del mes".
 
-Arriba del bloque hay dos filtros: **Todas** y **Sin asignar**. El segundo deja a la vista sólo las que faltan acomodar.
+Arriba hay dos filtros: **Todas** y **Sin asignar**. El segundo deja a la vista sólo las que faltan acomodar.
+
+### Subir fotos
+
+Botón naranja **"Subir fotos"**. Podés elegir varias a la vez. Entran como "Sin asignar" y después las asignás.
 
 ### Mover una foto
 
 Elegís otro producto en el desplegable. La foto **se saca automáticamente de donde estaba antes**, así que no quedan duplicados.
 
-La opción **"— Sin asignar —"** la deja libre. La foto no se borra: sigue en la carpeta y vuelve a aparecer con el borde naranja.
+La opción **"— Sin asignar —"** la deja libre. La foto no se borra: vuelve a aparecer con el borde naranja.
+
+> Las fotos de premios, equipo, locales y producto del mes no tienen desplegable: se cambian desde su propio bloque.
 
 ### Crear un producto desde una foto
 
 Si la foto es de un queso que todavía no está en el catálogo, elegí **"➕ Producto nuevo…"** al final de la lista.
 
-Te pide el nombre y crea el producto **con esa foto ya cargada**. Después se abre solo el panel de edición para que completes precio, categoría, descripción y el resto.
+Te pide el nombre y crea el producto **con esa foto ya cargada**. Después se abre solo el panel de edición para que completes precio, descripción y el resto.
 
-- El producto nace **visible en el sitio**.
+- El producto nace **visible en el sitio**, con el precio sin mostrar (dice "Consultar") hasta que lo completes.
 - Si escribís un nombre que ya existe, avisa y no lo crea.
-- Si cancelás, no crea nada y la foto queda libre.
-
-> **Al agregar fotos nuevas a la carpeta:** para que aparezcan en este bloque hay que sumarlas a la lista dentro del archivo del sitio. Es un paso que hace quien mantiene el sitio, no se hace desde el gestor.
+- Si cancelás, no crea nada y la foto queda como estaba.
 
 ---
 
-## 8. Exportar
+## 8. Exportar (copia de seguridad)
 
 Botón verde arriba a la derecha.
 
-Descarga un archivo de texto llamado `catalogo-maitilac.txt` con todo el contenido: anuncios, categorías, filtros, premios y productos.
+Descarga un archivo con la fecha del día en el nombre (por ejemplo `maitilac-copia-2026-09-28.json`). Tiene **todos los datos** del gestor: anuncios, filtros, premios, equipo, productos, contacto, locales y producto del mes. Las fotos no van en el archivo.
 
-Ese archivo es el que hay que pasarle a quien mantiene el sitio para que los cambios queden incorporados de forma permanente.
+Ya **no hace falta** para publicar cambios: sirve como copia de seguridad. Conviene descargarla de vez en cuando, sobre todo antes de hacer muchos cambios juntos, y guardarla en un lugar seguro.
 
 ---
 
 ## Preguntas frecuentes
 
 **Cambié algo y no lo veo en el sitio.**
-Actualizá la página con Ctrl+F5. Si sigue igual, fijate que el producto esté marcado como "En el sitio" y que su categoría no esté oculta.
+Fijate que el aviso haya dicho que se guardó. Después actualizá la página del sitio (F5). Si es un producto, fijate que esté "En el sitio".
 
-**Subí una foto y dice que no se pudo guardar.**
-La foto es muy pesada. El navegador tiene un límite de espacio. Probá con una imagen más chica (hasta 1 MB).
+**Subí una foto y dice que no se pudo.**
+Tiene que ser JPG, PNG o WebP, de hasta 15 MB. Las fotos comunes de celular entran sin problema.
 
-**Hice cambios en la computadora y no los veo en el celular.**
-Es esperable: los cambios quedan guardados en cada dispositivo. Para que se vean en todos lados hay que exportar e incorporarlos al sitio.
+**¿Los cambios se ven en el celular?**
+Sí, en cualquier dispositivo y para todo el mundo, apenas se guardan.
+
+**¿Puedo usar el gestor desde el celular?**
+Sí, funciona igual. Ingresás con tu usuario y contraseña.
 
 **Borré algo sin querer.**
-Si era un producto, "Restaurar original" vuelve a los originales — pero también descarta los demás cambios de productos. Si era un premio o una persona del equipo, hay que volver a cargarlo a mano.
+Si era un producto, avisale a quien mantiene el sitio: se puede recuperar. Si era un premio, "Restaurar premios" vuelve a la lista original, pero descarta también los demás cambios en premios. Si era una persona del equipo, hay que volver a cargarla a mano.
 
-**¿Puedo entrar al gestor desde el celular?**
-Sí, funciona igual. Pero los cambios quedan guardados en ese celular, no en la computadora.
+**Me olvidé la contraseña.**
+Pedile a quien mantiene el sitio que te ponga una nueva.
+
+**En la página Locales, el cartel "Abierto ahora" del local de Maipú no aparece.**
+Pasaba igual en el sitio anterior. Está anotado para corregirlo.
 
 ---
 
 ## Lo que NO se edita desde el gestor
 
-Estas cosas están escritas en el archivo del sitio y hay que pedirlas:
+Estas cosas están escritas en el sitio y hay que pedirlas:
 
-- Los textos de la página Nosotros (la historia, los años de la línea de tiempo)
-- Los datos de los locales: direcciones, horarios, teléfono
-- Los textos de la portada (el título grande, los tres datos "+40 Años" etc.)
+- Los textos de la página Nosotros (la historia y los años de la línea de tiempo)
+- Los textos de la portada (el título grande, los tres datos "+40 Años", etc.)
+- La lista de canales de la página Contacto (ver la nota del bloque 6)
 - Las ilustraciones de la cadena de producción
 - La foto de fondo de la portada

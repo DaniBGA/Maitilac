@@ -121,9 +121,9 @@ Todo el sitio **y** el panel de administración viven en un único archivo:
 | Base de datos | **PostgreSQL 17** (contenedor en el mismo VPS) | Modelo relacional con arrays nativos; productos, ocasiones y combos relacionados por id (resuelve P4). |
 | ORM y migraciones | **Drizzle ORM** + drizzle-kit | Esquema en TypeScript, tipos de punta a punta, migraciones versionadas en SQL legible. |
 | Autenticación | **Better Auth** (email + contraseña) | Sesiones seguras guardadas en la misma base Postgres, sin servicios externos. Registro público desactivado. |
-| Validación | **Zod** | Un único esquema por entidad, compartido entre los formularios del gestor y las Server Actions. |
-| Formularios del gestor | **React Hook Form** | Panel de edición de productos con muchos campos. |
-| Componentes del gestor | **shadcn/ui** (Radix) | Sólo por el comportamiento accesible (diálogos, paneles laterales, foco). **El gestor conserva su diseño actual** (clases `.g-*`), igual que el sitio público. |
+| Validación | ~~Zod~~ | *No se usó (Etapa 5):* cada Server Action valida sus campos a mano. Se puede sumar si los formularios crecen. |
+| Formularios del gestor | ~~React Hook Form~~ | *No se usó (Etapa 5):* el panel de productos usa estado de React simple. |
+| Componentes del gestor | ~~shadcn/ui~~ | *No se usó (Etapa 5):* el gestor se armó con el mismo markup del gestor viejo (clases `.g-*`). La revisión de foco y teclado del panel lateral queda para el Paso 6.3. |
 | Reordenar | **dnd-kit** | Arrastrar y soltar en lugar de las flechas ▲▼, como mejora de la Etapa 7 (durante la paridad se mantienen las flechas). Las flechas se conservan como alternativa accesible por teclado. |
 | Estilos | **Tailwind CSS 4** (sin preflight) + tokens CSS | La paleta y las tipografías actuales pasan a `@theme` (ver 4.6). Primero se porta el CSS viejo casi textual y los 371 estilos en línea pasan a clases con los mismos valores; convertirlos a utilidades es opcional y posterior. Detalle en `PASO A PASO.md`, "Estrategia de estilos". |
 | Imágenes | **sharp** | Al subir una foto se generan variantes AVIF/WebP en 3 tamaños, guardadas en disco (resuelve P3 y P10). |
@@ -157,8 +157,8 @@ Todo el sitio **y** el panel de administración viven en un único archivo:
 | `/catalogo/[slug]` | *(nuevo)* modal de producto | Página propia en caché. En `/catalogo`, el modal se abre como *intercepting route* de Next: la URL cambia, se puede compartir y "atrás" lo cierra |
 | `/locales` | `#locales` | Server Component, en caché |
 | `/contacto` | `#contacto` | Server Component; formulario como componente cliente |
-| `/gestor/login` | — | Con límite de intentos |
-| `/gestor/*` | `#gestor` | Protegido; se verifica la sesión en el layout y en **cada** Server Action |
+| `/gestor/ingresar` | — | Con límite de intentos |
+| `/gestor/*` | `#gestor` | Protegido; se verifica la sesión en la página y en **cada** Server Action |
 
 Un script mínimo en `/` redirige los hashes viejos (`/#catalogo` → `/catalogo`, `/#gestor` → `/gestor`) para no romper enlaces ya compartidos.
 
@@ -242,9 +242,9 @@ Notas:
 ### 4.4 Seguridad
 
 **Aplicación**
-- Login con Better Auth: sin registro público. Los usuarios se crean con un script (`pnpm gestor:crear-usuario`). Límite de intentos y cookies `HttpOnly`/`Secure`/`SameSite`.
-- La sesión se verifica en el layout de `/gestor` **y dentro de cada Server Action** (las actions son endpoints públicos aunque no se vean en la interfaz).
-- Toda entrada del gestor pasa por Zod antes de tocar la base. Drizzle usa consultas parametrizadas.
+- Login con Better Auth: sin registro público. Los usuarios se crean con un script (`pnpm gestor:usuario`). Límite de intentos y cookies `HttpOnly`/`Secure`/`SameSite`.
+- La sesión se verifica en la página `/gestor` (y antes, de forma optimista, en `proxy.ts`) **y dentro de cada Server Action** (las actions son endpoints públicos aunque no se vean en la interfaz).
+- Toda entrada del gestor se valida en la Server Action antes de tocar la base. Drizzle usa consultas parametrizadas.
 - Las consultas públicas filtran siempre por `activo`/`ver` y excluyen los borrados.
 - **Subida de fotos:** validación de tipo y tamaño, re-codificación con sharp (descarta cualquier contenido que no sea imagen) y nombres de archivo generados, nunca los del usuario.
 - El HTML de la historia se renderiza desde archivos del repositorio, nunca desde datos del gestor.
@@ -430,7 +430,8 @@ Cada fase termina en algo desplegable y verificable. No se avanza a la siguiente
 ### Fase 3 — Gestor
 - Better Auth, script para crear usuarios, protección del layout y de cada Server Action.
 - Pantallas en este orden (de menor a mayor complejidad): Anuncios → Config/Locales → Premios → Equipo → Ocasiones → Productos → Banco de fotos.
-- Cada guardado: validación Zod, escritura en la base, `revalidateTag` y aviso "Guardado. Ya se ve en el sitio".
+- Cada guardado: validación, escritura en la base, `updateTag` y aviso "Guardado. Ya se ve en el sitio".
+- *Estado (28/09/2026):* hecho, salvo quitar el enlace del footer (pendiente de aprobación), los usuarios de D2 y la prueba en un celular con el sitio publicado. Detalle en la Etapa 5 de la guía.
 - Copia de seguridad descargable (JSON).
 
 **Aceptación:** checklist de paridad del gestor (1.3) completo; un cambio hecho en una computadora se ve al instante en un celular; subir una foto desde un producto la hace aparecer en el Banco; quitarla del producto la deja "sin asignar"; llamar a una Server Action sin sesión devuelve error (test automatizado).

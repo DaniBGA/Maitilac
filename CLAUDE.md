@@ -6,6 +6,8 @@ Migración del sitio viejo (un único `index.html`, congelado en `referencia/`) 
 
 Para trabajar: `pnpm db:levantar` (Postgres en Docker, puerto 5440) y `pnpm dev`. Datos: `lib/datos.ts` (con caché por etiqueta; el gestor invalida con `updateTag`).
 
+Gestor: Server Actions en `lib/gestor/acciones.ts`, todas por `accion()` (sesión → cambios → `updateTag`). Bloques en `components/gestor/`. Los bloques que el gestor viejo no tenía llevan `data-nuevo` (el test visual los quita). Manual para quienes lo usan: `docs/MANUAL DEL GESTOR.md`.
+
 - Plan (qué y por qué): `docs/PLAN DE REFACTORIZACION.md`
 - Guía de ejecución (cómo, paso a paso, y estado actual): `docs/PASO A PASO.md` — seguir desde la primera casilla sin tildar.
 - Historia y decisiones del sitio viejo: `docs/REGISTRO DE CAMBIOS.md`

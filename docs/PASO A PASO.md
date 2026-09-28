@@ -2,7 +2,7 @@
 
 Guía operativa para ejecutar el [PLAN DE REFACTORIZACION.md](PLAN%20DE%20REFACTORIZACION.md) de a un paso por vez. El plan explica **qué** se construye y **por qué**; esta guía explica **cómo** y en qué orden, y sobre todo **cómo verificar que el diseño quede idéntico**.
 
-> **Estado actual:** Etapa 0 — sin empezar. *(Actualizar esta línea al cerrar cada paso.)*
+> **Estado actual:** Etapa 0 terminada (salvo subir a GitHub). En curso: Etapa 1. *(Actualizar esta línea al cerrar cada paso.)*
 
 ---
 
@@ -77,12 +77,11 @@ La herramienta central de toda la refactorización. Se arma en el paso 1.2 y se 
 
 **Objetivo:** tener un punto de partida guardado en git antes de tocar nada.
 
-- [ ] Crear `.gitignore` con: `node_modules/`, `.next/`, `.env*`, `!.env.example`, `test-results/`, `playwright-report/`, `_fuentes/`.
-- [ ] **Antes de agregar `_fuentes/` al `.gitignore`**, confirmar que el material fuente tiene una copia fuera del repo (Drive, disco externo).
-- [ ] `git add` de `index.html`, `img/`, `fonts/`, `fondo-hero.jpg`, los `.md` y el `.txt` del export.
-- [ ] Crear el repositorio en GitHub (privado) y subir.
+- [x] Crear `.gitignore` (dependencias, builds, `.env*`, resultados de tests).
+- [x] Commit con **todo** lo que había en la carpeta, incluido el material fuente del cliente. Así, cualquier movimiento posterior se puede deshacer con git y no hace falta una copia aparte.
+- [ ] Crear el repositorio en GitHub (privado) y subir. *(Pendiente: se necesita para el deploy de la Etapa 4.)*
 
-**Verificación:** `git log` muestra un commit; el repo en GitHub tiene los archivos.
+**Verificación:** `git log` muestra el commit `6f03af2`.
 
 **Commit:** `chore: estado inicial del sitio (index.html del 09/09/2026)`
 
@@ -90,34 +89,28 @@ La herramienta central de toda la refactorización. Se arma en el paso 1.2 y se 
 
 **Objetivo:** una copia intocable del sitio viejo contra la cual se compara todo.
 
-- [ ] Crear `referencia/` y copiar ahí `index.html`, `img/`, `fonts/` y `fondo-hero.jpg`.
-- [ ] Agregar `referencia/README.md`: "Copia congelada del sitio al 09/09/2026. **No editar.** Es la referencia de los tests visuales."
-- [ ] Probar que se ve bien servida: `npx serve referencia -l 5500` → abrir `http://localhost:5500`.
+- [x] Mover (`git mv`) a `referencia/` los archivos `index.html`, `img/`, `fonts/` y `fondo-hero.jpg`.
+- [x] Agregar `referencia/README.md` ("No editar").
+- [ ] Probar que se ve bien servida: `pnpm ref:servir` → abrir `http://localhost:5500`. *(Se verifica en el paso 1.2, al generar las capturas.)*
 
 **Verificación:** el sitio de `referencia/` se ve igual que el original en las 6 secciones (`#home`, `#nosotros`, `#catalogo`, `#locales`, `#contacto`, `#gestor`).
-
-**Commit:** `chore: congelar sitio actual en referencia/`
 
 ### Paso 0.3 — Ordenar la carpeta raíz
 
 **Objetivo:** dejar la raíz lista para el proyecto nuevo.
 
-- [ ] **Pedir permiso** antes de mover cualquier archivo (regla 4 del plan).
-- [ ] Mover a `_fuentes/` el material del cliente que no se publica: `FOTOS/`, `Premios ORDENADOS/`, `imagenes de INSTAGRAM/`, `Equipo/`, imágenes de WhatsApp, `Folleto Maitilac - con Lacteos & Cia.pdf`, `HISTORIA DE MAITILAC.docx`, `LOGO.jpeg`, `CLUSTER.jpeg`, `1.jpeg`, `2.jpeg`, `Copilot_*.png`, `tradicion que se hereda.jpeg`, `PARA ROSARIO - whatsapp.txt`, `catalogo-maitilac (1).txt`.
-- [ ] Mover a `docs/`: `PLAN DE REFACTORIZACION.md`, `PASO A PASO.md`, `REGISTRO DE CAMBIOS.md`, `MANUAL DEL GESTOR.md`.
-- [ ] Una vez verificado `referencia/`, sacar de la raíz `index.html`, `img/`, `fonts/` y `fondo-hero.jpg` (quedan en `referencia/` y en el historial de git).
+- [x] Mover con `git mv` a `_fuentes/` el material del cliente que no se publica (fotos originales, diplomas, imágenes de WhatsApp, folleto, historia, mensajes, export). **Queda versionado en git**, pero fuera del build (`.dockerignore`, paso 4.3).
+- [x] Mover a `docs/`: `PLAN DE REFACTORIZACION.md`, `PASO A PASO.md`, `REGISTRO DE CAMBIOS.md`, `MANUAL DEL GESTOR.md`.
 
-**Verificación:** la raíz sólo tiene `.git/`, `.gitignore`, `docs/`, `referencia/` y `_fuentes/` (ignorada).
+**Verificación:** la raíz sólo tiene `.git/`, `.gitignore`, `docs/`, `referencia/` y `_fuentes/`.
 
-**Commit:** `chore: ordenar raíz (docs/, referencia/, _fuentes/ fuera del repo)`
+**Commit:** `chore: congelar sitio en referencia/ y ordenar raíz`
 
-### Paso 0.4 — Decisiones bloqueantes
+### Paso 0.4 — Decisiones
 
-- [ ] **D1b:** plan de VPS (RAM/disco), titular, dominio y dónde se administra el DNS.
-- [ ] **D2:** emails de las personas con acceso al gestor.
-- [ ] Anotar las respuestas en la sección 10 del plan.
-
-**Verificación:** D1b y D2 figuran como resueltas en el plan. *(No bloquean las etapas 1 y 2: se puede avanzar mientras tanto.)*
+- [x] **D1b:** VPS **KVM 2** de Hostinger (28/09/2026).
+- [ ] **D1c:** dominio, titular y DNS. *(Antes de la Etapa 4.)*
+- [ ] **D2:** emails de las personas con acceso al gestor. *(Antes del paso 5.10; mientras tanto, usuario de prueba.)*
 
 ---
 
@@ -127,7 +120,7 @@ La herramienta central de toda la refactorización. Se arma en el paso 1.2 y se 
 
 **Objetivo:** proyecto vacío corriendo en local.
 
-Requisitos en la máquina: Node 22 LTS, pnpm, Docker, git.
+Requisitos en la máquina: Node 24 LTS o superior (local: Node 26 con nvm), pnpm (`npm i -g pnpm`; Node 25+ ya no trae corepack), Docker, git. La imagen de producción usa Node 24 LTS.
 
 - [ ] Crear el proyecto en una carpeta temporal y moverlo a la raíz (`create-next-app` no acepta carpetas con archivos):
   ```bash

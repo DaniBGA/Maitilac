@@ -217,3 +217,6 @@ export const productoDelMes = pgTable(
   },
   (t) => [check("producto_del_mes_una_fila", sql`${t.id} = 1`)],
 );
+
+// ---------- Login del gestor (Better Auth) ----------
+export * from "./esquema-auth";

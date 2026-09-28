@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getConfig, getLocales } from "@/lib/datos";
+import { Foto } from "./Foto";
 
 // FOOTER_HTML de referencia/index.html:1779-1807. Se repite en Inicio, Catálogo, Locales y Contacto.
 export async function FooterOscuro() {
@@ -8,7 +9,7 @@ export async function FooterOscuro() {
     <footer className="foot-dark js-footer-dark">
       <div className="foot-grid">
         <div>
-          <img src="/img/logo-tandil-2.png" alt="Maitilac — Quesos de Tandil" className="foot-logo" />
+          <Foto src="/img/logo-tandil-2.png" sizes="125px" alt="Maitilac — Quesos de Tandil" className="foot-logo" />
           <p className="foot-desc">Quesos artesanales elaborados con leche propia desde nuestros tambos.</p>
         </div>
         <div>

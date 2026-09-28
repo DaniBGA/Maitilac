@@ -29,6 +29,7 @@
 /* Modal de producto — #modal y pintarModal(), referencia/index.html:844 y 2183-2238 */
 .md-velo{position:fixed;inset:0;background:rgba(27,24,21,.72);z-index:200;display:flex;align-items:center;justify-content:center;padding:32px;animation:catOverlayIn .18s ease-out}
 .md-caja{background:#fff;border-radius:22px;max-width:960px;width:100%;max-height:88vh;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;box-shadow:0 40px 90px rgba(0,0,0,.4);animation:catModalIn .2s ease-out;position:relative}
+.md-caja:focus{outline:none} /* recibe el foco al abrir (teclado); sin borde, como antes */
 .md-cerrar{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:999px;border:none;background:rgba(255,255,255,.92);color:#2A2621;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;box-shadow:0 4px 14px rgba(0,0,0,.15)}
 .md-foto{position:relative;min-height:340px;background:#e9e2d3}
 .md-img{width:100%;height:100%;min-height:340px;object-fit:cover;display:block}

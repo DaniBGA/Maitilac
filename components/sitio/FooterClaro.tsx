@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getConfig, getLocales } from "@/lib/datos";
+import { Foto } from "./Foto";
 
 /** "2494538291" → "249 4538291", como se muestra en el sitio viejo. */
 const telefonoVisible = (t: string) => `${t.slice(0, 3)} ${t.slice(3)}`;
@@ -26,12 +27,12 @@ export async function FooterClaro() {
     <footer className="fc">
       <div className="foot-grid fc-grid">
         <div>
-          <img src="/img/logo-tandil-2.png" alt="Maitilac — Quesos de Tandil" className="foot-logo" />
+          <Foto src="/img/logo-tandil-2.png" sizes="125px" alt="Maitilac — Quesos de Tandil" className="foot-logo" />
           <p className="fc-desc">
             Empresa familiar que con el trabajado de cada día, hace que disfrutes de los buenos gustos.
           </p>
           <div className="fc-redes">
-            <a href={CONFIG.instagram} target="_blank" rel="noopener" className="fc-red">
+            <a href={CONFIG.instagram} target="_blank" rel="noopener" className="fc-red" aria-label="Instagram">
               <svg
                 width="18"
                 height="18"
@@ -45,7 +46,7 @@ export async function FooterClaro() {
                 <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"></circle>
               </svg>
             </a>
-            <a href={CONFIG.facebook} target="_blank" rel="noopener" className="fc-red">
+            <a href={CONFIG.facebook} target="_blank" rel="noopener" className="fc-red" aria-label="Facebook">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M13.5 9H16V6h-2.5C11.6 6 10 7.6 10 9.5V11H8v3h2v7h3v-7h2.2l.8-3H13V9.3c0-.2.2-.3.5-.3z"></path>
               </svg>

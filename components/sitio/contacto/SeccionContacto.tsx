@@ -258,7 +258,7 @@ export function SeccionContacto({
           </div>
           <h2 className="serif con-10">Redes Sociales</h2>
           <div className="con-11">
-            <a className="con-12" href="https://www.instagram.com/maitilac" target="_blank" rel="noopener">
+            <a className="con-12" href="https://www.instagram.com/maitilac" target="_blank" rel="noopener" aria-label="Instagram">
               <svg
                 width="20"
                 height="20"
@@ -272,7 +272,7 @@ export function SeccionContacto({
                 <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"></circle>
               </svg>
             </a>
-            <a className="con-12" href="https://www.facebook.com/maitilac" target="_blank" rel="noopener">
+            <a className="con-12" href="https://www.facebook.com/maitilac" target="_blank" rel="noopener" aria-label="Facebook">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M13.5 9H16V6h-2.5C11.6 6 10 7.6 10 9.5V11H8v3h2v7h3v-7h2.2l.8-3H13V9.3c0-.2.2-.3.5-.3z"></path>
               </svg>

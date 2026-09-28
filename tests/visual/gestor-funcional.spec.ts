@@ -206,3 +206,19 @@ test("banco de fotos: subir una foto suelta, asignarla y volver a soltarla", asy
   await expect(aviso(page)).toHaveText("La foto quedó sin asignar");
   await expect(page.locator("#g-banco .gn-banco.suelta")).toHaveCount(sueltasAntes + 1);
 });
+
+test("panel de producto: Tab no sale del panel y Esc devuelve el foco a Editar", async ({ page }) => {
+  await page.goto("/gestor");
+  const editar = tarjetaGestor(page, "Gouda").locator(".js-g-editar");
+  await editar.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#g-velo [role='dialog']")).toBeVisible();
+  const dentro = () => page.evaluate(() => !!document.activeElement?.closest("#g-velo [role='dialog']"));
+  for (let k = 0; k < 60; k++) {
+    await page.keyboard.press("Tab");
+    expect(await dentro()).toBe(true);
+  }
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#g-velo")).toBeHidden();
+  await expect(editar).toBeFocused();
+});

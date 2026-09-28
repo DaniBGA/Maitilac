@@ -42,6 +42,7 @@ export function Catalogo({ productos, ocasiones }: { productos: Producto[]; ocas
                 key={o.key}
                 type="button"
                 className={`js-filtro fl-btn${o.key === activa ? " fl-on" : ""}`}
+                aria-pressed={o.key === activa}
                 data-key={o.key}
                 onClick={() => alternar(o.key)}
               >

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { borrarProducto, guardarProducto, subirFotoProducto } from "@/lib/gestor/acciones";
 import type { GProducto, ProductoEditado } from "@/lib/gestor/tipos";
+import { atraparTab, useDevolverFoco } from "@/lib/foco";
 import { ruta } from "@/lib/util";
 import { formularioFoto, type Correr } from "./comun";
 
@@ -52,8 +53,14 @@ export function PanelProducto({
   // a sí mismo ni meter otro combo adentro).
   const quesosDisp = productos.filter((x) => !x.quesos.length && x.nombre !== p.nombre).map((x) => x.nombre);
 
+  // Teclado: Esc cierra, Tab no sale del panel y al cerrar el foco vuelve adonde estaba.
+  const panel = useRef<HTMLDivElement>(null);
+  useDevolverFoco();
   useEffect(() => {
-    const tecla = (e: KeyboardEvent) => e.key === "Escape" && alCerrar();
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === "Escape") alCerrar();
+      atraparTab(e, panel.current);
+    };
     document.addEventListener("keydown", tecla);
     return () => document.removeEventListener("keydown", tecla);
   }, [alCerrar]);
@@ -102,7 +109,7 @@ export function PanelProducto({
 
   return (
     <div className="g-velo" id="g-velo" onClick={(e) => e.target === e.currentTarget && alCerrar()}>
-      <div className="g-panel">
+      <div className="g-panel" ref={panel} role="dialog" aria-modal="true" aria-labelledby="g-panel-titulo">
         <div className="g-panel-hdr">
           <h2 className="serif" id="g-panel-titulo">
             {original ? "Editar: " + original.nombre : "Nuevo producto"}

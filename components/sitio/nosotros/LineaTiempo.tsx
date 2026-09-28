@@ -14,6 +14,7 @@ export function LineaTiempo({ hitos }: { hitos: Hito[] }) {
           key={x.anio}
           type="button"
           className={`tl-item js-hito${i === activo ? " on" : ""}`}
+          aria-pressed={i === activo}
           data-i={i}
           onClick={() => setActivo(i)}
         >

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Foto } from "./Foto";
 
 // Markup de referencia/index.html:478-495. Mismas clases e id (el CSS y los tests dependen de ellos).
 const SECCIONES = [
@@ -16,18 +17,33 @@ export function Header({ instagram }: { instagram: string }) {
   const ruta = usePathname();
   const [abierto, setAbierto] = useState(false);
   const cerrar = () => setAbierto(false);
+  const burger = useRef<HTMLButtonElement>(null);
+
+  // Con el menú del celular abierto, Esc lo cierra y el foco vuelve al botón.
+  useEffect(() => {
+    if (!abierto) return;
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setAbierto(false);
+      burger.current?.focus();
+    };
+    document.addEventListener("keydown", tecla);
+    return () => document.removeEventListener("keydown", tecla);
+  }, [abierto]);
 
   return (
     <header>
       <div className="hdr">
         <Link href="/" className="hdr-logo" onClick={cerrar}>
-          <img src="/img/logo-tandil-2.png" alt="Maitilac — Quesos de Tandil" />
+          <Foto src="/img/logo-tandil-2.png" sizes="70px" alt="Maitilac — Quesos de Tandil" />
         </Link>
         <button
           className="burger"
           id="burger"
+          ref={burger}
           aria-label="Menú"
           aria-expanded={abierto}
+          aria-controls="nav"
           onClick={() => setAbierto((a) => !a)}
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

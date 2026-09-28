@@ -455,11 +455,20 @@ Las mejoras de esta etapa tienen que ser **invisibles**. Si alguna cambia el dis
 
 **Verificación:** suite completa en verde; build sin base de datos; revisado a mano el `<head>`, `robots.txt`, `sitemap.xml` y que el JSON-LD sea válido. Falta pasar las páginas por el validador de resultados enriquecidos de Google cuando el sitio esté publicado.
 
-### Paso 6.3 — Accesibilidad y rendimiento
+### Paso 6.3 — Accesibilidad y rendimiento (casi terminado)
 
-- [ ] Navegación completa con teclado: menú, filtros, modal, carruseles, formulario, gestor.
-- [ ] `prefers-reduced-motion` detiene los carruseles automáticos.
-- [ ] Lighthouse móvil ≥ 90 en todas las páginas públicas.
+- [x] **Teclado** (`lib/foco.ts`, tests en `tests/visual/accesibilidad.spec.ts`):
+  - Modal de producto: `role="dialog"`, el foco entra al abrir, Tab no sale del modal, Esc lo cierra y el foco vuelve a "Ver Detalles". Al cambiar de foto con las flechas, el foco sigue en la flecha.
+  - Menú del celular: Esc lo cierra y el foco vuelve al botón; `aria-controls`.
+  - Filtros del catálogo y años de la línea de tiempo: `aria-pressed`.
+  - Íconos de Instagram y Facebook del footer claro y de Contacto: nombre accesible (`aria-label`).
+  - Panel de producto del gestor: `role="dialog"`, Tab no sale del panel y Esc devuelve el foco a "Editar" (test en `gestor-funcional`).
+  - El resto ya eran botones, enlaces y campos nativos (las flechas de las fotos y del gestor tienen `aria-label`).
+- [x] `prefers-reduced-motion`: los carruseles de Nosotros (historia y premios) no se mueven solos; se pueden correr a mano.
+- [x] Logos del header y los footers e ilustraciones de la cadena, por el optimizador de imágenes (tienen al menos una medida fija en el CSS). El logo del Cluster no: con ancho fijo y alto automático, la versión reducida cambiaba el alto de Nosotros en 1 px.
+- [ ] **Lighthouse móvil ≥ 90: confirmar en el VPS.** En esta máquina (en uso) el modo simulado varía ±10 puntos entre corridas: Inicio 69–83, Nosotros 77–87, Catálogo 84–92, Locales 87–91, Contacto 84–97. Con el throttling aplicado de verdad (`--throttling-method=devtools`), el Inicio da 95 (LCP 2,2 s). Una comparación A/B contra la versión anterior a este paso dio lo mismo dentro del ruido. Accesibilidad 95–96, buenas prácticas 100, SEO 100 en todas.
+
+**Quedan como propuesta para la Etapa 7 (cambian el diseño):** el contraste de varios textos (años de la línea de tiempo, etiquetas de los canales de Contacto, unidades de precio, "Producto del Mes", etc.) no llega a AA (backlog 9), y el logo del footer claro de Nosotros se ve achatado en tablet y celular (backlog 10).
 
 ### Paso 6.4 — Tests finales
 

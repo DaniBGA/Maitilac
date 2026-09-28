@@ -25,7 +25,8 @@ function Fila({ lista, alt }: { lista: string[]; alt: string }) {
 /**
  * Las dos filas de fotos de la historia: pintarFotosHistoria() y moverCarrusel()
  * de referencia/index.html:1976-2033. La de arriba avanza y la de abajo retrocede,
- * 0,5 px por cuadro. Cada una se frena al pasar el mouse o tocarla.
+ * 0,5 px por cuadro. Cada una se frena al pasar el mouse o tocarla, y no se mueven
+ * si el dispositivo pide reducir el movimiento.
  */
 export function CarruselHistoria({
   fotosHistoria,
@@ -59,7 +60,8 @@ export function CarruselHistoria({
       }
       id = requestAnimationFrame(mover);
     };
-    mover();
+    // Con "reducir movimiento" activado en el dispositivo, quietas (se pueden correr a mano).
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) mover();
 
     const limpiar: (() => void)[] = [];
     for (const [el, clave] of [

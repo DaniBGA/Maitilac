@@ -48,7 +48,8 @@ export function CarruselPremios({ premios, className }: { premios: Premio[]; cla
       }
       id = requestAnimationFrame(girar);
     };
-    girar();
+    // Con "reducir movimiento" activado en el dispositivo, quieto (se puede correr a mano).
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) girar();
     const entrar = () => (pausado = true);
     const salir = () => (pausado = false);
     c.addEventListener("mouseenter", entrar);

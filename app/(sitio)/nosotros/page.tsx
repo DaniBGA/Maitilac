@@ -165,37 +165,37 @@ async function NosotrosContenido() {
           <ol className="cadena-pasos">
             <li className="cd-paso">
               <span className="cd-circulo">
-                <img src="/img/cadena/1-pastando.png" alt="" loading="lazy" />
+                <Foto src="/img/cadena/1-pastando.png" sizes="134px" alt="" loading="lazy" />
               </span>{" "}
               <span className="cd-num">1</span> <span className="cd-lbl">El campo</span>
             </li>
             <li className="cd-paso">
               <span className="cd-circulo">
-                <img src="/img/cadena/2-ordene.png" alt="" loading="lazy" />
+                <Foto src="/img/cadena/2-ordene.png" sizes="134px" alt="" loading="lazy" />
               </span>{" "}
               <span className="cd-num">2</span> <span className="cd-lbl">Ordeñe</span>
             </li>
             <li className="cd-paso">
               <span className="cd-circulo">
-                <img src="/img/cadena/3-recoleccion.png" alt="" loading="lazy" />
+                <Foto src="/img/cadena/3-recoleccion.png" sizes="134px" alt="" loading="lazy" />
               </span>{" "}
               <span className="cd-num">3</span> <span className="cd-lbl">Recolección</span>
             </li>
             <li className="cd-paso">
               <span className="cd-circulo">
-                <img src="/img/cadena/4-maduracion.png" alt="" loading="lazy" />
+                <Foto src="/img/cadena/4-maduracion.png" sizes="134px" alt="" loading="lazy" />
               </span>{" "}
               <span className="cd-num">4</span> <span className="cd-lbl">Maduración</span>
             </li>
             <li className="cd-paso">
               <span className="cd-circulo">
-                <img src="/img/cadena/5-local.png" alt="" loading="lazy" />
+                <Foto src="/img/cadena/5-local.png" sizes="134px" alt="" loading="lazy" />
               </span>{" "}
               <span className="cd-num">5</span> <span className="cd-lbl">Nuestros locales</span>
             </li>
             <li className="cd-paso">
               <span className="cd-circulo">
-                <img src="/img/cadena/6-horma.png" alt="" loading="lazy" />
+                <Foto src="/img/cadena/6-horma.png" sizes="134px" alt="" loading="lazy" />
               </span>{" "}
               <span className="cd-num">6</span> <span className="cd-lbl">A tu mesa</span>
             </li>
@@ -234,6 +234,8 @@ async function NosotrosContenido() {
       </section>
       {/* Cluster */}
       <section className="sec-pad nos-24">
+        {/* <img> común: con ancho fijo y alto automático, una versión reducida cambia el alto
+            por redondeo (1 px de diferencia con el sitio viejo). */}
         <img
           className="nos-25"
           src="/img/cluster-quesero.png"

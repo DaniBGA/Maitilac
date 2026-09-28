@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { atraparTab, useDevolverFoco } from "@/lib/foco";
 import type { Producto } from "@/lib/tipos";
 import { indiceCircular, precioVisible } from "@/lib/util";
 import { IcoDer, IcoIzq } from "../Icono";
@@ -11,6 +12,9 @@ import { Foto } from "../Foto";
  * Modal de detalle de producto: #modal y pintarModal() de referencia/index.html:844
  * y 2173-2245. Galería con flechas y teclas ← →, Esc o clic en el fondo para cerrar,
  * y el scroll de la página bloqueado mientras está abierto.
+ *
+ * Teclado: al abrir, el foco pasa al modal; Tab no sale de él, y al cerrar vuelve
+ * adonde estaba (el botón "Ver Detalles"). Nada de esto se ve.
  *
  * modo "interceptado": abierto desde el sitio → cerrar = volver atrás.
  * modo "pagina": se entró directo a /catalogo/<slug> → cerrar = ir al catálogo.
@@ -28,6 +32,9 @@ export function ModalProducto({
   const [idx, setIdx] = useState(0);
   const total = p.photos.length;
   const i = indiceCircular(idx, total);
+  const caja = useRef<HTMLDivElement>(null);
+  // Flecha con la que se cambió la foto, para devolverle el foco (la caja se recrea).
+  const volverA = useRef<string | null>(null);
 
   const cerrar = useCallback(() => {
     if (modo === "interceptado") router.back();
@@ -40,6 +47,7 @@ export function ModalProducto({
       if (e.key === "Escape") cerrar();
       if (e.key === "ArrowLeft") setIdx((n) => n - 1);
       if (e.key === "ArrowRight") setIdx((n) => n + 1);
+      atraparTab(e, caja.current);
     };
     document.addEventListener("keydown", teclas);
     return () => {
@@ -48,27 +56,52 @@ export function ModalProducto({
     };
   }, [cerrar]);
 
+  useDevolverFoco();
+
+  // Al abrir y en cada cambio de foto (la caja se recrea): foco en la flecha usada o en la caja.
+  useEffect(() => {
+    const flecha = volverA.current ? caja.current?.querySelector<HTMLElement>(volverA.current) : null;
+    (flecha ?? caja.current)?.focus({ preventScroll: true });
+    volverA.current = null;
+  }, [i]);
+
   const consulta = `https://wa.me/${whatsapp}?text=${encodeURIComponent("Hola! Quería consultar por el queso " + p.nombre)}`;
 
   return (
     <div id="modal" className="md-velo" onClick={(e) => e.target === e.currentTarget && cerrar()}>
       {/* key={i}: como en el sitio viejo (que volvía a dibujar el modal entero), al
           cambiar de foto la caja se recrea: vuelve arriba y repite la animación de entrada. */}
-      <div className="modal-grid md-caja" key={i}>
+      <div
+        className="modal-grid md-caja"
+        key={i}
+        ref={caja}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="md-nombre"
+        tabIndex={-1}
+      >
         <button type="button" id="cerrar-modal" aria-label="Cerrar" className="md-cerrar" onClick={cerrar}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
             <path d="M6 6l12 12M18 6L6 18"></path>
           </svg>
         </button>
         <div className="md-foto">
-          <Foto src={p.photos[i] ?? ""} sizes="(max-width:720px) 84vw, 480px" alt={p.nombre} className="md-img" />
+          <Foto
+            src={p.photos[i] ?? ""}
+            sizes="(max-width:720px) 84vw, 480px"
+            alt={p.nombre}
+            className="md-img"
+          />
           {total > 1 ? (
             <>
               <button
                 type="button"
                 className="navimg js-mfoto md-izq"
                 aria-label="Anterior"
-                onClick={() => setIdx(idx - 1)}
+                onClick={() => {
+                  volverA.current = ".md-izq";
+                  setIdx(idx - 1);
+                }}
               >
                 <IcoIzq />
               </button>
@@ -76,7 +109,10 @@ export function ModalProducto({
                 type="button"
                 className="navimg js-mfoto md-der"
                 aria-label="Siguiente"
-                onClick={() => setIdx(idx + 1)}
+                onClick={() => {
+                  volverA.current = ".md-der";
+                  setIdx(idx + 1);
+                }}
               >
                 <IcoDer />
               </button>
@@ -94,7 +130,9 @@ export function ModalProducto({
         </div>
         <div className="modal-pad md-pad">
           <div className="md-badges">{p.badge ? <span className="md-badge">{p.badge}</span> : null}</div>
-          <h2 className="serif md-nombre">{p.nombre}</h2>
+          <h2 className="serif md-nombre" id="md-nombre">
+            {p.nombre}
+          </h2>
           {p.tipo ? <div className="md-tipo">{p.tipo}</div> : null}
           {p.desc ? <p className="md-desc">{p.desc}</p> : null}
           <div className="md-precio-fila">

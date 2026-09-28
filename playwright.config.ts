@@ -18,6 +18,7 @@ export default defineConfig({
   expect: {
     timeout: 20_000,
     toHaveScreenshot: { maxDiffPixelRatio: 0.002, animations: "disabled", caret: "hide" },
+    toMatchSnapshot: { maxDiffPixelRatio: 0.002 },
   },
   use: {
     baseURL: ES_REFERENCIA ? "http://localhost:4500" : "http://localhost:3000",

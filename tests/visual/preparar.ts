@@ -75,3 +75,27 @@ export async function detenerCarruseles(page: Page) {
 
 /** El <main> visible (en el sitio viejo, los demás están ocultos con .hidden). */
 export const MAIN_VISIBLE = "main.page:not(.hidden)";
+
+/**
+ * Captura de un elemento con coordenadas redondeadas. La captura por locator de
+ * Playwright redondea distinto según la posición con decimales del elemento en
+ * la página (en el sitio viejo el footer arranca en y = 4395,19; en el nuevo,
+ * mientras la página esté vacía, en y = 85) y da 1 px de diferencia de alto.
+ */
+export async function capturarElemento(page: Page, selector: string) {
+  const r = await page.locator(selector).first().evaluate((el) => {
+    const b = el.getBoundingClientRect();
+    return { x: b.left + scrollX, y: b.top + scrollY, width: b.width, height: b.height };
+  });
+  return page.screenshot({
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+    clip: {
+      x: Math.round(r.x),
+      y: Math.round(r.y),
+      width: Math.round(r.width),
+      height: Math.round(r.height),
+    },
+  });
+}

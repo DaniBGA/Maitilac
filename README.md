@@ -5,7 +5,7 @@ Sitio web de Maitilac (quesos artesanales de Tandil), en migración desde un ún
 - **Plan** (qué se construye y por qué): [docs/PLAN DE REFACTORIZACION.md](docs/PLAN%20DE%20REFACTORIZACION.md)
 - **Paso a paso** (cómo, en qué orden y estado actual): [docs/PASO A PASO.md](docs/PASO%20A%20PASO.md)
 
-> **Estado:** las 5 páginas públicas (Inicio, Nosotros, Catálogo con detalle de producto, Locales y Contacto) se ven igual que el sitio viejo y leen los datos de PostgreSQL. El gestor (con login) guarda en la base y los cambios se ven al instante. Falta: calidad y SEO (Etapa 6) y el servidor (Etapa 4, al final).
+> **Estado:** las 5 páginas públicas (Inicio, Nosotros, Catálogo con detalle de producto, Locales y Contacto) se ven igual que el sitio viejo y leen los datos de PostgreSQL. El gestor (con login) guarda en la base y los cambios se ven al instante. Fotos optimizadas, SEO y accesibilidad (Etapa 6) listos en lo que no depende del servidor. Falta: el servidor y la publicación (Etapa 4) y el lanzamiento.
 
 ---
 

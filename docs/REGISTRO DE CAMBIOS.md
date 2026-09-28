@@ -798,6 +798,28 @@ Antes eran doce llamadas seguidas: la primera que fallara dejaba el sitio sin Ja
 
 ---
 
+## 30. Migración a Next.js + PostgreSQL (en curso, septiembre 2026)
+
+El sitio deja de ser un único `index.html` que guarda los cambios del gestor en el navegador. Pasa a ser una aplicación **Next.js** con base de datos **PostgreSQL**, que se va a publicar en un VPS de Hostinger. El sitio viejo quedó congelado en `referencia/` y es la vara contra la que se compara todo.
+
+**Lo que no cambia:** el diseño y los textos. Cada página se compara automáticamente, píxel por píxel y en tres anchos de pantalla, contra el sitio viejo. Toda diferencia visual tiene que estar anotada y aprobada (tabla *Diferencias visuales aprobadas* de `docs/PASO A PASO.md`).
+
+**Lo que cambia para quien usa el gestor:**
+- Se entra con usuario y contraseña (`/gestor`).
+- Lo que se guarda se ve **al instante para todo el mundo**, en cualquier dispositivo. Ya no hace falta exportar ni pegar nada en el código: "Exportar" pasa a ser una copia de seguridad.
+- Bloques nuevos: **Contacto y locales** (WhatsApp, email, redes, horarios, fotos de los locales y producto del mes) y **Banco de fotos** conectado de verdad al catálogo (resuelve el pedido del 06/08/2026, ver *Pendientes*).
+- Manual actualizado: `docs/MANUAL DEL GESTOR.md`.
+
+**Correcciones respecto del sitio viejo** (pendientes de aprobación en la tabla de diferencias): "Ver Detalles" del Inicio abre el producto (sección 29: en el sitio viejo seguía sin responder); cada producto tiene su propia dirección (`/catalogo/gouda`) para compartirla.
+
+**Además, sin cambios a la vista:** fotos optimizadas (una tarjeta pasa de 225 KB a 12 KB), títulos y datos para buscadores, navegación con teclado y carruseles quietos para quien pide reducir el movimiento.
+
+**Detalles heredados que se mantuvieron igual** y quedaron anotados para decidir: el cartel "Abierto ahora" de Maipú no aparece en la página Locales; el footer de Nosotros queda apretado en celular; algunos textos no llegan al contraste recomendado; los canales de la página Contacto siguen fijos.
+
+Plan completo: `docs/PLAN DE REFACTORIZACION.md`. Paso a paso y estado: `docs/PASO A PASO.md`.
+
+---
+
 ## Pendientes
 
 **Fotos que faltan** (aparecen como recuadros rayados grises):
@@ -812,7 +834,7 @@ Antes eran doce llamadas seguidas: la primera que fallara dejaba el sitio sin Ja
 **Fotos de producto:** ya cargadas (ver sección 23). Los 11 productos tienen foto y varios tienen ahora entre 3 y 8. Los productos con más de una muestran flechitas para pasar entre ellas.
 
 **A desarrollar:**
-- ⚠ **Conectar el Banco de fotos con el catálogo** (ver sección 24). Una foto subida desde Editar tiene que aparecer sola en el Banco. Hoy no pasa: el Banco es una lista a mano y queda desactualizado. Pedido del cliente el 06/08/2026.
+- ✅ **Conectar el Banco de fotos con el catálogo** (ver sección 24): resuelto en el sitio nuevo (sección 30). Una foto subida desde Editar tiene que aparecer sola en el Banco. Hoy no pasa: el Banco es una lista a mano y queda desactualizado. Pedido del cliente el 06/08/2026.
 
 **A confirmar:**
 - ✅ **Las 3 fotos sin asignar** (`sin-asignar-1/2/3.jpg`): resuelto. El cliente las asignó a **Provoleta** desde el Banco (ver sección 25).
@@ -825,6 +847,8 @@ Antes eran doce llamadas seguidas: la primera que fallara dejaba el sitio sin Ja
 ---
 
 ## Cómo subirlo a Netlify
+
+> Corresponde al sitio viejo (`referencia/`). El sitio nuevo se publica en un VPS de Hostinger (sección 30).
 
 Arrastrar la carpeta `sitio` completa a [app.netlify.com/drop](https://app.netlify.com/drop). Son **58 archivos, 9,79 MB** sin contar `imagenes nuevas/` (que conviene borrar antes; con esa carpeta son 88 archivos y 15,63 MB).
 

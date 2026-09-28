@@ -2,7 +2,7 @@
 
 Guía operativa para ejecutar el [PLAN DE REFACTORIZACION.md](PLAN%20DE%20REFACTORIZACION.md) de a un paso por vez. El plan explica **qué** se construye y **por qué**; esta guía explica **cómo** y en qué orden, y sobre todo **cómo verificar que el diseño quede idéntico**.
 
-> **Estado actual:** Etapas 0 a 3 terminadas y Etapa 5 (gestor) terminada salvo el Paso 5.10: falta aprobar que se quite el enlace del footer, crear los usuarios de D2 y la prueba en un celular con el sitio publicado. También falta subir el repo a GitHub y la revisión manual en dispositivos reales. Próximo: **Etapa 6**. La **Etapa 4** (servidor) queda para el final (decisión del 28/09/2026). *(Actualizar esta línea al cerrar cada paso.)*
+> **Estado actual:** Etapas 0 a 3 terminadas. Etapa 5 (gestor) terminada salvo el Paso 5.10 (aprobar que se quite el enlace del footer, usuarios de D2, prueba en un celular con el sitio publicado). Etapa 6: hechos 6.1 (imágenes), 6.2 (SEO), casi todo 6.3 (falta confirmar Lighthouse ≥ 90 en el VPS), 6.4 (falta CI) y 6.5 (falta `OPERACION.md`); 6.6 es el lanzamiento. Falta subir el repo a GitHub. Próximo: **Etapa 4** (servidor), que necesita el dominio (D1c) y el repo. *(Actualizar esta línea al cerrar cada paso.)*
 
 ---
 
@@ -427,7 +427,7 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
 
 ---
 
-## Etapa 6 — Calidad y lanzamiento
+## Etapa 6 — Calidad y lanzamiento (hecho lo que no depende del servidor)
 
 Las mejoras de esta etapa tienen que ser **invisibles**. Si alguna cambia el diseño (por ejemplo, un contraste que no llega a AA), no se aplica acá: se anota como propuesta para la Etapa 7.
 
@@ -474,13 +474,15 @@ Las mejoras de esta etapa tienen que ser **invisibles**. Si alguna cambia el dis
 
 - [x] Vitest (`pnpm test`, `tests/unit/`): `horarios` (incluida la hora de Argentina y el caso de Maipú), `precio` (reconstrucción de todos los precios de fábrica y `leerPrecioEscrito`), conteo de ocasiones (contra los números de la captura de textos del sitio viejo) y slugs. 32 tests. El conteo pasó a `lib/ocasiones.ts`, compartido por el catálogo y el gestor.
 - [x] Playwright funcional: navegación, modal y teclado (`navegacion.spec.ts`, `accesibilidad.spec.ts`); el filtro activo y el mensaje de WhatsApp se comparan contra el sitio viejo (`estados.spec.ts`). Del gestor, 16 (suman filtros y equipo).
-- [ ] Suite visual completa en verde en CI: se arma con el repo en GitHub (Etapa 4). En local, `pnpm test:visual` pasa completa (142).
+- [ ] Suite visual completa en verde en CI: se arma con el repo en GitHub (Etapa 4). En local, `pnpm test:visual` pasa completa (144).
 
-### Paso 6.5 — Documentación
+### Paso 6.5 — Documentación (casi terminado)
 
-- [ ] Reescribir `docs/MANUAL DEL GESTOR.md` para el gestor nuevo: login, Banco de fotos, Config y Locales; sacar Categorías.
-- [ ] `docs/OPERACION.md`: deploy, backups, restauración y alta de usuarios.
-- [ ] Entrada en `REGISTRO DE CAMBIOS.md` con la migración.
+- [x] `docs/MANUAL DEL GESTOR.md` reescrito para el gestor nuevo (se hizo en la Etapa 5).
+- [ ] `docs/OPERACION.md`: deploy, backups, restauración y alta de usuarios. Se escribe con la Etapa 4, cuando exista el servidor.
+- [x] Entrada 30 en `REGISTRO DE CAMBIOS.md` con la migración (actualizarla al lanzar).
+
+*El Paso 6.6 necesita el servidor y el dominio: se hace después de la Etapa 4.*
 
 ### Paso 6.6 — Lanzamiento
 

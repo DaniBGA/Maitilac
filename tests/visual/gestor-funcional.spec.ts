@@ -152,7 +152,7 @@ test("contacto: el email nuevo se ve en el footer", async ({ page }) => {
   await expect(aviso(page)).toHaveText("Datos de contacto guardados. Ya se ven en el sitio.");
 });
 
-test("locales: el horario nuevo se ve en la página Locales", async ({ page }) => {
+test("locales: el horario nuevo se ve en Locales y en Contacto", async ({ page }) => {
   await page.goto("/gestor");
   const local = page.locator("#g-contacto .gn-local").first();
   const horario = local.locator(".g-campo").filter({ hasText: "lunes a sábado (como se muestra)" }).locator("input");
@@ -162,6 +162,8 @@ test("locales: el horario nuevo se ve en la página Locales", async ({ page }) =
   await expect(aviso(page)).toHaveText("Local guardado. Ya se ve en el sitio.");
   await page.goto("/locales");
   await expect(page.locator("#page-locales")).toContainText("9:00 a 20:00 hs");
+  await page.goto("/contacto");
+  await expect(page.locator(".canal-loc").first()).toContainText("Lun a Sáb · 9:00 a 20:00 hs");
 
   await page.goto("/gestor");
   const local2 = page.locator("#g-contacto .gn-local").first();

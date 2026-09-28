@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
+import type { Local } from "@/lib/tipos";
 import { enlaceWhatsApp, mensajeContacto, type Pestana } from "@/lib/whatsapp";
 
 // Sección de canales y formulario de Contacto: markup de referencia/index.html:963-1101,
@@ -10,9 +11,11 @@ import { enlaceWhatsApp, mensajeContacto, type Pestana } from "@/lib/whatsapp";
 export function SeccionContacto({
   whatsapp,
   whatsappMayorista,
+  locales,
 }: {
   whatsapp: string;
   whatsappMayorista: string;
+  locales: Local[];
 }) {
   const [pestana, setPestana] = useState<Pestana>("consulta");
   const form = useRef<HTMLFormElement>(null);
@@ -105,18 +108,22 @@ export function SeccionContacto({
             <div className="canal-locales">
               <div className="canal-loc-tit">NUESTROS LOCALES</div>
               <div className="con-8">
-                <div className="canal-loc">
-                  <strong>Maipú 1135</strong>
-                  <span>Lun a Sáb · 8:30 a 21:00 hs</span>
-                </div>
-                <div className="canal-loc">
-                  <strong>Avellaneda 655</strong>
-                  <span>
-                    Lun a Sáb · 8:30 a 21:00 hs
-                    <br />
-                    Domingos · 9:30 a 13:30 hs
-                  </span>
-                </div>
+                {/* Los mismos datos que la página Locales; el sitio viejo mostraba la
+                    dirección sin la ciudad ("Maipú 1135"). */}
+                {locales.map((l) => (
+                  <div className="canal-loc" key={l.nombre}>
+                    <strong>{l.direccion.split(",")[0]}</strong>
+                    <span>
+                      {`Lun a Sáb · ${l.semana}`}
+                      {l.domingo ? (
+                        <>
+                          <br />
+                          {`Domingos · ${l.domingo}`}
+                        </>
+                      ) : null}
+                    </span>
+                  </div>
+                ))}
               </div>
               <Link className="canal-link" href="/locales" data-go="locales">
                 Cómo llegar{" "}

@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+_fuentes
+referencia
+docs
+tests
+test-results
+playwright-report
+.env*

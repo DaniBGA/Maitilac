@@ -18,3 +18,9 @@ tests/visual/__resultados__/
 # Sistema / editores
 .DS_Store
 Thumbs.db
+
+# Next.js / pnpm
+.pnp
+.pnp.*
+*.pem
+.pnpm-debug.log*

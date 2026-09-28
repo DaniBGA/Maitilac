@@ -1,0 +1,39 @@
+/* Estilos en línea de las partes del Inicio que armaba el JavaScript del sitio viejo.
+   Valores copiados textual de los template strings. */
+
+/* Tarjeta de producto destacado — pintarDestacados(), referencia/index.html:1844-1895 */
+.td-foto{position:relative;height:210px;background:#e9e2d3}
+.td-img{width:100%;height:210px;object-fit:cover;display:block}
+.td-cuerpo{padding:22px;display:flex;flex-direction:column;flex:1}
+.td-titulo{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.td-desc{margin:12px 0 0;font-size:15px;line-height:1.45;color:#6B655C;font-weight:500;min-height:22px}
+.td-precio{margin:16px 0 18px;display:flex;align-items:baseline;gap:6px}
+.td-unidad{font-size:14px;color:#9a9488;font-weight:600}
+.td-caja{border:1px solid rgba(94,61,34,.14);border-radius:12px;padding:14px;background:#FBF9F3;margin-bottom:20px}
+.td-rotulo{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.07em;color:#7A4E2B;margin-bottom:11px}
+.td-maridajes{display:flex;gap:7px;align-items:center;min-height:27px;overflow:hidden}
+.td-extra{color:#9a9488;font-size:12px;font-weight:700}
+.td-rotulo-locales{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.07em;color:#7A4E2B;margin:16px 0 10px}
+.td-locales{display:flex;flex-wrap:wrap;gap:14px}
+.td-local{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#4a453d}
+.td-punto{width:7px;height:7px;border-radius:999px;background:#617C52}
+.td-boton{margin-top:auto}
+
+/* Tarjeta de local (resumen) — pintarLocalesHome(), referencia/index.html:1897-1926 */
+.lr-card{background:#fff;border:1px solid rgba(94,61,34,.1);border-radius:18px;overflow:hidden;box-shadow:0 6px 22px rgba(94,61,34,.07)}
+.lr-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.lr-ph{height:200px}
+.lr-cuerpo{padding:34px}
+.lr-cab{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.lr-nombre{margin:0;font-size:28px;font-weight:600}
+.lr-dir{display:flex;align-items:center;gap:8px;margin-top:12px;color:#6B655C;font-size:15px;font-weight:500}
+.lr-abierto{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:700;white-space:nowrap}
+.lr-rotulo{font-size:11px;font-weight:800;letter-spacing:.08em;color:#7A4E2B;margin:26px 0 12px}
+.lr-horarios{display:flex;gap:56px;flex-wrap:wrap}
+.lr-dia{font-size:14px;color:#6B655C;font-weight:500}
+.lr-hora{font-size:16px;font-weight:700;margin-top:3px}
+.lr-llegar{display:block;text-align:center;margin-top:28px;background:#F3EFE6;color:#2A2621;padding:14px;border-radius:999px;font-size:15px;font-weight:700;border:1px solid rgba(94,61,34,.12)}
+
+/* Instagram — referencia/index.html:1928-1931 */
+.ig-img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;display:block;background:#e9e2d3}
+.ig-ph{aspect-ratio:1/1;border-radius:14px}

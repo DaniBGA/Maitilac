@@ -1,0 +1,246 @@
+﻿Hola Rosario! Te paso el sitio para que lo veas y me digas qué te parece.
+
+*Ojo: esto es un boceto, no la versión final.* Está para que lo recorras, pruebes el gestor y nos digas qué cambiarías: textos, precios, fotos, cómo está organizado, lo que sea. Todavía estamos a tiempo de cambiar cualquier cosa.
+
+Te escribo cómo funciona cada parte para que puedas probarlo. Está largo, pero lo podés leer de a partes: primero lo que armamos hasta ahora, después cómo usarlo.
+
+━━━━━━━━━━━━━━━━━━━━
+
+*LO QUE ARMAMOS HASTA AHORA*
+
+*1. El Sardo por ahora quedó como uno solo*
+
+Antes estaba dividido en "Sardo Fresco" y "Sardo Estacionado". Por ahora lo dejamos como un solo producto: *Sardo*.
+
+El motivo: las fotos que fueron llegando nunca aclaraban cuál de los dos era, así que había que adivinar en cada una.
+
+Quedó con la descripción "Queso salado", todos los maridajes de los dos juntos, y los premios PLATA 2023 y ORO 2025.
+
+❓ *Dos cosas para que decidas vos:*
+
+• ¿Va como un solo Sardo, o los separamos de nuevo en fresco y estacionado? Si van separados, necesitaríamos saber de cuál es cada foto.
+
+• Los premios PLATA 2023 y ORO 2025 eran del *estacionado*. Al unirlos quedaron como del Sardo en general. ¿Lo dejamos así o lo aclaramos?
+
+El catálogo quedó en 10 productos.
+
+*2. Se acomodaron las fotos*
+
+Quedaron repartidas así:
+
+• Gouda — 5 fotos
+• Holanda — 4 fotos
+• Sardo — 5 fotos
+• Reggianito — 4 fotos
+• Provoleta — 3 fotos
+• Cremoso — 5 fotos
+• Mozzarella — 3 fotos
+• Barra Tybo — 3 fotos
+• Combo 3 Quesos — 3 fotos
+• Flor de Picada — 10 fotos
+
+Total: 45 fotos, todas asignadas. No quedó ninguna suelta.
+
+❓ *Revisá que cada foto esté en el queso correcto.* Varias las asignamos por deducción, mirando la etiqueta del envoltorio. Si alguna está mal, la corregís vos desde el Banco de fotos (te explico abajo cómo).
+
+*3. Las 3 fotos que no se podían identificar*
+
+Eran las hormas amarillas con etiqueta genérica, que no decía el nombre del queso. Por ahora quedaron en la *Provoleta*.
+
+❓ Confirmanos si es correcto o de qué queso son.
+
+*4. Ahora podés editar los filtros del catálogo*
+
+Los botones de "Buscá por ocasión" (Sale picadita, A rallar se ha dicho, etc.) antes estaban fijos y había que pedirlos. Ahora tienen su propia sección en el gestor: podés cambiarles el nombre, elegir qué quesos muestra cada uno, ordenarlos, agregar filtros nuevos o eliminarlos.
+
+Además se arreglaron solos con el cambio del Sardo.
+
+━━━━━━━━━━━━━━━━━━━━
+
+*CÓMO USAR EL GESTOR*
+
+*Para entrar*
+
+Abrí el sitio, bajá hasta el final de la página. A la derecha del "© 2026 Maitilac" hay un enlace gris que dice *"Gestor del catálogo"*.
+
+No pide usuario ni contraseña. Para volver al sitio, el botón "Ver el catálogo" arriba a la derecha.
+
+*⚠️ IMPORTANTE ANTES DE EMPEZAR*
+
+Probá todo lo que quieras: no podés romper nada. Los cambios que hagas se guardan *solo en la computadora o el celular donde los hacés*, no se publican ni se ven en otro dispositivo.
+
+Así que tocá tranquila, cambiá precios, sacá quesos, probá cómo queda.
+
+Cuando tengas armado algo que te guste y quieras que lo dejemos así:
+
+1. Apretás el botón verde *"Exportar"* arriba a la derecha
+2. Se descarga un archivo
+3. Nos lo pasás y lo incorporamos
+
+También sirve al revés: si preferís, anotá los cambios y mandanos la lista por acá. Como quieras.
+
+━━━━━━━━━━━━━━━━━━━━
+
+*LAS 7 SECCIONES DEL GESTOR*
+
+*1-ANUNCIOS DE LA PORTADA*
+
+Los tres carteles que se ven arriba de todo en el Inicio:
+
+• *Barra superior* — la franja que cruza todo el ancho
+• *Banner naranja* — el primer globo sobre la foto (para promociones)
+• *Banner verde* — el segundo globo, al lado
+
+De cada uno podés cambiar el texto, elegir el color (marrón, naranja o verde) y encenderlo o apagarlo con la tilde.
+
+Lo bueno de apagarlo: el cartel desaparece de la portada pero *el texto queda guardado*. Ideal para promociones que van y vienen — apagás el 20% OFF cuando termina, y lo prendés de nuevo el mes siguiente.
+
+Cada cartel tiene una vista previa que te muestra cómo va a quedar mientras escribís.
+
+Al terminar: botón "Guardar anuncios".
+
+*2-CATEGORÍAS*
+
+Son las etiquetas que agrupan los quesos: FRESCOS, MADUROS, PASTA HILADA, etc.
+
+• Para cambiar el nombre: clic encima y escribís
+• Para ocultarla: la casilla verde de la izquierda
+• Agregar o eliminar: los botones correspondientes
+
+⚠️ Ojo con ocultar: al destildar una categoría, *todos sus quesos dejan de verse en el sitio*. Es una forma rápida de sacar una línea entera sin tocar producto por producto.
+
+Al lado de cada una dice cuántos productos la usan.
+
+*3-BUSCÁ POR OCASIÓN (los filtros del catálogo)*
+
+Son los botones que se ven arriba del catálogo: "Sale picadita", "Va a la parrilla", "A rallar se ha dicho"...
+
+De cada uno podés:
+
+• Cambiarle el nombre — clic encima y escribís
+• Elegir qué quesos muestra — las pastillas de abajo, clic para marcar o desmarcar. Las marcadas quedan naranjas
+• Cambiar el orden con las flechas
+• Eliminarlo — los quesos no se borran, solo desaparece el botón
+• Agregar uno nuevo con el botón naranja
+
+Al lado del nombre te dice cuántos quesos se ven hoy con ese filtro. Si queda en cero, el aviso se pone rojo: en el sitio ese botón se ve gris y no se puede apretar.
+
+*4-PREMIOS*
+
+Los que se ven en el carrusel de la página Nosotros.
+
+De cada uno cambiás: año, tipo de premio (Oro, Plata, Gran Campeón), concurso y quesos premiados. Se guardan solos al salir del campo.
+
+Para la foto: clic en el recuadro de la izquierda y elegís una imagen.
+
+Si ocultás todos los premios, la sección entera desaparece de la página.
+
+*5-NUESTRO EQUIPO*
+
+Las personas que aparecen en la página Nosotros.
+
+De cada una cambiás el nombre, el cargo y la profesión o área. La foto se sube haciendo clic en el círculo de la izquierda.
+
+Igual que en premios: si ocultás a todos, la sección desaparece.
+
+*6-PRODUCTOS*
+
+El bloque más grande. Arriba tenés un buscador y tres filtros: Todos, En el sitio, Ocultos.
+
+*Para sacar un queso del sitio temporalmente:*
+Botón "Sacar del sitio". El producto NO se borra: queda guardado con todos sus datos y deja de verse. Con "Poner en el sitio" vuelve. Sirve para faltantes de stock o productos de temporada.
+
+Es distinto de "Eliminar" (que está adentro de Editar), que borra el producto para siempre.
+
+*Para cambiar los datos de un queso:*
+Botón "Editar". Se abre un panel con todo: nombre, categoría, tipo, descripción, precio, presentación (Entero / Trozado / Feteado), maridajes, premios y fotos.
+
+El precio va como texto, así que podés poner "$4500" o "Consultar", lo que necesites.
+
+*Para ocultar el precio de un queso:*
+Debajo del campo de precio hay una casilla: *"Mostrar el precio en el sitio"*. Si la destildás, en la web dice "Consultar" en lugar del número.
+
+El precio no se borra: queda guardado y lo volvés a mostrar cuando quieras tildando la casilla. Sirve para quesos que cambian seguido de precio o que se cotizan aparte.
+
+En la lista del gestor vos vas a seguir viendo el precio real, con un cartelito al lado que te avisa que en el sitio dice "Consultar".
+
+*Productos destacados:*
+La casilla "★ Producto destacado" hace que el queso aparezca en la portada. En la lista se ven con una estrella naranja. Si no marcás ninguno, la sección desaparece de la portada.
+
+*Si le cambiás el nombre a un queso:* no tenés que avisar nada. Los filtros del catálogo y los combos que lo incluían se actualizan solos. Al guardar te lo confirma con un aviso.
+
+*7-BANCO DE FOTOS*
+
+Este es el que más confunde, así que va con calma.
+
+Es un *inventario*: muestra todas las fotos que están cargadas, todas juntas, sin importar a qué queso pertenecen. Debajo de cada una hay una lista para elegir a qué producto va.
+
+*¿En qué se diferencia de Productos?*
+
+Es lo mismo mirado al revés:
+
+• En *Productos* ves un queso y sus fotos → "quiero arreglar el Gouda"
+• En el *Banco* ves una foto y su queso → "¿dónde quedó esta foto?"
+
+*¿Para qué sirve?*
+
+Dos cosas que desde Productos no podés hacer:
+
+*a) Encontrar fotos que quedaron sueltas.* Las que no están en ningún queso salen con borde naranja. Mirando la sección Productos nunca te enterarías de que existen. Son fotos que sacaste y no se están viendo en el sitio.
+
+*b) Corregir una foto mal puesta, en un clic.* Si una foto está en el queso equivocado, la cambiás en la lista y listo. Se saca sola de donde estaba, no quedan repetidas.
+
+Desde Productos serían cinco pasos: abrir un queso, borrar la foto, guardar, abrir el otro, subirla.
+
+*Un atajo útil:* si la foto es de un queso que todavía no está en el catálogo, elegí "➕ Producto nuevo…" al final de la lista. Te pide el nombre y crea el producto con esa foto ya cargada.
+
+⚠️ Si subís fotos nuevas, pasánoslas también a nosotros para sumarlas al Banco. Si no, van a verse en el queso pero no van a aparecer en el inventario.
+
+━━━━━━━━━━━━━━━━━━━━
+
+*PREGUNTAS FRECUENTES*
+
+*Cambié algo y no lo veo en el sitio*
+Actualizá con Ctrl+F5. Si sigue igual, fijate que el queso esté "En el sitio" y que su categoría no esté oculta.
+
+*Subí una foto y dice que no se pudo guardar*
+Es muy pesada. Probá con una imagen de hasta 1 MB.
+
+*Hice cambios en la compu y no los veo en el celular*
+Es lo esperable. Los cambios quedan en cada dispositivo. Para que se vean en todos lados hay que exportar y que los incorporemos.
+
+*¿Puedo entrar desde el celular?*
+Sí, funciona igual. Pero los cambios quedan en ese celular.
+
+*Borré algo sin querer*
+Si era un producto, el botón "Restaurar original" vuelve todo a como estaba — pero también descarta los demás cambios de productos y de filtros.
+
+━━━━━━━━━━━━━━━━━━━━
+
+*LO QUE TODAVÍA NO SE EDITA SOLO*
+
+Estas cosas por ahora las cambiamos nosotros, pedínoslas:
+
+• Los textos de la página Nosotros (la historia, los años)
+• Direcciones, horarios y teléfono de los locales
+• Los textos de la portada
+• Las ilustraciones de la cadena de producción
+• La foto de fondo de la portada
+
+━━━━━━━━━━━━━━━━━━━━
+
+*LO QUE NECESITAMOS DE VOS*
+
+Como esto es un boceto, tu opinión es lo que define cómo sigue. Contanos:
+
+• ¿Los textos están bien? Sobre todo los de la historia y los de la portada
+• ¿Los precios y las descripciones son correctos?
+• ¿Las fotos están cada una en su queso?
+• ¿Falta algo, o sobra algo?
+• ¿Hay algo que se vea feo o confuso?
+
+Y las dos preguntas de arriba: qué hacemos con el Sardo, y de qué queso son las 3 fotos sin identificar.
+
+No te guardes nada — estamos a tiempo de cambiar lo que sea, desde un texto hasta cómo está organizada una sección entera.
+
+Cualquier duda escribinos.

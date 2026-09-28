@@ -1,0 +1,20 @@
+# Dependencias y builds
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Variables de entorno
+.env*
+!.env.example
+
+# Tests
+test-results/
+playwright-report/
+blob-report/
+tests/visual/__resultados__/
+
+# Sistema / editores
+.DS_Store
+Thumbs.db

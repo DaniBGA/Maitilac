@@ -1,0 +1,445 @@
+/* Catálogo Maitilac — exportado el 6/8/2026
+   Reemplazá los bloques correspondientes de index.html */
+
+const ANUNCIOS_BASE = {
+  "barra": {
+    "ver": true,
+    "texto": "¡NUEVA VARIEDAD DE QUESO AZUL DISPONIBLE!",
+    "color": "marron"
+  },
+  "badge1": {
+    "ver": true,
+    "texto": "20% OFF",
+    "color": "naranja"
+  },
+  "badge2": {
+    "ver": true,
+    "texto": "¡NUEVA VARIEDAD DE QUESO AZUL DISPONIBLE!",
+    "color": "verde"
+  }
+};
+
+const CATEGORIAS_BASE = [
+  {
+    "nombre": "FRESCOS",
+    "ver": true
+  },
+  {
+    "nombre": "PASTA HILADA",
+    "ver": true
+  },
+  {
+    "nombre": "MADUROS",
+    "ver": true
+  },
+  {
+    "nombre": "ESPECIALES",
+    "ver": true
+  },
+  {
+    "nombre": "COMBOS",
+    "ver": true
+  },
+  {
+    "nombre": "PICADAS",
+    "ver": true
+  }
+];
+
+const PREMIOS_BASE = [
+  {
+    "anio": "2025",
+    "titulo": "Gran Campeón",
+    "evento": "Cata Quesos y Sabores de Tandil",
+    "detalle": "Barra Tybo",
+    "foto": "",
+    "ver": true
+  },
+  {
+    "anio": "2025",
+    "titulo": "Oro",
+    "evento": "Cata Quesos y Sabores de Tandil",
+    "detalle": "Gouda · Sardo Estacionado · Barra Tybo · Cremoso",
+    "foto": "",
+    "ver": true
+  },
+  {
+    "anio": "2025",
+    "titulo": "Plata",
+    "evento": "Cata Quesos y Sabores de Tandil",
+    "detalle": "Mozzarella",
+    "foto": "",
+    "ver": true
+  },
+  {
+    "anio": "2023",
+    "titulo": "Oro",
+    "evento": "Cata Quesos y Sabores de Tandil",
+    "detalle": "Gouda · Holanda",
+    "foto": "",
+    "ver": true
+  },
+  {
+    "anio": "2023",
+    "titulo": "Plata",
+    "evento": "Cata Quesos y Sabores de Tandil",
+    "detalle": "Sardo Estacionado · Barra Tybo",
+    "foto": "",
+    "ver": true
+  },
+  {
+    "anio": "2019",
+    "titulo": "Oro",
+    "evento": "Cata Quesos y Sabores de Tandil",
+    "detalle": "Gouda",
+    "foto": "",
+    "ver": true
+  }
+];
+
+const PRODUCTOS_BASE = [
+  {
+    "nombre": "Gouda",
+    "destacado": true,
+    "cat": "MADUROS",
+    "tipo": "Pasta Semidura sin Ojos",
+    "activo": true,
+    "desc": "Queso suave",
+    "precio": "$4500",
+    "unidad": "kg",
+    "badge": "",
+    "photos": [
+      "img/gouda-1.jpg",
+      "img/gouda-2.jpg",
+      "img/gouda-3.jpg",
+      "img/gouda-5.jpg",
+      "img/gouda-4.jpg"
+    ],
+    "comida": [
+      "Nuez",
+      "Pera",
+      "Manzana verde y miel"
+    ],
+    "bebida": [
+      "Chardonnay",
+      "Pinot Noir"
+    ],
+    "presentaciones": [
+      "Entero",
+      "Trozado"
+    ],
+    "quesos": [],
+    "premios": "ORO 2019, ORO 2023 Y ORO 2025"
+  },
+  {
+    "nombre": "Holanda",
+    "destacado": true,
+    "cat": "MADUROS",
+    "tipo": "Pasta Semidura con Ojos",
+    "activo": true,
+    "desc": "Queso picante",
+    "precio": "$4800",
+    "unidad": "kg",
+    "badge": "Producto del Mes",
+    "photos": [
+      "img/holanda-2.jpg",
+      "img/holanda-3.jpg",
+      "img/holanda-4.jpg",
+      "img/holanda-1.jpg"
+    ],
+    "comida": [
+      "Jamón cocido",
+      "Uva",
+      "Pepinillos"
+    ],
+    "bebida": [
+      "Sauvignon blanc",
+      "Espumante"
+    ],
+    "presentaciones": [
+      "Entero",
+      "Trozado"
+    ],
+    "quesos": [],
+    "premios": "ORO 2023"
+  },
+  {
+    "nombre": "Sardo Fresco",
+    "destacado": true,
+    "cat": "MADUROS",
+    "tipo": "Pasta Dura",
+    "activo": true,
+    "desc": "Queso salado",
+    "precio": "$5200",
+    "unidad": "kg",
+    "badge": "",
+    "photos": [
+      "img/sardo-1.jpg"
+    ],
+    "comida": [
+      "Aceitunas",
+      "Tomates secos"
+    ],
+    "bebida": [
+      "Malbec joven",
+      "Cerveza lager"
+    ],
+    "presentaciones": [
+      "Entero",
+      "Trozado"
+    ],
+    "quesos": [],
+    "premios": ""
+  },
+  {
+    "nombre": "Sardo Estacionado",
+    "cat": "MADUROS",
+    "tipo": "Pasta Dura",
+    "activo": true,
+    "desc": "",
+    "precio": "$5200",
+    "unidad": "kg",
+    "badge": "",
+    "photos": [
+      "img/sardo-2.jpg",
+      "img/sardo-3.jpg",
+      "img/sardo-4.jpg",
+      "img/sardo-5.jpg"
+    ],
+    "comida": [
+      "Almendras",
+      "Higo",
+      "Miel"
+    ],
+    "bebida": [
+      "Cabernet sauvignon",
+      "Whisky suave"
+    ],
+    "presentaciones": [
+      "Entero",
+      "Trozado"
+    ],
+    "quesos": [],
+    "premios": "PLATA 2023 Y ORO 2025"
+  },
+  {
+    "nombre": "Barra Tybo",
+    "cat": "PASTA HILADA",
+    "tipo": "Pasta Semidura sin Ojos",
+    "activo": true,
+    "desc": "",
+    "precio": "$3900",
+    "unidad": "kg",
+    "badge": "",
+    "photos": [
+      "img/barra-1.jpg",
+      "img/barra-2.jpg",
+      "img/feteado-1.jpg"
+    ],
+    "comida": [
+      "Pepino",
+      "Mostaza suave"
+    ],
+    "bebida": [
+      "Cerveza rubia",
+      "Vino rosado"
+    ],
+    "presentaciones": [
+      "Entero",
+      "Feteado"
+    ],
+    "quesos": [],
+    "premios": "PLATA 2023 Y ORO 2025 · GRAN CAMPEON 2025"
+  },
+  {
+    "nombre": "Reggianito",
+    "cat": "MADUROS",
+    "tipo": "Pasta Dura",
+    "activo": true,
+    "desc": "Muy estacionado",
+    "precio": "$6200",
+    "unidad": "kg",
+    "badge": "",
+    "photos": [
+      "img/reggianito-1.jpg",
+      "img/reggianito-2.jpg",
+      "img/sardo-7.jpg",
+      "img/sardo-6.jpg"
+    ],
+    "comida": [
+      "Jamón crudo",
+      "Rúcula",
+      "Pera",
+      "Aceto"
+    ],
+    "bebida": [
+      "Cabernet franc",
+      "Aperol spritz"
+    ],
+    "presentaciones": [
+      "Entero",
+      "Trozado"
+    ],
+    "quesos": [],
+    "premios": ""
+  },
+  {
+    "nombre": "Provoleta",
+    "cat": "ESPECIALES",
+    "tipo": "Pasta Dura",
+    "activo": true,
+    "desc": "",
+    "precio": "$5600",
+    "unidad": "kg",
+    "badge": "",
+    "photos": [
+      "img/sin-asignar-3.jpg",
+      "img/sin-asignar-1.jpg",
+      "img/sin-asignar-2.jpg"
+    ],
+    "comida": [
+      "Chimichurri",
+      "Morrones asados",
+      "Panceta"
+    ],
+    "bebida": [
+      "Malbec",
+      "Cerveza IPA"
+    ],
+    "presentaciones": [
+      "Entero",
+      "Trozado al vacío"
+    ],
+    "quesos": [],
+    "premios": ""
+  },
+  {
+    "nombre": "Cremoso",
+    "cat": "FRESCOS",
+    "tipo": "Pasta Blanda",
+    "activo": true,
+    "desc": "",
+    "precio": "$3200",
+    "unidad": "kg",
+    "badge": "",
+    "photos": [
+      "img/cremoso-1.jpg",
+      "img/cremoso-2.jpg",
+      "img/cremoso-3.jpg",
+      "img/cremoso-4.jpg",
+      "img/cremoso-5.jpg"
+    ],
+    "comida": [
+      "Dulce de membrillo y batata",
+      "Jamón"
+    ],
+    "bebida": [
+      "Torrontés",
+      "Cerveza suave"
+    ],
+    "presentaciones": [
+      "Entero",
+      "Trozado"
+    ],
+    "quesos": [],
+    "premios": "ORO 2025"
+  },
+  {
+    "nombre": "Mozzarella",
+    "destacado": true,
+    "cat": "PASTA HILADA",
+    "tipo": "Pasta Hilada",
+    "activo": true,
+    "desc": "",
+    "precio": "$3800",
+    "unidad": "kg",
+    "badge": "",
+    "photos": [
+      "img/mozzarella-1.jpg",
+      "img/mozzarella-2.jpg",
+      "img/mozzarella-3.jpg"
+    ],
+    "comida": [
+      "Tomate",
+      "Albahaca",
+      "Aceite de oliva"
+    ],
+    "bebida": [
+      "Pinot grigio",
+      "Vermuy blanco"
+    ],
+    "presentaciones": [
+      "Entero",
+      "Trozado"
+    ],
+    "quesos": [],
+    "premios": "PLATA 2025"
+  },
+  {
+    "nombre": "Combo 3 Quesos",
+    "cat": "COMBOS",
+    "tipo": "Combo de 3 Quesos",
+    "activo": true,
+    "desc": "Nuestros tres quesos más pedidos en una misma caja, ideal para compartir o regalar.",
+    "precio": "Desde $8500",
+    "unidad": "combo",
+    "badge": "",
+    "photos": [
+      "img/combos-3.jpg",
+      "img/combos-4.jpg",
+      "img/provoleta-1.jpg"
+    ],
+    "comida": [
+      "Vinos y fiambres",
+      "Tabla de picada"
+    ],
+    "bebida": [
+      "A elección según el combo"
+    ],
+    "presentaciones": [],
+    "quesos": [
+      "Gouda",
+      "Sardo Fresco",
+      "Holanda"
+    ],
+    "premios": ""
+  },
+  {
+    "nombre": "Flor de Picada",
+    "cat": "",
+    "tipo": "",
+    "activo": true,
+    "desc": "Brochettes de quesos, fiambres, aceitunas y tomates cherry armados en forma de ramo.",
+    "precio": "Consultar",
+    "unidad": "unidad",
+    "badge": "Nuevo",
+    "photos": [
+      "img/flor-de-picada-1.jpg",
+      "img/flor-de-picada-2.jpg",
+      "img/flor-de-picada-3.jpg",
+      "img/flor-de-picada-4.jpg",
+      "img/flor-de-picada-5.jpg",
+      "img/flor-de-picada-6.jpg",
+      "img/flor-de-picada-7.jpg",
+      "img/flor-de-picada-8.jpg",
+      "img/combos-2.jpg",
+      "img/combos-1.jpg"
+    ],
+    "comida": [
+      "Aceitunas",
+      "Tomates cherry",
+      "Fiambres"
+    ],
+    "bebida": [
+      "Espumante",
+      "Vino rosado"
+    ],
+    "presentaciones": [],
+    "quesos": [
+      "Cremoso",
+      "Gouda",
+      "Sardo Fresco"
+    ],
+    "premios": ""
+  }
+];

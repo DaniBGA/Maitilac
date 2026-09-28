@@ -1,0 +1,11 @@
+/* Portado textual de referencia/index.html:201-209. No redondear valores (ver docs/PASO A PASO.md, "Contrato de diseño"). */
+
+/* ---------- Footer ---------- */
+.foot-dark{background:#1B1815;color:rgba(247,244,236,.7)}
+.foot-dark a{color:rgba(247,244,236,.7)}
+.foot-dark a:hover{color:#DA8737}
+.foot-grid{max-width:1200px;margin:0 auto;padding:70px 32px 40px;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:48px}
+.foot-tit{font-size:12px;font-weight:800;letter-spacing:.08em;color:#F7F4EC;margin-bottom:18px}
+.foot-col{display:flex;flex-direction:column;gap:12px;font-size:15px}
+.foot-bottom{border-top:1px solid rgba(247,244,236,.12)}
+.foot-bottom>div{max-width:1200px;margin:0 auto;padding:22px 32px;font-size:13px;color:rgba(247,244,236,.5)}

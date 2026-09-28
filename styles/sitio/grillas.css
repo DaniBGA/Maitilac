@@ -1,0 +1,13 @@
+/* Portado textual de referencia/index.html:152-162. No redondear valores (ver docs/PASO A PASO.md, "Contrato de diseño"). */
+
+/* ---------- Grillas ---------- */
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+/* Destacados y equipo: si la última fila queda incompleta, se centra */
+.grid-centrada{display:flex;flex-wrap:wrap;justify-content:center;gap:26px}
+.grid-centrada > *{flex:0 1 calc(25% - 19.5px);min-width:0}
+/* Variante de 3 columnas, para el equipo */
+.grid-centrada-3{display:flex;flex-wrap:wrap;justify-content:center;gap:28px}
+.grid-centrada-3 > *{flex:0 1 calc(33.333% - 19px);min-width:0}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.grid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}

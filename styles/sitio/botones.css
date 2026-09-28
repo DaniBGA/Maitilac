@@ -1,0 +1,8 @@
+/* Portado textual de referencia/index.html:164-169. No redondear valores (ver docs/PASO A PASO.md, "Contrato de diseño"). */
+
+/* ---------- Botones generales ---------- */
+.btn-pill{display:inline-flex;align-items:center;gap:9px;padding:13px 24px;border-radius:999px;font-size:15px;font-weight:700}
+.btn-wsp{background:#5E3D22;color:#fff}
+.btn-wsp:hover{color:#fff}
+.btn-out{border:1px solid rgba(94,61,34,.25);color:#2A2621}
+.btn-out:hover{background:#F3EFE6;color:#2A2621}

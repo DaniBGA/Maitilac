@@ -1,0 +1,55 @@
+/* Portado textual de referencia/index.html:76-128. No redondear valores (ver docs/PASO A PASO.md, "Contrato de diseño"). */
+
+/* ---------- Línea de tiempo (Historia) ---------- */
+.timeline{display:grid;grid-template-columns:200px 1fr;gap:60px;align-items:stretch}
+/* Columna izquierda: los años, unidos por una línea vertical.
+   Se reparten a lo alto para acompañar el largo del texto. */
+.tl-nav{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:6px 0;min-height:100%}
+/* El relato de la historia, arriba del detalle de cada año */
+.tl-relato{margin-bottom:36px}
+.tl-relato p{margin:0 0 18px;font-size:17.5px;line-height:1.75;color:#4a453d;font-weight:500}
+.tl-relato p:last-child{margin-bottom:0}
+.tl-relato strong{color:#2A2621}
+/* Frase de apertura, en cursiva */
+.tl-lema{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:24px !important;line-height:1.4 !important;color:#7A4E2B !important;margin-bottom:26px !important}
+/* La pregunta que cambió todo */
+.tl-pregunta{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:26px !important;line-height:1.35 !important;color:#7A4E2B !important;margin:26px 0 !important;padding-left:22px;border-left:3px solid #DA8737}
+/* "Así nació MAITILAC." */
+.tl-destacado{font-family:'Cormorant Garamond',Georgia,serif;font-size:28px !important;font-weight:600;color:#2A2621 !important;margin:26px 0 !important}
+/* Cierre del relato */
+.tl-cierre{font-family:'Cormorant Garamond',Georgia,serif;font-size:23px !important;line-height:1.5 !important;color:#5b564d !important;margin:22px 0 !important;padding-top:22px;border-top:1px solid rgba(94,61,34,.14)}
+/* Aviso de que la línea de tiempo se puede tocar */
+.tl-ayuda{display:inline-flex;align-items:center;gap:9px;margin-top:8px !important;font-size:14.5px !important;color:#7A4E2B !important;font-weight:700 !important;background:#EFEBDF;border:1px solid rgba(122,78,43,.2);border-radius:999px;padding:10px 18px}
+.tl-ayuda::before{content:'←';font-size:17px;line-height:1}
+
+/* Globo con el resumen del año, al pasar el mouse */
+/* Aparece debajo del año, sin invadir la columna del texto */
+.tl-globo{position:absolute;left:0;top:calc(100% + 10px);transform:translateY(-6px);width:288px;background:#211E1A;color:#F7F4EC;padding:14px 17px;border-radius:12px;font-size:13.5px;line-height:1.55;font-weight:500;box-shadow:0 14px 34px rgba(0,0,0,.45);opacity:0;visibility:hidden;transition:opacity .18s,transform .18s;z-index:60;pointer-events:none;text-align:left}
+.tl-globo strong{display:block;margin-bottom:4px;font-size:15px;color:#DA8737;font-weight:800}
+/* Punta del globo, apuntando al año */
+.tl-globo::before{content:'';position:absolute;bottom:100%;left:24px;border:7px solid transparent;border-bottom-color:#211E1A}
+.tl-item:hover .tl-globo,.tl-item:focus-visible .tl-globo{opacity:1;visibility:visible;transform:translateY(0)}
+.tl-nav::before{content:'';position:absolute;left:11px;top:18px;bottom:18px;width:2px;background:rgba(94,61,34,.16)}
+/* Los últimos años abren el globo hacia arriba, para que no se salga */
+.tl-item:nth-last-child(-n+2) .tl-globo{top:auto;bottom:calc(100% + 10px);transform:translateY(6px)}
+.tl-item:nth-last-child(-n+2) .tl-globo::before{bottom:auto;top:100%;border-bottom-color:transparent;border-top-color:#211E1A}
+.tl-item:nth-last-child(-n+2):hover .tl-globo,.tl-item:nth-last-child(-n+2):focus-visible .tl-globo{transform:translateY(0)}
+.tl-item{position:relative;display:flex;align-items:center;gap:16px;padding:8px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;width:100%}
+.tl-dot{position:relative;z-index:1;flex:none;width:24px;height:24px;border-radius:999px;background:#F7F4EC;border:2px solid rgba(94,61,34,.28);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.tl-dot::after{content:'';width:8px;height:8px;border-radius:999px;background:rgba(94,61,34,.28);transition:all .2s}
+.tl-anio{font-family:'Cormorant Garamond',Georgia,serif;font-size:31px;font-weight:700;color:#a89e8d;line-height:1;transition:color .2s,font-size .2s}
+.tl-item:hover .tl-anio{color:#7A4E2B}
+.tl-item.on .tl-anio{color:#DA8737;font-size:38px}
+.tl-item.on .tl-dot{border-color:#DA8737;transform:scale(1.1)}
+.tl-item.on .tl-dot::after{background:#DA8737}
+/* Columna derecha: texto arriba, carrusel abajo */
+/* min-width:0 evita que el carrusel ensanche la columna y desborde la pantalla */
+.tl-panel{min-height:520px;min-width:0}
+.tl-carrusel{display:flex;gap:18px;overflow-x:auto;padding:4px 2px 14px;margin-top:34px;scrollbar-width:none}
+.tl-carrusel::-webkit-scrollbar{display:none}
+.tl-carrusel::-webkit-scrollbar{height:7px}
+.tl-carrusel::-webkit-scrollbar-track{background:rgba(94,61,34,.07);border-radius:999px}
+.tl-carrusel::-webkit-scrollbar-thumb{background:rgba(94,61,34,.28);border-radius:999px}
+.tl-foto{flex:none;width:340px;height:245px;border-radius:16px;scroll-snap-align:start;object-fit:cover;background:#e9e2d3}
+/* Segunda fila del carrusel: pegada a la de arriba */
+.tl-carrusel-2{margin-top:14px}

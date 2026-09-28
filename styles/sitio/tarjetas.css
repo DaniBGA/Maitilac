@@ -1,0 +1,15 @@
+/* Portado textual de referencia/index.html:62-74. No redondear valores (ver docs/PASO A PASO.md, "Contrato de diseño"). */
+
+/* ---------- Tarjetas de producto ---------- */
+.card{background:#fff;border:1px solid rgba(94,61,34,.1);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 6px 22px rgba(94,61,34,.07)}
+.card h3{margin:0;font-size:25px;font-weight:600;color:#2A2621}
+.chip{background:#fff;border:1px solid rgba(94,61,34,.16);color:#4a453d;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600}
+/* Etiquetas de presentación (Entero / Trozado / Feteado) */
+.chip-pres{background:#EFEBDF;border:1px solid rgba(122,78,43,.3);color:#7A4E2B;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.02em}
+/* Etiquetas de quesos incluidos en combos y picadas */
+.chip-queso{background:#F2F5EE;border:1px solid rgba(97,124,82,.35);color:#4f6b41;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700}
+.precio{font-size:26px;font-weight:800;color:#C67A31;letter-spacing:-.01em}
+.btn-detalles{margin-top:auto;background:#7A4E2B;color:#fff;padding:14px;border-radius:999px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;border:none}
+.btn-detalles:hover{background:#5E3D22;color:#fff}
+.badge{position:absolute;top:14px;left:14px;background:#DA8737;color:#fff;padding:6px 13px;border-radius:8px;font-size:12px;font-weight:800;letter-spacing:.02em}
+.navimg{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:999px;border:none;background:rgba(255,255,255,.9);color:#2A2621;display:flex;align-items:center;justify-content:center;cursor:pointer}

@@ -1,0 +1,26 @@
+/* Portado textual de referencia/index.html:24-47. No redondear valores (ver docs/PASO A PASO.md, "Contrato de diseño"). */
+
+/* ---------- Base ---------- */
+*{box-sizing:border-box}
+/* html y body juntos: en celular, declararlo solo en body no alcanza y queda
+   una franja blanca al costado que se puede deslizar. */
+html{overflow-x:hidden;width:100%}
+body{margin:0;background:#F7F4EC;color:#2A2621;font-family:'Mulish',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;width:100%;max-width:100%;position:relative}
+a{color:#C67A31;text-decoration:none}
+a:hover{color:#DA8737}
+.serif{font-family:'Cormorant Garamond',Georgia,serif}
+img{max-width:100%}
+input,select,textarea{font-family:inherit}
+input::placeholder,textarea::placeholder{color:#a8a297}
+button{font-family:inherit}
+
+/* Placeholder de foto pendiente (patrón rayado con etiqueta) */
+.ph{position:relative;background-color:#e9e2d3;background-image:repeating-linear-gradient(45deg,rgba(94,61,34,.05),rgba(94,61,34,.05) 12px,rgba(94,61,34,.11) 12px,rgba(94,61,34,.11) 24px)}
+.ph::after{content:attr(data-ph);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(94,61,34,.55);white-space:nowrap;text-align:center;width:82%}
+
+@keyframes catOverlayIn{from{opacity:0}to{opacity:1}}
+@keyframes catModalIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+/* ---------- Layout reutilizable ---------- */
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+.hidden{display:none !important}

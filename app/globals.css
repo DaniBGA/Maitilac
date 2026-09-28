@@ -1,0 +1,59 @@
+/*
+ * Estilos globales del sitio Maitilac.
+ *
+ * Capas, de menor a mayor prioridad (ver docs/PASO A PASO.md, "Estrategia de estilos"):
+ *   theme     → variables de Tailwind y tokens de la marca
+ *   sitio     → CSS del sitio viejo, portado textual y en el mismo orden
+ *   en-linea  → lo que en el sitio viejo eran atributos style="" (les gana a las
+ *               reglas normales de "sitio", como un estilo en línea; los !important
+ *               de "sitio" les siguen ganando, igual que en el sitio viejo)
+ *   utilities → utilidades de Tailwind, sólo para código nuevo
+ *
+ * Tailwind se importa SIN preflight: el sitio viejo depende de los márgenes
+ * por defecto del navegador en h1, p, ul, etc.
+ */
+@layer theme, sitio, en-linea, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@import "../styles/sitio/base.css" layer(sitio);
+@import "../styles/sitio/header.css" layer(sitio);
+@import "../styles/sitio/tarjetas.css" layer(sitio);
+@import "../styles/sitio/historia.css" layer(sitio);
+@import "../styles/sitio/cadena.css" layer(sitio);
+@import "../styles/sitio/grillas.css" layer(sitio);
+@import "../styles/sitio/botones.css" layer(sitio);
+@import "../styles/sitio/contacto.css" layer(sitio);
+@import "../styles/sitio/footer.css" layer(sitio);
+@import "../styles/sitio/gestor.css" layer(sitio);
+@import "../styles/sitio/responsive.css" layer(sitio);
+
+@import "../styles/en-linea/layout.css" layer(en-linea);
+
+/* ---------- Tipografías (referencia/index.html:19-22) ---------- */
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:400 700;font-display:swap;src:url("/fonts/cormorant.woff2") format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:400 700;font-display:swap;src:url("/fonts/cormorant-italic.woff2") format('woff2')}
+@font-face{font-family:'Mulish';font-style:normal;font-weight:400 800;font-display:swap;src:url("/fonts/mulish.woff2") format('woff2')}
+@font-face{font-family:'Yellowtail';font-style:normal;font-weight:400;font-display:swap;src:url("/fonts/yellowtail.woff2") format('woff2')}
+
+/* ---------- Tokens de la marca (docs/PLAN DE REFACTORIZACION.md, 4.6) ---------- */
+@theme {
+  --color-crema: #F7F4EC;
+  --color-crema-2: #EFEBDF;
+  --color-crema-3: #E7E4D6;
+  --color-tinta: #2A2621;
+  --color-oscuro: #1B1815;
+  --color-marron: #5E3D22;
+  --color-marron-2: #7A4E2B;
+  --color-naranja: #C67A31;
+  --color-naranja-2: #DA8737;
+  --color-verde: #617C52;
+
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Mulish', system-ui, sans-serif;
+  --font-script: 'Yellowtail', cursive;
+
+  --breakpoint-tablet: 1024px;
+  --breakpoint-celular: 720px;
+}

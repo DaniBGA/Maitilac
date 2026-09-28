@@ -2,6 +2,10 @@
  * Paso 2.1 — Extrae los datos de fábrica del sitio viejo (referencia/index.html)
  * ejecutando su propio JavaScript, así no se copia nada a mano (regla 1: textos tal cual).
  *
+ * Los textos fijos van a content/ y lo que edita el gestor, a db/importar/data/
+ * (origen de `pnpm db:importar`). Los datos extra de Locales y del producto del
+ * mes (db/importar/data/extras.json) se sacaron del HTML aparte.
+ *
  *   pnpm datos:extraer
  */
 import { chromium } from "@playwright/test";
@@ -14,6 +18,8 @@ const CONSTANTES = [
 ];
 
 const nombreArchivo = (c: string) => c.replace(/_BASE$/, "").toLowerCase().replace(/_/g, "-");
+const CONTENIDO_FIJO = ["colores", "historia", "fotos-historia", "fotos-hoy", "pasos", "insta"];
+const carpeta = (nombre: string) => (CONTENIDO_FIJO.includes(nombre) ? "content" : "db/importar/data");
 
 async function main() {
   const navegador = await chromium.launch();
@@ -26,12 +32,13 @@ async function main() {
   const datos = (await pagina.evaluate(`({ ${CONSTANTES.join(", ")} })`)) as Record<string, unknown>;
   await navegador.close();
 
-  mkdirSync("data", { recursive: true });
   for (const c of CONSTANTES) {
-    const archivo = `data/${nombreArchivo(c)}.json`;
+    const nombre = nombreArchivo(c);
+    mkdirSync(carpeta(nombre), { recursive: true });
+    const archivo = `${carpeta(nombre)}/${nombre}.json`;
     writeFileSync(archivo, JSON.stringify(datos[c], null, 2) + "\n");
     const n = Array.isArray(datos[c]) ? (datos[c] as unknown[]).length : Object.keys(datos[c] as object).length;
-    console.log(`${archivo.padEnd(28)} ${n}`);
+    console.log(`${archivo.padEnd(36)} ${n}`);
   }
 }
 

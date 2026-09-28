@@ -1,0 +1,28 @@
+{
+  "config": {
+    "facebook": "https://www.facebook.com/maitilac"
+  },
+  "locales": {
+    "Local Maipú": {
+      "fotoDetalle": "img/local-maipu-2.jpg",
+      "fotoDetalleAlt": "Frente del local de Maipú 1135",
+      "comoLlegar": "Ubicado a pocas cuadras del centro, sobre calle Maipú entre 4 de Abril y Alsina (a media cuadra de la calesita).",
+      "mapaUrl": "https://maps.google.com/?q=Maipú+1135,+Tandil",
+      "encuadreDetalle": "center 40%"
+    },
+    "Local Avellaneda": {
+      "fotoDetalle": "img/local-avellaneda-2.jpg",
+      "fotoDetalleAlt": "Frente del local de Avellaneda 655",
+      "comoLlegar": "De camino al dique y al Parque Independencia, sobre Av. Avellaneda.",
+      "mapaUrl": "https://maps.google.com/?q=Avellaneda+655,+Tandil",
+      "encuadreDetalle": "center 62%"
+    }
+  },
+  "productoDelMes": {
+    "producto": "Holanda",
+    "texto": "Queso picante. Pasta semidura con ojos.",
+    "foto": "img/holanda-1.jpg",
+    "precioMostrado": "$4800",
+    "unidadMostrada": "kg"
+  }
+}

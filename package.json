@@ -11,10 +11,17 @@
     "ref:servir": "serve referencia -l 4500 --no-clipboard",
     "ref:capturar": "REFERENCIA=1 playwright test --update-snapshots=all",
     "test:visual": "playwright test",
-    "datos:extraer": "tsx scripts/extraer-datos.ts"
+    "datos:extraer": "tsx scripts/extraer-datos.ts",
+    "db:levantar": "docker compose -f infra/docker-compose.dev.yml up -d",
+    "db:generar": "drizzle-kit generate",
+    "db:migrar": "drizzle-kit migrate",
+    "db:importar": "tsx --env-file=.env db/importar/index.ts",
+    "db:estudio": "drizzle-kit studio"
   },
   "dependencies": {
+    "drizzle-orm": "^0.45.3",
     "next": "16.3.6",
+    "postgres": "^3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
@@ -24,6 +31,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "prettier": "^3.9.9",

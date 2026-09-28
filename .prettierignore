@@ -3,3 +3,5 @@ _fuentes/
 docs/
 tests/visual/__referencia__/
 pnpm-lock.yaml
+styles/
+db/migraciones/

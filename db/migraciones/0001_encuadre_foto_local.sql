@@ -1,0 +1,1 @@
+ALTER TABLE "locales" ADD COLUMN "encuadre_detalle" text DEFAULT 'center' NOT NULL;

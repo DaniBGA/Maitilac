@@ -1,0 +1,25 @@
+# Base de datos para desarrollo local.
+#   docker compose -f infra/docker-compose.dev.yml up -d
+# Puerto 5440 en la máquina (5432 y 5433 suelen estar ocupados por otros proyectos).
+name: maitilac-dev
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: maitilac
+      POSTGRES_USER: maitilac
+      POSTGRES_PASSWORD: maitilac
+    ports:
+      - "127.0.0.1:5440:5432"
+    volumes:
+      - datos:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U maitilac -d maitilac"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  datos:

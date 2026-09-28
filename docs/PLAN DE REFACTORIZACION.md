@@ -162,7 +162,7 @@ Todo el sitio **y** el panel de administración viven en un único archivo:
 
 Un script mínimo en `/` redirige los hashes viejos (`/#catalogo` → `/catalogo`, `/#gestor` → `/gestor`) para no romper enlaces ya compartidos.
 
-**Estrategia de caché:** las funciones de lectura de `lib/queries.ts` se marcan con `'use cache'` y una etiqueta por entidad. Las Server Actions del gestor, después de escribir en la base, llaman a `revalidateTag('<entidad>')`. La caché de Next vive en el disco del contenedor (volumen persistente), así que un reinicio no la vacía. Caddy agrega compresión y cabeceras de caché largas para `/_next/static` y `/fotos`.
+**Estrategia de caché** *(implementada en la Etapa 3)*: las funciones de `lib/datos.ts` usan `'use cache'` + `cacheLife('max')` + `cacheTag('<entidad>')`. Las páginas se arman en cada pedido (`await connection()`), así **el build no necesita la base** (la imagen Docker se compila sin acceso a ella), y los datos salen de la caché en memoria del servidor, que en un VPS persiste entre pedidos. Las Server Actions del gestor, después de escribir en la base, llaman a `updateTag('<entidad>')` y el cambio se ve al instante. Si el servidor se reinicia, la caché arranca vacía y se vuelve a llenar en el primer pedido (una consulta liviana). Caddy agrega compresión y cabeceras de caché largas para `/_next/static` y `/fotos`.
 
 ### 4.2 Qué va a la base de datos y qué queda en el repositorio
 
@@ -191,7 +191,6 @@ productos (
   ver_precio bool default true,
   badge text,                              -- 'Producto del Mes', 'Nuevo', …
   destacado bool default false,
-  producto_del_mes bool default false,     -- reemplaza el bloque escrito a mano (P5)
   presentaciones text[] default '{}',      -- 'Entero', 'Trozado', 'Feteado', …
   maridaje_comida text[] default '{}',
   maridaje_bebida text[] default '{}',
@@ -205,7 +204,7 @@ productos (
 producto_fotos    (producto_id fk, foto_id fk, orden int, pk(producto_id, foto_id))
 combo_quesos      (combo_id fk → productos, queso_id fk → productos, orden int)   -- por id (P4)
 
-ocasiones         (id uuid pk, label text, ver bool, orden int)
+ocasiones         (id uuid pk, clave text unique, label text, ver bool, orden int)   -- clave: la del sitio viejo
 ocasion_productos (ocasion_id fk, producto_id fk, pk(ocasion_id, producto_id))
 
 anuncios (clave text pk check (clave in ('barra','badge1','badge2')),
@@ -218,12 +217,18 @@ equipo   (id uuid pk, nombre text, rol text, area text,
           foto_id fk null, ver bool, orden int)
 
 locales  (id uuid pk, nombre text, direccion text,
-          horario_texto_semana text, horario_texto_domingo text,   -- lo que se muestra, tal cual
-          horarios jsonb,                                          -- lo que calcula "Abierto ahora"
-          foto_id fk null, orden int)
+          horario_semana text, horario_domingo text,               -- lo que se muestra, tal cual
+          abre text, cierra text, dom_abre text, dom_cierra text,  -- lo que calcula "Abierto ahora"
+          foto_id fk null,                                         -- foto del resumen del Inicio
+          foto_detalle_id fk null, encuadre_detalle text,          -- foto de la página Locales y su object-position
+          como_llegar text, mapa_url text, orden int)
 
 config   (id int pk check (id = 1), whatsapp text, whatsapp_mayorista text,
           telefono text, email text, instagram text, facebook text)
+
+-- Bloque "Producto del mes" del catálogo (una fila). En el sitio viejo tiene su
+-- propio texto y su propia foto, distintos de la descripción y la 1.ª foto del producto.
+producto_del_mes (id int pk check (id = 1), producto_id fk null, texto text, foto_id fk null)
 
 -- Tablas de Better Auth (user, session, account, verification), generadas por su CLI
 ```
@@ -231,6 +236,7 @@ config   (id int pk check (id = 1), whatsapp text, whatsapp_mayorista text,
 Notas:
 - **`precio` numérico + `precio_prefijo`**: hoy el precio es texto libre (`'$4500'`, `'Desde $8500'`, `'Consultar'`). La migración lo descompone sin perder información y una única función formatea (`$4.500`). Si el cliente prefiere seguir escribiendo el precio como texto libre, se reemplaza por un campo `precio_texto` (decisión abierta D3).
 - **Sin tabla de categorías**: se eliminaron del sitio y no se reintroducen (regla 5).
+- **Ajustes de la Etapa 3** (para que nada cambie visualmente): `producto_del_mes` pasó de ser una columna de `productos` a una tabla propia; `locales` sumó la foto, el encuadre, "cómo llegar" y el mapa de la página Locales; `ocasiones` conserva la clave del sitio viejo. El precio se sigue mostrando con el formato viejo (`$4500`) hasta que se decida D3. Implementado en `db/schema.ts`.
 - **Quitar una foto de un producto** sólo borra la fila de `producto_fotos`. La foto sigue en `fotos` y aparece como "sin asignar" en el Banco (pedido del cliente del 06/08/2026).
 
 ### 4.4 Seguridad
@@ -310,7 +316,7 @@ maitilac/
 └─ _fuentes/                       # material del cliente, fuera del build (ver fase 0)
 ```
 
-**En el VPS:** `/srv/maitilac/` con el `docker-compose.yml`, el `.env` y los volúmenes `postgres/`, `fotos/`, `cache-next/` y `backups/`.
+**En el VPS:** `/srv/maitilac/` con el `docker-compose.yml`, el `.env` y los volúmenes `postgres/`, `fotos/` y `backups/` (la caché de páginas vive en memoria).
 
 ### 4.6 Tokens de diseño (extraídos del CSS actual)
 

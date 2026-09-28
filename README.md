@@ -5,7 +5,7 @@ Sitio web de Maitilac (quesos artesanales de Tandil), en migración desde un ún
 - **Plan** (qué se construye y por qué): [docs/PLAN DE REFACTORIZACION.md](docs/PLAN%20DE%20REFACTORIZACION.md)
 - **Paso a paso** (cómo, en qué orden y estado actual): [docs/PASO A PASO.md](docs/PASO%20A%20PASO.md)
 
-> **Estado:** etapas 0, 1 y 2 terminadas: las 5 páginas públicas (Inicio, Nosotros, Catálogo con detalle de producto, Locales y Contacto) se ven igual que el sitio viejo, con los datos en `data/*.json`. Base de datos y gestor, en etapas siguientes.
+> **Estado:** etapas 0 a 3 terminadas: las 5 páginas públicas (Inicio, Nosotros, Catálogo con detalle de producto, Locales y Contacto) se ven igual que el sitio viejo y leen los datos de PostgreSQL. El gestor, en la Etapa 5.
 
 ---
 
@@ -16,11 +16,12 @@ Sitio web de Maitilac (quesos artesanales de Tandil), en migración desde un ún
 | Node.js | 24 LTS o superior | `node -v` |
 | pnpm | 10 o superior | `pnpm -v` |
 | git | cualquiera reciente | `git --version` |
+| Docker | con Compose v2 | `docker compose version` |
 
 - **pnpm:** `npm i -g pnpm`. Desde Node 25 ya no viene *corepack*, así que `corepack enable` no funciona.
 - **Node con nvm** (recomendado): `nvm install 24 && nvm use 24`.
 - **Python 3** no es obligatorio. Sólo sirve como alternativa para ver el sitio viejo (ver [Problemas frecuentes](#problemas-frecuentes)).
-- **Docker** todavía no hace falta. Se va a necesitar para la base de datos (Etapa 3).
+- **Docker** (con Docker Compose): para la base de datos PostgreSQL.
 
 ---
 
@@ -31,7 +32,14 @@ git clone <url-del-repo> maitilac
 cd maitilac
 pnpm install
 pnpm exec playwright install chromium   # navegador para los tests visuales
+
+cp .env.example .env    # conexión a la base local
+pnpm db:levantar        # PostgreSQL en Docker (puerto 5440)
+pnpm db:migrar          # crea las tablas
+pnpm db:importar        # carga los datos de fábrica del sitio viejo
 ```
+
+La base queda guardada en un volumen de Docker: la próxima vez alcanza con `pnpm db:levantar` (si la máquina se reinició) y `pnpm dev`.
 
 ---
 
@@ -123,7 +131,12 @@ Saca las capturas **desde `referencia/`** (el sitio viejo) y las guarda en `test
 | `pnpm ref:servir` | Sitio viejo de referencia (http://localhost:4500) |
 | `pnpm ref:capturar` | Genera las capturas de referencia desde el sitio viejo |
 | `pnpm test:visual` | Compara el sitio nuevo contra las capturas de referencia |
-| `pnpm datos:extraer` | Vuelve a extraer los datos del sitio viejo a `data/*.json` |
+| `pnpm datos:extraer` | Vuelve a extraer los datos del sitio viejo (`content/` y `db/importar/data/`) |
+| `pnpm db:levantar` | Levanta PostgreSQL en Docker (puerto 5440) |
+| `pnpm db:migrar` | Aplica las migraciones pendientes |
+| `pnpm db:importar` | Carga los datos de fábrica (sólo con la base vacía; `--forzar` borra todo y reimporta) |
+| `pnpm db:generar` | Genera una migración nueva después de cambiar `db/schema.ts` |
+| `pnpm db:estudio` | Abre Drizzle Studio para ver y editar la base en el navegador |
 
 Chequeo de tipos: `pnpm exec tsc --noEmit`.
 
@@ -136,7 +149,10 @@ app/                  Rutas de Next.js
   (sitio)/            Páginas públicas (layout con el header)
   globals.css         Capas CSS, Tailwind sin preflight, fuentes y tokens
 components/sitio/     Header, footers y (próximamente) el resto de las secciones
-lib/                  Datos y utilidades (config de contacto, etc.)
+lib/                  Acceso a datos (con caché), utilidades, horarios, WhatsApp
+db/                   Esquema, migraciones e importación de datos (Drizzle + PostgreSQL)
+content/              Textos fijos: historia, proceso, Instagram (versionados en git)
+infra/                Docker Compose (por ahora, la base local)
 styles/
   sitio/              CSS del sitio viejo, portado textual (no redondear valores)
   en-linea/           Lo que en el sitio viejo eran atributos style=""
@@ -172,6 +188,12 @@ En distribuciones que Playwright no soporta oficialmente, descarga una versión 
 
 **Un test visual falla por pocos píxeles al cambiar de máquina**
 Las capturas dependen del sistema operativo (renderizado de fuentes). Las referencias actuales se generaron en Linux: si se trabaja en otro sistema, regenerarlas localmente con `pnpm ref:capturar` **sin subirlas al repo**, o correr los tests en Linux (en CI van a correr en Linux).
+
+**`pnpm dev` muestra un error de conexión a la base (ECONNREFUSED)**
+PostgreSQL no está levantado: `pnpm db:levantar`. Verificar con `docker compose -f infra/docker-compose.dev.yml ps` que diga *healthy*.
+
+**Cambié algo directo en la base y la página no lo muestra**
+Es la caché: los datos se guardan hasta que el gestor los invalide al guardar. En desarrollo, reiniciar `pnpm dev` la vacía.
 
 **Error de tipos que menciona `.next/types`**
 Quedaron archivos generados viejos: borrar la carpeta `.next` y volver a correr `pnpm dev` o `pnpm build`.

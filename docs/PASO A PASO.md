@@ -2,7 +2,7 @@
 
 Guía operativa para ejecutar el [PLAN DE REFACTORIZACION.md](PLAN%20DE%20REFACTORIZACION.md) de a un paso por vez. El plan explica **qué** se construye y **por qué**; esta guía explica **cómo** y en qué orden, y sobre todo **cómo verificar que el diseño quede idéntico**.
 
-> **Estado actual:** Etapas 0, 1 y 2 terminadas (falta subir el repo a GitHub y la revisión manual en dispositivos reales). Próximo: **Etapa 3, paso 3.1**. *(Actualizar esta línea al cerrar cada paso.)*
+> **Estado actual:** Etapas 0 a 3 terminadas (falta subir el repo a GitHub y la revisión manual en dispositivos reales). Próximo: **Etapa 4** (servidor) o **Etapa 5** (gestor); ver la nota al principio de la Etapa 4. *(Actualizar esta línea al cerrar cada paso.)*
 
 ---
 
@@ -258,70 +258,48 @@ Pestañas, texto de ayuda, "Pedir presupuesto mayorista" y mensaje de WhatsApp. 
 
 ---
 
-## Etapa 3 — Base de datos
+## Etapa 3 — Base de datos ✅
 
-A partir de acá, el criterio para cada paso es: **los tests visuales tienen que seguir exactamente igual que al cerrar la Etapa 2.** Cambiar de dónde salen los datos no puede cambiar ni un píxel.
+Criterio de la etapa: **los tests visuales tienen que seguir exactamente igual que al cerrar la Etapa 2.** Cumplido: la suite completa (110 tests) pasa leyendo de la base, en desarrollo y en producción (`pnpm build && pnpm start`).
 
-### Paso 3.1 — Postgres local con Docker
+### Paso 3.1 — Postgres local con Docker ✅
+- [x] `infra/docker-compose.dev.yml`: Postgres 17 en el **puerto 5440** (el 5432 y el 5433 los usan otros proyectos de la máquina), con volumen y *healthcheck*.
+- [x] `.env.example` → `.env` con `DATABASE_URL` (el `.env` no se sube).
+- [x] Drizzle ORM 0.45 + drizzle-kit, cliente `postgres`.
 
-- [ ] `infra/docker-compose.dev.yml` con `postgres:17`, volumen persistente y *healthcheck*.
-- [ ] `.env.example` con `DATABASE_URL`; `.env` local (no se sube).
-- [ ] `pnpm add drizzle-orm postgres` y `pnpm add -D drizzle-kit`.
+### Paso 3.2 — Esquema y migraciones ✅
+- [x] `db/schema.ts` y migraciones en `db/migraciones/` (`0000_esquema_inicial`, `0001_encuadre_foto_local`).
+- [x] Ajustes respecto del plan, para no cambiar nada visible: tabla `producto_del_mes` (texto y foto propios), columnas extra en `locales` (foto y encuadre de la página Locales, "cómo llegar", mapa) y `ocasiones.clave`. Anotado en el plan, sección 4.3.
 
-**Verificación:** `docker compose -f infra/docker-compose.dev.yml up -d` levanta la base y `pnpm drizzle-kit studio` se conecta.
+### Paso 3.3 — Importación ✅
+- [x] `pnpm db:importar` (`db/importar/index.ts`): 63 fotos, 12 productos, 45 fotos de producto, 6 quesos de combos, 7 ocasiones con 14 relaciones, 3 anuncios, 11 premios, 9 personas, 2 locales, config y producto del mes. Sin avisos.
+- [x] Valida que cada precio se reconstruya **idéntico** al texto del sitio viejo, y que el producto del mes muestre el mismo precio y unidad que el producto.
+- [x] No pisa una base con datos: para reimportar hace falta `--forzar` (¡borra lo editado en el gestor!).
+- [x] Los datos que el sitio viejo tenía sólo escritos en el HTML (Locales, producto del mes, Facebook) se extrajeron con un script a `db/importar/data/extras.json`.
+- [x] Las fotos se registran apuntando a los archivos de `public/img/`. Las variantes AVIF/WebP llegan en la Etapa 6.
 
-**Commit:** `chore: Postgres local y Drizzle`
+### Paso 3.4 — Páginas leyendo de la base ✅
+- [x] `lib/datos.ts`: mismas funciones y misma forma de datos que en la Etapa 2, ahora asíncronas y contra Postgres. Los textos fijos (historia, proceso, Instagram, colores) pasaron a `content/`.
+- [x] Producto del mes, página Locales y footers (direcciones, teléfono, redes) salen de la base: se terminaron los datos repetidos (plan, P5).
+- [x] En Locales se sigue reproduciendo la búsqueda por clave del sitio viejo (el "Abierto ahora" de Maipú queda vacío, backlog ítem 11).
 
-### Paso 3.2 — Esquema y migraciones
+### Paso 3.5 — Caché ✅
+- [x] `cacheComponents` activado. Cada consulta usa `'use cache'` + `cacheLife('max')` + `cacheTag('<entidad>')`.
+- [x] Las páginas se arman en cada pedido (`await connection()` en el layout y en cada página, dentro de un `Suspense`): **el build compila sin base de datos**, verificado con una `DATABASE_URL` inválida. Las rutas quedan como *Partial Prerender*.
+- [x] Verificado a mano: al cambiar un precio en la base, la página sigue mostrando el anterior (caché); al invalidar la etiqueta `productos`, aparece el nuevo al instante.
+- [x] En producción las páginas responden en unos 50 ms.
 
-- [ ] `db/schema.ts` con las tablas de la sección 4.3 del plan (menos las de autenticación, que van en la Etapa 5).
-- [ ] `pnpm drizzle-kit generate` y revisar el SQL generado.
-- [ ] Aplicar con `pnpm drizzle-kit migrate`.
-
-**Verificación:** las tablas existen con sus claves, `check` y relaciones.
-
-**Commit:** `feat(db): esquema inicial`
-
-### Paso 3.3 — Importación de datos
-
-Ver la sección 6 del plan.
-
-- [ ] `db/importar/index.ts` que lee `data/*.json` e inserta todo: slugs, relaciones por id, precio descompuesto y orden.
-- [ ] Las fotos en esta etapa se registran en `fotos` **apuntando a los mismos archivos originales** de `public/img/`. Las variantes AVIF/WebP se generan en la Etapa 6.
-- [ ] Informe final por consola (filas por tabla, fotos no encontradas, nombres sin relacionar).
-- [ ] Idempotente: correrlo dos veces no duplica nada.
-
-**Verificación:** el informe no muestra errores; los conteos coinciden con el paso 2.1.
-
-**Commit:** `feat(db): importación de datos de fábrica`
-
-### Paso 3.4 — Pasar las páginas a la base, una por una
-
-- [ ] `lib/queries.ts` con una función por necesidad (`productosDestacados`, `catalogo`, `ocasionesVisibles`, `premiosVisibles`, `equipoVisible`, `locales`, `anuncios`, `config`), que devuelvan **la misma forma** que los JSON.
-- [ ] Reemplazar los JSON por las consultas, **de a una página**, corriendo `pnpm test:visual` después de cada una.
-- [ ] Producto del mes: pasa a salir del producto con `producto_del_mes = true`. Marcar Holanda en la importación para que se vea igual.
-- [ ] Locales: la página y el resumen del Inicio salen de la tabla `locales`, con los textos de horario tal cual se mostraban.
-- [ ] Borrar `data/*.json` sólo cuando ninguna página los use (los conserva el script de importación en `db/importar/data/`).
-
-**Verificación:** suite visual y de textos **idéntica** al cierre de la Etapa 2.
-
-**Commit:** un commit por página, ej. `refactor(catalogo): leer de la base`
-
-### Paso 3.5 — Caché
-
-- [ ] Activar `cacheComponents` en `next.config.ts` y marcar las consultas con `'use cache'` + `cacheTag('<entidad>')`.
-- [ ] Verificar la API exacta de caché en la documentación de la versión de Next instalada.
-- [ ] Probar a mano: cambiar un precio en la base, invalidar la etiqueta y ver el cambio al recargar.
-
-**Verificación:** con la caché activa, la segunda carga de cada página no consulta la base (ver logs); después de invalidar, el cambio aparece.
-
-**Commit:** `feat: caché por entidad`
+### Notas técnicas de esta etapa
+- **Etiquetas de caché** que tiene que invalidar el gestor al guardar: `config`, `anuncios`, `productos`, `ocasiones`, `producto-del-mes`, `locales`, `equipo`, `premios`.
+- **Activity (Next 16):** al volver atrás desde un modal, Next conserva el modal oculto en lugar de borrarlo. Los tests comprueban que no se vea (`toBeHidden`), no que no exista.
+- **Hidratación:** el contenido llega dentro de un `Suspense` y React termina de hidratar un poco más tarde. `components/sitio/MarcaHidratado.tsx` pone `data-hidratado="si"` en `<html>` y los tests lo esperan antes de capturar. No se ve.
+- `styles/` y `db/migraciones/` están en `.prettierignore`: `pnpm format` no tiene que tocar el CSS portado textual.
 
 ---
 
 ## Etapa 4 — Servidor y publicación de prueba
 
-*Se puede hacer en paralelo a las etapas 2 y 3 si D1b ya está resuelta. Conviene tenerla lista antes de mostrarle avances al cliente.*
+*Necesita el dominio (D1c) y el repo en GitHub. Si todavía no están, se puede hacer antes la Etapa 5 (gestor): no depende del servidor.*
 
 ### Paso 4.1 — Preparar el VPS
 

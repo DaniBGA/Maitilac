@@ -22,6 +22,8 @@ await build({
   outdir: ".next/herramientas",
   outExtension: { ".js": ".mjs" },
   // Algunas dependencias usan require(): en un módulo ESM hay que crearlo.
-  banner: { js: 'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);' },
+  banner: {
+    js: 'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);',
+  },
   logLevel: "warning",
 });

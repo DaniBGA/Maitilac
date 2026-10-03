@@ -28,6 +28,17 @@ const nextConfig: NextConfig = {
       { pathname: "/fondo-hero.jpg", search: "" },
     ],
   },
+  // Archivos de public/: Next los manda con max-age=0 y el navegador los vuelve a pedir en
+  // cada visita. Las fuentes no cambian nunca; las imágenes, 31 días como las optimizadas.
+  // (Si se reemplaza un archivo, conviene cambiarle el nombre.)
+  async headers() {
+    const dias = (n: number) => `public, max-age=${n * 86400}`;
+    return [
+      { source: "/fonts/:archivo*", headers: [{ key: "Cache-Control", value: `${dias(365)}, immutable` }] },
+      { source: "/img/:archivo*", headers: [{ key: "Cache-Control", value: dias(31) }] },
+      { source: "/fondo-hero.jpg", headers: [{ key: "Cache-Control", value: dias(31) }] },
+    ];
+  },
 };
 
 export default nextConfig;

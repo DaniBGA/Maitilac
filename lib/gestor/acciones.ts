@@ -72,12 +72,19 @@ async function mover(
   const i = filas.findIndex((f) => f.id === id);
   const j = i + dir;
   if (i < 0 || j < 0 || j >= filas.length) return;
-  await db.transaction(async (tx) => {
-    // Se reasignan 0..n para que el orden quede siempre consecutivo
-    const nuevo = filas.map((f) => f.id);
-    [nuevo[i], nuevo[j]] = [nuevo[j], nuevo[i]];
-    for (const [k, fid] of nuevo.entries()) await tx.update(tabla).set({ orden: k }).where(eq(tabla.id, fid));
-  });
+  // Se reasignan 0..n para que el orden quede siempre consecutivo, en una sola consulta
+  // (antes, un UPDATE por fila).
+  const nuevo = filas.map((f) => f.id);
+  [nuevo[i], nuevo[j]] = [nuevo[j], nuevo[i]];
+  const ids = sql.join(
+    nuevo.map((fid) => sql`${fid}::uuid`),
+    sql`, `,
+  );
+  await db.execute(
+    sql`update ${tabla} set orden = nuevo.posicion - 1
+        from unnest(array[${ids}]) with ordinality as nuevo(id, posicion)
+        where ${tabla.id} = nuevo.id`,
+  );
 }
 
 const limpiar = (t: unknown) => String(t ?? "").trim();
@@ -378,21 +385,23 @@ export async function guardarProducto(id: string | null, p: ProductoEditado): Pr
       // Fotos, en el orden del panel
       const fotoId = await asegurarFotos(tx, p.photos);
       await tx.delete(s.productoFotos).where(eq(s.productoFotos.productoId, productoId!));
-      for (const [k, archivo] of p.photos.entries())
+      if (p.photos.length)
         await tx
           .insert(s.productoFotos)
-          .values({ productoId: productoId!, fotoId: fotoId[archivo], orden: k });
+          .values(
+            p.photos.map((archivo, k) => ({ productoId: productoId!, fotoId: fotoId[archivo], orden: k })),
+          );
       // Quesos incluidos (por nombre en el panel, por id en la base)
       await tx.delete(s.comboQuesos).where(eq(s.comboQuesos.comboId, productoId!));
       const quesos = await tx
         .select({ id: s.productos.id, nombre: s.productos.nombre })
         .from(s.productos)
         .where(noEliminado);
-      for (const [k, q] of p.quesos.entries()) {
+      const filasQuesos = p.quesos.flatMap((q, k) => {
         const queso = quesos.find((x) => x.nombre === q && x.id !== productoId);
-        if (queso)
-          await tx.insert(s.comboQuesos).values({ comboId: productoId!, quesoId: queso.id, orden: k });
-      }
+        return queso ? [{ comboId: productoId!, quesoId: queso.id, orden: k }] : [];
+      });
+      if (filasQuesos.length) await tx.insert(s.comboQuesos).values(filasQuesos);
     });
     // Los filtros y combos se relacionan por id: al renombrar se actualizan solos.
     return renombrado ? "Guardado. Los filtros se actualizaron solos." : "Guardado. Ya se ve en el catálogo.";

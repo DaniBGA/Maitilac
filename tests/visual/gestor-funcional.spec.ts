@@ -262,3 +262,22 @@ test("equipo: el cargo editado se ve en Nosotros", async ({ page }) => {
   await page.goto("/nosotros");
   await expect(page.locator("#equipo")).not.toContainText("Cargo de prueba");
 });
+
+test("productos: la flecha cambia el orden en el catálogo", async ({ page }) => {
+  const nombres = () => page.locator("#catalogo-grid h3").allTextContents();
+  await page.goto("/catalogo");
+  const original = await nombres();
+  expect(original.slice(0, 2)).toEqual(["Gouda", "Holanda"]);
+
+  await page.goto("/gestor");
+  await tarjetaGestor(page, "Holanda").getByRole("button", { name: "Mover antes" }).click();
+  await expect(aviso(page)).toHaveText("Orden actualizado");
+  await page.goto("/catalogo");
+  expect(await nombres()).toEqual(["Holanda", "Gouda", ...original.slice(2)]);
+
+  await page.goto("/gestor");
+  await tarjetaGestor(page, "Holanda").getByRole("button", { name: "Mover después" }).click();
+  await expect(aviso(page)).toHaveText("Orden actualizado");
+  await page.goto("/catalogo");
+  expect(await nombres()).toEqual(original);
+});

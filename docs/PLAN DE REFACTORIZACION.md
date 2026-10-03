@@ -310,7 +310,7 @@ maitilac/
 │  ├─ Caddyfile
 │  └─ backup.sh                    # pg_dump + fotos, con rotación
 ├─ Dockerfile                      # build multi-etapa, salida "standalone" de Next
-├─ .github/workflows/              # ci.yml (tests) y deploy.yml
+├─ .github/workflows/              # ci.yml (tests); el deploy se hace con scripts/deploy.sh
 ├─ docs/                           # REGISTRO DE CAMBIOS, MANUAL DEL GESTOR, este plan
 └─ _fuentes/                       # material del cliente, fuera del build (ver fase 0)
 ```

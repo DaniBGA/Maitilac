@@ -1,6 +1,6 @@
 // Tipos de los datos del sitio (misma forma que las constantes del sitio viejo, ver data/*.json).
 
-export type ColorAnuncio = "marron" | "naranja" | "verde";
+type ColorAnuncio = "marron" | "naranja" | "verde";
 export type Anuncio = { ver: boolean; texto: string; color: ColorAnuncio | string };
 export type Anuncios = { barra: Anuncio; badge1: Anuncio; badge2: Anuncio };
 export type Color = { nombre: string; fondo: string; texto: string };

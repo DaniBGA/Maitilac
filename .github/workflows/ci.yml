@@ -1,5 +1,5 @@
-# Verificación en cada pull request y en cada push a main (docs/PASO A PASO.md, Paso 4.4).
-# Si pasa en main, se dispara el deploy (deploy.yml).
+# Verificación en cada pull request y en cada push a main, si el código está en GitHub.
+# La publicación no pasa por acá: se hace con scripts/deploy.sh (docs/GUIA DE DEPLOY.md).
 name: CI
 
 on:

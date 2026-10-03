@@ -337,7 +337,7 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
 - [x] `scripts/deploy.sh`, desde la computadora y sin depender de GitHub: verifica el código, compila la imagen, copia la configuración, hace una copia previa, sube la imagen por SSH (unos 110 MB), la activa, comprueba que las 5 páginas se armen bien (no alcanza con el código 200: con el streaming, una página rota también responde 200) y, si algo falla, vuelve sola a la anterior. Comandos `primera-vez` (crea el `.env` con secretos nuevos, carga los datos de fábrica y programa el cron), `volver`, `usuario`, `copia` y `estado`. Configuración en `deploy.env` (modelo: `deploy.env.example`).
 - [x] Probado contra un servidor Ubuntu 24.04 de prueba (contenedor con SSH): primera vez, actualizaciones, `volver` ida y vuelta, `copia`, `usuario` con login real, una versión que no compila (no publica) y una que se rompe en ejecución (vuelve sola en unos 10 s). La limpieza de imágenes nunca borra la actual ni la anterior.
 - [x] `docs/GUIA DE DEPLOY.md`: paso a paso desde el VPS vacío (seguridad, DNS, primera vez, actualizaciones, copias, dominio definitivo, problemas frecuentes).
-- [x] `.github/workflows/ci.yml` sigue sirviendo para verificar cada cambio si el código se sube a GitHub. `deploy.yml` (deploy por GitHub) quedó reemplazado por el script: pendiente decidir si se borra.
+- [x] `.github/workflows/ci.yml` sigue sirviendo para verificar cada cambio si el código se sube a GitHub. `deploy.yml` (deploy por GitHub) se borró: lo reemplaza el script (03/10/2026).
 - [ ] ⏳ Primera publicación real (la hace el dueño del proyecto con la guía).
 
 **Verificación:** `https://nuevo.<dominio>` abre con HTTPS válido; `PRUEBA_URL=https://nuevo.<dominio> pnpm test:visual` da todo en verde (sólo páginas públicas, sin tocar datos).
@@ -353,6 +353,7 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
 - **Error de Next encontrado al probar producción** (16.3.6, la última estable): si el navegador cortaba la conexión mientras el optimizador leía la foto original (alguien que cambia de página rápido en la primera visita), esa foto quedaba colgada para todos hasta reiniciar el sitio. El pedido interno reutilizaba el `socket` del navegador y su promesa no se resolvía nunca; como Next agrupa los pedidos iguales, arrastraba a todos los siguientes. Se reprodujo cerrando páginas a mitad de carga: 30 de 42 imágenes colgadas (10 sin Caddy, así que no era Caddy). **Parche** con `pnpm patch` (`patches/next.patch`): el pedido interno ya no usa ese `socket`. Después del parche, 0 de 42 en tres repeticiones. Al actualizar Next, comprobar si se corrigió y sacar el parche.
 - **Tests contra un sitio publicado:** `PRUEBA_URL=<url> pnpm test:visual` corre sólo las páginas públicas (sin el gestor, que modifica datos), sin levantar servidor ni tocar ninguna base. El recorrido con scroll de los tests pasó a hacerse desde Playwright con esperas reales.
 - Una vez, en la suite local, el catálogo salió sin sus dos últimos productos aunque la base los tenía; no se pudo reproducir (la corrida siguiente, 144 de 144). Si vuelve a pasar, investigar la caché del servidor de desarrollo.
+- Los tests ahora borran, al empezar, las fotos que subieron en corridas anteriores (`subidas/`): después de reimportar la base no las usa nada.
 
 ---
 

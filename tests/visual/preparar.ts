@@ -9,8 +9,6 @@ export const RUTAS = [
   { nombre: "contacto", vieja: "/#contacto", nueva: "/contacto" },
 ] as const;
 
-export type Ruta = (typeof RUTAS)[number];
-
 export const ES_REFERENCIA = process.env.REFERENCIA === "1";
 
 // Jueves 01/10/2026: a las 11:00 los dos locales están abiertos.
@@ -45,7 +43,7 @@ export async function prepararPagina(page: Page, ruta: { vieja: string; nueva: s
  * cambiarles el atributo "loading" tocaría el DOM antes de que React termine de
  * hidratar y daría un error de hidratación.
  */
-export async function esperarContenido(page: Page) {
+async function esperarContenido(page: Page) {
   // El recorrido se hace desde acá y no dentro de la página: con el reloj falso, los
   // temporizadores de la página no esperan a que el navegador pinte, y contra un
   // servidor rápido (producción) las "lazy" quedaban sin empezar a cargar.
@@ -85,7 +83,7 @@ export async function esperarContenido(page: Page) {
  * única posición que el navegador no reacomoda al agrandar la ventana para la
  * captura de página completa. El sitio nuevo tiene que conservar estas clases e id.
  */
-export async function detenerCarruseles(page: Page) {
+async function detenerCarruseles(page: Page) {
   await page.evaluate(() => {
     document.querySelectorAll<HTMLElement>(".tl-carrusel, #premios-carrusel").forEach((c) => {
       c.scrollLeft = 0;

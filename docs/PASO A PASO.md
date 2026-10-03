@@ -2,7 +2,7 @@
 
 Guía operativa para ejecutar el [PLAN DE REFACTORIZACION.md](PLAN%20DE%20REFACTORIZACION.md) de a un paso por vez. El plan explica **qué** se construye y **por qué**; esta guía explica **cómo** y en qué orden, y sobre todo **cómo verificar que el diseño quede idéntico**.
 
-> **Estado actual:** Etapas 0 a 3 terminadas. Etapa 5 (gestor) terminada salvo el Paso 5.10 (aprobar que se quite el enlace del footer, usuarios de D2, prueba en un celular con el sitio publicado). Etapa 6: hechos 6.1 (imágenes), 6.2 (SEO), casi todo 6.3 (falta confirmar Lighthouse ≥ 90 en el VPS), 6.4 (falta CI) y 6.5 (falta `OPERACION.md`); 6.6 es el lanzamiento. Falta subir el repo a GitHub. Próximo: **Etapa 4** (servidor), que necesita el dominio (D1c) y el repo. *(Actualizar esta línea al cerrar cada paso.)*
+> **Estado actual:** Etapas 0 a 3 terminadas. Etapa 5 (gestor) terminada salvo el Paso 5.10 (aprobar que se quite el enlace del footer, usuarios de D2, prueba en un celular con el sitio publicado). Etapa 6 hecha en lo que no depende del servidor. **Etapa 4 preparada y probada en local** (imagen Docker, Caddy, backups, CI y deploy; ver [OPERACION.md](OPERACION.md)). Para seguir hace falta: el VPS, el dominio (D1c), el repo en GitHub y los emails (D2). *(Actualizar esta línea al cerrar cada paso.)*
 
 ---
 
@@ -297,13 +297,11 @@ Criterio de la etapa: **los tests visuales tienen que seguir exactamente igual q
 
 ---
 
-## Etapa 4 — Servidor y publicación de prueba
+## Etapa 4 — Servidor y publicación de prueba (preparada; falta el VPS)
 
-*Necesita el dominio (D1c) y el repo en GitHub. Se hace al final, después de la Etapa 6 (decisión del 28/09/2026).*
+*Todo lo que no necesita el VPS, el dominio ni GitHub ya está hecho y probado en local con el mismo `docker-compose.yml`, `Caddyfile` y scripts (03/10/2026). Cómo se usa en el servidor: [OPERACION.md](OPERACION.md).*
 
-*Pendientes anotados durante las etapas 5 y 6:* la caché de imágenes optimizadas (`.next/cache/images`) conviene que viva en un volumen, para no regenerarlas en cada deploy; Caddy tiene que pasar el encabezado `Accept` (lo hace por defecto) para que el optimizador elija AVIF o WebP; Caddy tiene que servir `/fotos` desde el volumen de `FOTOS_DIR`; en el build de la imagen conviene pasar un `BETTER_AUTH_SECRET` de relleno (si no, Better Auth avisa en el log); Next copia `.env` dentro de `standalone`, pero `.dockerignore` excluye `.env*`, así que las variables van por el entorno del contenedor.
-
-### Paso 4.1 — Preparar el VPS
+### Paso 4.1 — Preparar el VPS ⏳
 
 En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH pública.
 
@@ -313,55 +311,48 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
   rsync --archive --chown=deploy:deploy ~/.ssh /home/deploy
   ```
 - [ ] En `/etc/ssh/sshd_config`: `PermitRootLogin no` y `PasswordAuthentication no`; `systemctl restart ssh`. **Probar el acceso con `deploy` en otra terminal antes de cerrar la sesión de root.**
-- [ ] Firewall: `ufw allow OpenSSH && ufw allow 80,443/tcp && ufw enable`.
+- [ ] Firewall: `ufw allow OpenSSH && ufw allow 80,443/tcp && ufw allow 443/udp && ufw enable`.
 - [ ] `apt install -y fail2ban unattended-upgrades`.
 - [ ] Docker: `curl -fsSL https://get.docker.com | sh` y `usermod -aG docker deploy`.
-- [ ] **Ojo:** Docker salta las reglas de `ufw` para los puertos que publica. Sólo Caddy publica puertos (80 y 443); Postgres y la app **no** publican ninguno.
+- [ ] **Ojo:** Docker salta las reglas de `ufw` para los puertos que publica. Sólo Caddy publica puertos (80 y 443); Postgres y la app **no** publican ninguno (ya es así en `infra/docker-compose.yml`).
 
 **Verificación:** `ssh deploy@<ip>` entra con clave; `ssh root@<ip>` es rechazado; `ufw status` muestra sólo 22, 80 y 443.
 
 ### Paso 4.2 — DNS y Caddy
 
-- [ ] Registro `A` de `nuevo.<dominio>` apuntando a la IP del VPS.
-- [ ] `infra/Caddyfile`:
-  ```
-  nuevo.<dominio> {
-    encode zstd gzip
-    handle_path /fotos/* {
-      root * /data/fotos
-      header Cache-Control "public, max-age=31536000, immutable"
-      file_server
-    }
-    reverse_proxy app:3000
-  }
-  ```
+- [ ] ⏳ Registro `A` de `nuevo.<dominio>` apuntando a la IP del VPS.
+- [x] `infra/Caddyfile`: HTTPS automático para `{$DOMINIO}`, compresión, `/fotos/*` directo del volumen (caché de un año) y encabezados de seguridad (HSTS, `nosniff`, `Referrer-Policy`, sin `Server`).
 
 ### Paso 4.3 — Docker de producción
 
-- [ ] `Dockerfile` multi-etapa: instala dependencias, hace `pnpm build` y copia la salida `standalone`. Al arrancar, corre las migraciones y después `node server.js`.
-- [ ] `infra/docker-compose.yml` con tres servicios: `app` (imagen de GHCR, `restart: unless-stopped`, volúmenes `fotos` y `cache-next`), `db` (`postgres:17`, volumen, *healthcheck*) y `caddy` (puertos 80/443, `Caddyfile`, volumen de certificados y `fotos` de sólo lectura).
-- [ ] En el VPS: `/srv/maitilac/` con `docker-compose.yml`, `Caddyfile` y `.env` (permisos `600`).
+- [x] `Dockerfile` multi-etapa (Node 24): instala dependencias (con el parche de Next), hace `pnpm build` y `pnpm herramientas`, y copia la salida `standalone`. Corre como usuario `node`. Al arrancar aplica las migraciones (`herramientas/migrar.mjs`) y después `node server.js`. 435 MB. No lleva ningún `.env` ni secreto (verificado en la imagen y en su historial).
+- [x] Herramientas empaquetadas con esbuild (`scripts/herramientas.mjs`): `migrar.mjs`, `importar.mjs` y `crear-usuario.mjs`, que corren con `node` solo dentro de la imagen.
+- [x] `infra/docker-compose.yml`: `app` (imagen de `IMAGEN`, volúmenes `fotos` y `cache-next`), `db` (`postgres:17-alpine`, *healthcheck*) y `caddy` (80/443 tcp y 443/udp, certificados y `fotos` de sólo lectura). `infra/.env.produccion.example` con las variables.
+- [ ] ⏳ En el VPS: `/srv/maitilac/` con esos archivos y el `.env` (permisos `600`). Pasos en OPERACION.md.
+
+**Verificado en local** (con `DOMINIO=localhost` y Caddy en 8080/8443, porque el 80 de esta máquina está ocupado): las 8 rutas públicas responden, `/gestor` redirige al login, la copia de seguridad da 401 sin sesión; login con cookie `Secure`/`HttpOnly`; foto subida servida por Caddy desde el volumen y optimizada en AVIF; y **`PRUEBA_URL=https://localhost:8443 pnpm test:visual`: 115 de 115**, con la caché de imágenes vacía.
 
 ### Paso 4.4 — Deploy automático
 
-- [ ] `.github/workflows/ci.yml`: lint, tests unitarios y visuales en cada *pull request*.
-- [ ] `.github/workflows/deploy.yml` en cada push a `main`: build de la imagen → push a GHCR → SSH al VPS → `docker compose pull app && docker compose up -d`.
-- [ ] Secretos en GitHub: `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`. En el VPS, `docker login ghcr.io` con un token de sólo lectura de paquetes.
-- [ ] Primer deploy y `pnpm db:importar` dentro del contenedor.
+- [x] `.github/workflows/ci.yml`: lint, tipos, tests unitarios, build y tests visuales (con Postgres como servicio) en cada *pull request* y push a `main`. Si fallan los visuales, sube el informe.
+- [x] `.github/workflows/deploy.yml`: cuando la CI pasa en `main` (o a mano), build de la imagen → push a GHCR (etiquetas `latest` y el commit) → SSH al VPS → `docker compose pull app && docker compose up -d app`.
+- [ ] ⏳ Crear el repo y probar los dos flujos (están validados con actionlint, pero no se pudieron correr). **Posible problema:** las capturas de referencia se generaron en esta máquina; en el runner de GitHub las fuentes pueden dibujarse distinto y fallar los tests visuales. Si pasa, regenerar las referencias desde `referencia/` dentro de la imagen de Playwright y usarla también en la CI.
+- [ ] ⏳ Secretos y variable en GitHub, `docker login ghcr.io` en el VPS (OPERACION.md, puesta en marcha).
+- [ ] ⏳ Primer deploy y `node herramientas/importar.mjs` dentro del contenedor.
 
-**Verificación:** `https://nuevo.<dominio>` abre con HTTPS válido; correr `pnpm test:visual` apuntando a esa URL da el mismo resultado que en local.
-
-**Commit:** `ci: deploy automático al VPS`
+**Verificación:** `https://nuevo.<dominio>` abre con HTTPS válido; `PRUEBA_URL=https://nuevo.<dominio> pnpm test:visual` da todo en verde (sólo páginas públicas, sin tocar datos).
 
 ### Paso 4.5 — Copias de seguridad
 
-- [ ] `infra/backup.sh`: `pg_dump` comprimido + archivo del volumen de fotos, con rotación (7 diarias, 4 semanales).
-- [ ] Cron del usuario `deploy`: `0 3 * * * /srv/maitilac/backup.sh`.
-- [ ] Activar los snapshots semanales en el panel de Hostinger.
+- [x] `infra/backup.sh`: `pg_dump` + archivo de las fotos subidas, con rotación (7 diarias, 4 semanales). `infra/restaurar.sh`: restaura base y fotos, pidiendo confirmación.
+- [x] Probado en local: copia → base reimportada de fábrica y fotos borradas → restauración → vuelven la foto subida, su archivo y el usuario del gestor, y Caddy la sirve. Rotación probada con copias viejas de mentira.
+- [ ] ⏳ Cron del usuario `deploy`: `0 3 * * * /srv/maitilac/backup.sh >> /srv/maitilac/copias/backup.log 2>&1`.
+- [ ] ⏳ Activar los snapshots semanales en el panel de Hostinger.
 
-**Verificación:** al día siguiente hay un backup; se restaura en la base local y el sitio local se ve igual.
-
-**Commit:** `ops: backups diarios`
+### Notas técnicas de esta etapa
+- **Error de Next encontrado al probar producción** (16.3.6, la última estable): si el navegador cortaba la conexión mientras el optimizador leía la foto original (alguien que cambia de página rápido en la primera visita), esa foto quedaba colgada para todos hasta reiniciar el sitio. El pedido interno reutilizaba el `socket` del navegador y su promesa no se resolvía nunca; como Next agrupa los pedidos iguales, arrastraba a todos los siguientes. Se reprodujo cerrando páginas a mitad de carga: 30 de 42 imágenes colgadas (10 sin Caddy, así que no era Caddy). **Parche** con `pnpm patch` (`patches/next.patch`): el pedido interno ya no usa ese `socket`. Después del parche, 0 de 42 en tres repeticiones. Al actualizar Next, comprobar si se corrigió y sacar el parche.
+- **Tests contra un sitio publicado:** `PRUEBA_URL=<url> pnpm test:visual` corre sólo las páginas públicas (sin el gestor, que modifica datos), sin levantar servidor ni tocar ninguna base. El recorrido con scroll de los tests pasó a hacerse desde Playwright con esperas reales.
+- Una vez, en la suite local, el catálogo salió sin sus dos últimos productos aunque la base los tenía; no se pudo reproducir (la corrida siguiente, 144 de 144). Si vuelve a pasar, investigar la caché del servidor de desarrollo.
 
 ---
 
@@ -474,12 +465,12 @@ Las mejoras de esta etapa tienen que ser **invisibles**. Si alguna cambia el dis
 
 - [x] Vitest (`pnpm test`, `tests/unit/`): `horarios` (incluida la hora de Argentina y el caso de Maipú), `precio` (reconstrucción de todos los precios de fábrica y `leerPrecioEscrito`), conteo de ocasiones (contra los números de la captura de textos del sitio viejo) y slugs. 32 tests. El conteo pasó a `lib/ocasiones.ts`, compartido por el catálogo y el gestor.
 - [x] Playwright funcional: navegación, modal y teclado (`navegacion.spec.ts`, `accesibilidad.spec.ts`); el filtro activo y el mensaje de WhatsApp se comparan contra el sitio viejo (`estados.spec.ts`). Del gestor, 16 (suman filtros y equipo).
-- [ ] Suite visual completa en verde en CI: se arma con el repo en GitHub (Etapa 4). En local, `pnpm test:visual` pasa completa (144).
+- [ ] Suite visual completa en verde en CI: el flujo ya está escrito (`.github/workflows/ci.yml`, Etapa 4); falta el repo para correrlo. En local, `pnpm test:visual` pasa completa (144).
 
-### Paso 6.5 — Documentación (casi terminado)
+### Paso 6.5 — Documentación ✅
 
 - [x] `docs/MANUAL DEL GESTOR.md` reescrito para el gestor nuevo (se hizo en la Etapa 5).
-- [ ] `docs/OPERACION.md`: deploy, backups, restauración y alta de usuarios. Se escribe con la Etapa 4, cuando exista el servidor.
+- [x] `docs/OPERACION.md`: puesta en marcha, deploy, backups, restauración, alta de usuarios y cambio de dominio (probado en local; falta repasarlo en el VPS).
 - [x] Entrada 30 en `REGISTRO DE CAMBIOS.md` con la migración (actualizarla al lanzar).
 
 *El Paso 6.6 necesita el servidor y el dominio: se hace después de la Etapa 4.*

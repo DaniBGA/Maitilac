@@ -1,8 +1,8 @@
 # Operación del sitio en el VPS
 
-Cómo se pone en marcha, se actualiza, se respalda y se restaura el sitio en el VPS de Hostinger. Para trabajar en local, ver el [README](../README.md); para el orden de los pasos y el estado, [PASO A PASO.md](PASO%20A%20PASO.md) (Etapa 4).
+Referencia técnica de lo que corre en el VPS de Hostinger: qué hay, cómo se respalda, cómo se restaura y cómo se mantiene. **Para publicar y actualizar, seguí [GUIA DE DEPLOY.md](GUIA%20DE%20DEPLOY.md)** (todo se hace con `scripts/deploy.sh`). Para trabajar en local, el [README](../README.md).
 
-> Todo lo de este documento se probó en local con el mismo `docker-compose.yml`, `Caddyfile` y scripts. Lo único que falta probar es lo que depende del VPS, el dominio y GitHub (marcado con ⏳).
+> Todo esto se probó en local con el mismo `docker-compose.yml`, `Caddyfile` y scripts, y `deploy.sh` contra un servidor Ubuntu 24.04 de prueba. Falta repasarlo en el VPS real.
 
 ---
 
@@ -16,7 +16,7 @@ Internet ──► Caddy (80/443, HTTPS automático) ──► app (Next.js, pue
 | Servicio | Imagen | Datos que guarda (volumen) |
 |---|---|---|
 | `caddy` | `caddy:2-alpine` | Certificados (`caddy-datos`). Lee las fotos (`fotos`, sólo lectura) |
-| `app` | la del sitio, desde GHCR | Fotos subidas desde el gestor (`fotos`) y caché de imágenes optimizadas (`cache-next`) |
+| `app` | la del sitio (la sube `scripts/deploy.sh`) | Fotos subidas desde el gestor (`fotos`) y caché de imágenes optimizadas (`cache-next`) |
 | `db` | `postgres:17-alpine` | La base (`datos`) |
 
 Sólo Caddy publica puertos. Ni la base ni el sitio se pueden alcanzar desde afuera.
@@ -32,75 +32,36 @@ Al arrancar, `app` aplica las migraciones pendientes y después levanta el sitio
 
 | Archivo | De dónde sale |
 |---|---|
-| `docker-compose.yml` | `infra/docker-compose.yml` del repo |
-| `Caddyfile` | `infra/Caddyfile` |
-| `backup.sh` y `restaurar.sh` | `infra/` |
-| `.env` (permisos `600`) | se arma a partir de `infra/.env.produccion.example` |
+| `docker-compose.yml`, `Caddyfile`, `backup.sh`, `restaurar.sh` | copiados de `infra/` por `deploy.sh` en cada publicación (no editarlos en el servidor: se pisan) |
+| `.env` (permisos `600`) | lo crea `deploy.sh primera-vez` a partir de `infra/.env.produccion.example`, con secretos nuevos. **No borrarlo nunca** (tiene la contraseña de la base) |
+| `.imagen-anterior` | la versión anterior, para `deploy.sh volver` |
 | `copias/` | la crea `backup.sh` |
 
 ---
 
-## Puesta en marcha (una sola vez) ⏳
+## Publicar y actualizar
 
-1. **Preparar el VPS:** Paso 4.1 de la guía (usuario `deploy`, SSH sólo con clave, firewall, Docker).
-2. **DNS:** registro `A` de `nuevo.<dominio>` a la IP del VPS. Comprobar con `dig +short nuevo.<dominio>`.
-3. **Copiar los archivos** desde la carpeta del repo:
-   ```bash
-   ssh deploy@<ip> 'sudo mkdir -p /srv/maitilac && sudo chown deploy: /srv/maitilac'
-   scp infra/docker-compose.yml infra/Caddyfile infra/backup.sh infra/restaurar.sh deploy@<ip>:/srv/maitilac/
-   scp infra/.env.produccion.example deploy@<ip>:/srv/maitilac/.env
-   ```
-4. **Completar el `.env`** en el VPS (`nano /srv/maitilac/.env`, después `chmod 600 .env`):
-   - `DOMINIO`, `SITIO_URL` y `BETTER_AUTH_URL` con `nuevo.<dominio>`.
-   - `BETTER_AUTH_SECRET` y `POSTGRES_PASSWORD`: uno distinto cada uno, con `openssl rand -hex 32`.
-   - `IMAGEN`: `ghcr.io/<usuario>/<repo>:latest`.
-5. **Acceso a la imagen:** en GitHub, un token *classic* con permiso `read:packages` únicamente. En el VPS:
-   ```bash
-   docker login ghcr.io -u <usuario-de-github>    # pide el token
-   ```
-6. **GitHub** (Settings → Secrets and variables → Actions):
-   - Variable `SITIO_URL`: `https://nuevo.<dominio>`.
-   - Secretos `VPS_HOST` (IP), `VPS_USER` (`deploy`), `VPS_SSH_KEY` y `VPS_KNOWN_HOSTS` (salida de `ssh-keyscan <ip>`).
-   - `VPS_SSH_KEY` es una clave nueva, sólo para el deploy: `ssh-keygen -t ed25519 -f deploy-maitilac -N ""`. La pública (`deploy-maitilac.pub`) va al final de `/home/deploy/.ssh/authorized_keys` del VPS; la privada, al secreto.
-   - Crear el entorno `produccion` (Settings → Environments).
-7. **Primer deploy:** hacer push a `main` (o correr *Deploy* a mano desde la pestaña Actions). Cuando termine:
-   ```bash
-   cd /srv/maitilac
-   docker compose up -d                                   # la primera vez levanta los tres servicios
-   docker compose exec app node herramientas/importar.mjs # datos de fábrica
-   ```
-8. **Usuarios del gestor:** ver [Usuarios del gestor](#usuarios-del-gestor).
-9. **Copias automáticas:** `crontab -e` (como `deploy`) y agregar:
-   ```
-   0 3 * * * /srv/maitilac/backup.sh >> /srv/maitilac/copias/backup.log 2>&1
-   ```
-   Activar también los snapshots semanales en el panel de Hostinger.
-10. **Comprobar:** `https://nuevo.<dominio>` abre con candado; desde la carpeta del repo, `PRUEBA_URL=https://nuevo.<dominio> pnpm test:visual` tiene que dar todo en verde (corre sólo las páginas públicas, sin tocar datos).
+Con `scripts/deploy.sh`, desde la computadora: [GUIA DE DEPLOY.md](GUIA%20DE%20DEPLOY.md). Lo que hace en el servidor, por si hiciera falta a mano:
 
----
+1. Copia los archivos de `infra/` a `/srv/maitilac/`.
+2. Corre `./backup.sh` (si la base está levantada).
+3. Carga la imagen nueva (`docker save | ssh … docker load`) con una etiqueta `maitilac:<fecha>-<commit>`.
+4. Guarda la versión actual en `.imagen-anterior`, escribe la nueva en `IMAGEN=` del `.env` y corre `docker compose up -d`.
+5. Comprueba `/api/auth/ok` y que las 5 páginas traigan su `<main>` sin marcas de error. Si no, vuelve a la imagen anterior.
 
-## Actualizar el sitio
-
-**Automático:** cada push a `main` corre la CI y, si pasa, *Deploy* publica la imagen nueva y la levanta en el VPS. Las migraciones corren solas al arrancar.
-
-**A mano**, en el VPS:
-```bash
-cd /srv/maitilac
-docker compose pull app && docker compose up -d app
-```
-
-**Volver a una versión anterior:** cada imagen queda publicada también con el commit (`ghcr.io/<usuario>/<repo>:<sha>`). En el `.env`, cambiar `IMAGEN` a esa etiqueta y `docker compose up -d app`. Ojo: si la versión nueva traía una migración, la base ya quedó migrada. Las migraciones de este proyecto sólo agregan cosas, salvo `0003_fotos_sin_variantes`, que sacó columnas sin uso.
+Para volver a mano: poner en `IMAGEN=` del `.env` la etiqueta anterior (`docker image ls maitilac`) y `docker compose up -d`.
 
 ---
 
 ## Usuarios del gestor
 
-No hay registro público. Para crear un usuario, o ponerle una contraseña nueva si se la olvidó:
+No hay registro público. Para crear un usuario, o ponerle una contraseña nueva si se la olvidó, desde la computadora:
 
 ```bash
-cd /srv/maitilac
-docker compose exec app node herramientas/crear-usuario.mjs persona@ejemplo.com "Nombre Apellido"
+./scripts/deploy.sh usuario persona@ejemplo.com "Nombre Apellido"
 ```
+
+(En el servidor es `docker compose exec app node herramientas/crear-usuario.mjs persona@ejemplo.com "Nombre Apellido"`.)
 
 Pide la contraseña dos veces (mínimo 10 caracteres). Hay que pasársela a la persona por un canal seguro y nunca por el mismo mail del usuario.
 
@@ -112,10 +73,8 @@ Pide la contraseña dos veces (mínimo 10 caracteres). Hay que pasársela a la p
 - **Cuándo:** todos los días a las 3:00 (cron). Se guardan las 7 últimas en `copias/diarias/` y, de los domingos, las 4 últimas en `copias/semanales/`.
 - **Registro:** `copias/backup.log`, una línea por copia.
 - **A mano:** `/srv/maitilac/backup.sh`.
-- **Llevarse una copia a la computadora** (conviene hacerlo de vez en cuando, porque las copias viven en el mismo VPS):
-  ```bash
-  scp -r deploy@<ip>:/srv/maitilac/copias/semanales ./copias-maitilac
-  ```
+- **Antes de cada actualización**, `deploy.sh` hace una copia más.
+- **Llevarse una copia a la computadora** (conviene hacerlo de vez en cuando, porque las copias viven en el mismo VPS): `./scripts/deploy.sh copia` (queda en `copias-servidor/`). Las semanales: `scp -r deploy@<ip>:/srv/maitilac/copias/semanales ./copias-maitilac`.
 - Además, el botón **Exportar** del gestor descarga un JSON con todos los datos (sin fotos).
 
 ### Restaurar
@@ -135,20 +94,9 @@ y reiniciar `pnpm dev` (la caché tiene los datos anteriores).
 
 ---
 
-## Pasar al dominio definitivo ⏳
+## Pasar al dominio definitivo
 
-1. DNS: registro `A` del dominio (y `www`, si se usa) a la IP del VPS.
-2. En el `.env` del VPS: `DOMINIO`, `SITIO_URL` y `BETTER_AUTH_URL` con el dominio definitivo.
-3. En GitHub: la variable `SITIO_URL` con el dominio definitivo, y volver a correr *Deploy* (la dirección se usa al compilar).
-4. Para que `nuevo.<dominio>` (y `www`, si corresponde) lleve al definitivo, agregar al final del `Caddyfile`:
-   ```
-   nuevo.<dominio>, www.<dominio> {
-   	redir https://<dominio>{uri} permanent
-   }
-   ```
-5. `docker compose up -d` (Caddy pide el certificado nuevo solo).
-
-Las sesiones abiertas en el gestor se pierden con el cambio de dirección: hay que volver a ingresar.
+Pasos en [GUIA DE DEPLOY.md](GUIA%20DE%20DEPLOY.md#pasar-al-dominio-definitivo): DNS, las tres direcciones del `.env` del servidor, la redirección en `infra/Caddyfile` (en el repo, porque `deploy.sh` lo copia en cada publicación), `SITIO_URL` en `deploy.env` y publicar.
 
 ---
 
@@ -161,7 +109,7 @@ Las sesiones abiertas en el gestor se pierden con el cambio de dirección: hay q
 | Reiniciar el sitio | `docker compose restart app` |
 | Actualizar Caddy y PostgreSQL (parches) | `docker compose pull caddy db && docker compose up -d` |
 | Espacio en disco | `df -h` y `docker system df` |
-| Limpiar imágenes viejas | `docker image prune -f` (el deploy ya lo hace) |
+| Limpiar imágenes viejas | `deploy.sh` ya guarda sólo las últimas; para el resto: `docker system prune -f` |
 
 Después de reiniciar `app`, Caddy puede responder 502 durante unos segundos, hasta que el sitio termina de arrancar.
 
@@ -171,6 +119,7 @@ La caché de imágenes optimizadas (`cache-next`) sobrevive a los deploys. La pr
 
 ## Notas técnicas
 
-- **Parche sobre Next** (`patches/next.patch`, lo aplica `pnpm install`). En Next 16.3.6, si el navegador cortaba la conexión mientras el optimizador leía la foto original (por ejemplo, alguien que cambia de página rápido), esa foto quedaba colgada para todos hasta reiniciar el sitio. El parche hace que esa lectura interna no dependa de la conexión del navegador. Al actualizar Next: revisar si se corrigió (se reproduce con la prueba de la Etapa 4 en la guía) y, si es así, sacar el parche. Si el parche deja de aplicar, `pnpm install` falla y avisa.
-- **Variables al compilar:** `SITIO_URL` se usa al compilar (robots.txt y metadatos) y al ejecutar. Las demás son sólo de ejecución y van en el `.env` del VPS. La imagen no lleva ningún secreto.
+- **Parche sobre Next** (`patches/next.patch`, lo aplica `pnpm install`). En Next 16.3.6, si el navegador cortaba la conexión mientras el optimizador leía la foto original (por ejemplo, alguien que cambia de página rápido), esa foto quedaba colgada para todos hasta reiniciar el sitio. El parche hace que esa lectura interna no dependa de la conexión del navegador. Al actualizar Next: revisar si se corrigió (se reproduce con la prueba descrita en la Etapa 4 de PASO A PASO.md) y, si es así, sacar el parche. Si el parche deja de aplicar, `pnpm install` falla y avisa.
+- **Variables al compilar:** `SITIO_URL` se usa al compilar (robots.txt y metadatos; `deploy.sh` la toma de `deploy.env`) y al ejecutar (del `.env` del VPS). Las demás son sólo de ejecución. La imagen no lleva ningún secreto.
+- **GitHub Actions:** `.github/workflows/ci.yml` verifica cada cambio si el código está en GitHub. El deploy se hace con `deploy.sh`.
 - **HTTP/3:** Caddy lo ofrece por 443/udp (está publicado en el `docker-compose.yml`).

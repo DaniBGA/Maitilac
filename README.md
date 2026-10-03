@@ -152,7 +152,7 @@ Saca las capturas **desde `referencia/`** (el sitio viejo) y las guarda en `test
 
 ## Producción (Docker)
 
-El sitio se publica como una imagen Docker detrás de Caddy (HTTPS automático), con PostgreSQL al lado. Puesta en marcha, deploy, copias de seguridad y restauración: [docs/OPERACION.md](docs/OPERACION.md).
+El sitio se publica como una imagen Docker detrás de Caddy (HTTPS automático), con PostgreSQL al lado. **Publicar y actualizar:** [docs/GUIA DE DEPLOY.md](docs/GUIA%20DE%20DEPLOY.md), con `./scripts/deploy.sh`. Referencia técnica (copias, restauración, mantenimiento): [docs/OPERACION.md](docs/OPERACION.md).
 
 Para probar la imagen en local:
 
@@ -181,6 +181,7 @@ PRUEBA_URL=https://nuevo.<dominio> pnpm test:visual
 | `pnpm ref:capturar` | Genera las capturas de referencia desde el sitio viejo |
 | `pnpm test:visual` | Compara el sitio nuevo contra las capturas de referencia |
 | `pnpm test` | Tests unitarios (Vitest): horarios, precios, filtros, slugs |
+| `./scripts/deploy.sh` | Publica una actualización en el VPS (ver la guía de deploy: `primera-vez`, `volver`, `usuario`, `copia`, `estado`) |
 | `pnpm herramientas` | Empaqueta las herramientas del servidor (migrar, importar, crear usuario) en `.next/herramientas/` |
 | `pnpm datos:extraer` | Vuelve a extraer los datos del sitio viejo (`content/` y `db/importar/data/`) |
 | `pnpm db:levantar` | Levanta PostgreSQL en Docker (puerto 5440) |

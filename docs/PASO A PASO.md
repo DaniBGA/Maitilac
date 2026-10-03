@@ -2,7 +2,7 @@
 
 Guía operativa para ejecutar el [PLAN DE REFACTORIZACION.md](PLAN%20DE%20REFACTORIZACION.md) de a un paso por vez. El plan explica **qué** se construye y **por qué**; esta guía explica **cómo** y en qué orden, y sobre todo **cómo verificar que el diseño quede idéntico**.
 
-> **Estado actual:** Etapas 0 a 3 terminadas. Etapa 5 (gestor) terminada salvo el Paso 5.10 (aprobar que se quite el enlace del footer, usuarios de D2, prueba en un celular con el sitio publicado). Etapa 6 hecha en lo que no depende del servidor. **Etapa 4 preparada y probada en local** (imagen Docker, Caddy, backups, CI y deploy; ver [OPERACION.md](OPERACION.md)). Para seguir hace falta: el VPS, el dominio (D1c), el repo en GitHub y los emails (D2). *(Actualizar esta línea al cerrar cada paso.)*
+> **Estado actual:** Etapas 0 a 3 terminadas. Etapa 5 (gestor) terminada salvo el Paso 5.10 (aprobar que se quite el enlace del footer, usuarios de D2, prueba en un celular con el sitio publicado). Etapa 6 hecha en lo que no depende del servidor. **Etapa 4 lista para publicar:** la publicación la hace el dueño del proyecto con [GUIA DE DEPLOY.md](GUIA%20DE%20DEPLOY.md) y `scripts/deploy.sh`. *(Actualizar esta línea al cerrar cada paso.)*
 
 ---
 
@@ -299,7 +299,7 @@ Criterio de la etapa: **los tests visuales tienen que seguir exactamente igual q
 
 ## Etapa 4 — Servidor y publicación de prueba (preparada; falta el VPS)
 
-*Todo lo que no necesita el VPS, el dominio ni GitHub ya está hecho y probado en local con el mismo `docker-compose.yml`, `Caddyfile` y scripts (03/10/2026). Cómo se usa en el servidor: [OPERACION.md](OPERACION.md).*
+*Todo lo que no necesita el VPS ni el dominio ya está hecho y probado en local (03/10/2026). **La publicación la hace el dueño del proyecto** con [GUIA DE DEPLOY.md](GUIA%20DE%20DEPLOY.md) y `scripts/deploy.sh` (decisión del 03/10/2026). Referencia técnica: [OPERACION.md](OPERACION.md).*
 
 ### Paso 4.1 — Preparar el VPS ⏳
 
@@ -328,17 +328,17 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
 - [x] `Dockerfile` multi-etapa (Node 24): instala dependencias (con el parche de Next), hace `pnpm build` y `pnpm herramientas`, y copia la salida `standalone`. Corre como usuario `node`. Al arrancar aplica las migraciones (`herramientas/migrar.mjs`) y después `node server.js`. 435 MB. No lleva ningún `.env` ni secreto (verificado en la imagen y en su historial).
 - [x] Herramientas empaquetadas con esbuild (`scripts/herramientas.mjs`): `migrar.mjs`, `importar.mjs` y `crear-usuario.mjs`, que corren con `node` solo dentro de la imagen.
 - [x] `infra/docker-compose.yml`: `app` (imagen de `IMAGEN`, volúmenes `fotos` y `cache-next`), `db` (`postgres:17-alpine`, *healthcheck*) y `caddy` (80/443 tcp y 443/udp, certificados y `fotos` de sólo lectura). `infra/.env.produccion.example` con las variables.
-- [ ] ⏳ En el VPS: `/srv/maitilac/` con esos archivos y el `.env` (permisos `600`). Pasos en OPERACION.md.
+- [x] En el VPS, `/srv/maitilac/` con esos archivos y el `.env` (permisos `600`): lo arma `deploy.sh primera-vez`.
 
 **Verificado en local** (con `DOMINIO=localhost` y Caddy en 8080/8443, porque el 80 de esta máquina está ocupado): las 8 rutas públicas responden, `/gestor` redirige al login, la copia de seguridad da 401 sin sesión; login con cookie `Secure`/`HttpOnly`; foto subida servida por Caddy desde el volumen y optimizada en AVIF; y **`PRUEBA_URL=https://localhost:8443 pnpm test:visual`: 115 de 115**, con la caché de imágenes vacía.
 
-### Paso 4.4 — Deploy automático
+### Paso 4.4 — Deploy con `scripts/deploy.sh`
 
-- [x] `.github/workflows/ci.yml`: lint, tipos, tests unitarios, build y tests visuales (con Postgres como servicio) en cada *pull request* y push a `main`. Si fallan los visuales, sube el informe.
-- [x] `.github/workflows/deploy.yml`: cuando la CI pasa en `main` (o a mano), build de la imagen → push a GHCR (etiquetas `latest` y el commit) → SSH al VPS → `docker compose pull app && docker compose up -d app`.
-- [ ] ⏳ Crear el repo y probar los dos flujos (están validados con actionlint, pero no se pudieron correr). **Posible problema:** las capturas de referencia se generaron en esta máquina; en el runner de GitHub las fuentes pueden dibujarse distinto y fallar los tests visuales. Si pasa, regenerar las referencias desde `referencia/` dentro de la imagen de Playwright y usarla también en la CI.
-- [ ] ⏳ Secretos y variable en GitHub, `docker login ghcr.io` en el VPS (OPERACION.md, puesta en marcha).
-- [ ] ⏳ Primer deploy y `node herramientas/importar.mjs` dentro del contenedor.
+- [x] `scripts/deploy.sh`, desde la computadora y sin depender de GitHub: verifica el código, compila la imagen, copia la configuración, hace una copia previa, sube la imagen por SSH (unos 110 MB), la activa, comprueba que las 5 páginas se armen bien (no alcanza con el código 200: con el streaming, una página rota también responde 200) y, si algo falla, vuelve sola a la anterior. Comandos `primera-vez` (crea el `.env` con secretos nuevos, carga los datos de fábrica y programa el cron), `volver`, `usuario`, `copia` y `estado`. Configuración en `deploy.env` (modelo: `deploy.env.example`).
+- [x] Probado contra un servidor Ubuntu 24.04 de prueba (contenedor con SSH): primera vez, actualizaciones, `volver` ida y vuelta, `copia`, `usuario` con login real, una versión que no compila (no publica) y una que se rompe en ejecución (vuelve sola en unos 10 s). La limpieza de imágenes nunca borra la actual ni la anterior.
+- [x] `docs/GUIA DE DEPLOY.md`: paso a paso desde el VPS vacío (seguridad, DNS, primera vez, actualizaciones, copias, dominio definitivo, problemas frecuentes).
+- [x] `.github/workflows/ci.yml` sigue sirviendo para verificar cada cambio si el código se sube a GitHub. `deploy.yml` (deploy por GitHub) quedó reemplazado por el script: pendiente decidir si se borra.
+- [ ] ⏳ Primera publicación real (la hace el dueño del proyecto con la guía).
 
 **Verificación:** `https://nuevo.<dominio>` abre con HTTPS válido; `PRUEBA_URL=https://nuevo.<dominio> pnpm test:visual` da todo en verde (sólo páginas públicas, sin tocar datos).
 
@@ -346,7 +346,7 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
 
 - [x] `infra/backup.sh`: `pg_dump` + archivo de las fotos subidas, con rotación (7 diarias, 4 semanales). `infra/restaurar.sh`: restaura base y fotos, pidiendo confirmación.
 - [x] Probado en local: copia → base reimportada de fábrica y fotos borradas → restauración → vuelven la foto subida, su archivo y el usuario del gestor, y Caddy la sirve. Rotación probada con copias viejas de mentira.
-- [ ] ⏳ Cron del usuario `deploy`: `0 3 * * * /srv/maitilac/backup.sh >> /srv/maitilac/copias/backup.log 2>&1`.
+- [x] Cron diario a las 3:00: lo programa `deploy.sh primera-vez` (probado en el servidor de prueba).
 - [ ] ⏳ Activar los snapshots semanales en el panel de Hostinger.
 
 ### Notas técnicas de esta etapa

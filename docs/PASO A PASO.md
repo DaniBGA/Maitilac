@@ -461,6 +461,20 @@ Las mejoras de esta etapa tienen que ser **invisibles**. Si alguna cambia el dis
 
 **Quedan como propuesta para la Etapa 7 (cambian el diseño):** el contraste de varios textos (años de la línea de tiempo, etiquetas de los canales de Contacto, unidades de precio, "Producto del Mes", etc.) no llega a AA (backlog 9), y el logo del footer claro de Nosotros se ve achatado en tablet y celular (backlog 10).
 
+### Optimización de velocidad (03/10/2026) ✅
+
+Medido antes de tocar nada, en modo producción contra la base local: las páginas públicas tardan entre 17 y 29 ms en armarse con la caché llena (la base sólo se consulta cuando el gestor guarda un cambio), y la primera visita después de arrancar, unos 300–450 ms (Node cargando el código). El margen estaba en otro lado:
+
+- [x] **Caché del navegador para `public/`:** Next mandaba fuentes e imágenes con `max-age=0` y el navegador las volvía a consultar en cada visita. Ahora (`headers()` en `next.config.ts`) las fuentes van con un año (`immutable`) y las imágenes con 31 días. Medido con un perfil de navegador cerrado y vuelto a abrir: al volver a Nosotros, 10 pedidos al servidor en lugar de 14 (las 4 fuentes ya no se piden). **Si se reemplaza un archivo de `public/`, hay que cambiarle el nombre.**
+- [x] **Índices** en las columnas que relacionan tablas (fotos de productos, de premios, del equipo y de los locales; quesos de los combos; productos de los filtros). Migración `0004_indices_claves_foraneas`. Con las tablas de hoy no se nota; sirve cuando crezca el banco de fotos y al borrar fotos o productos.
+- [x] **`getLocales`:** trae las dos fotos de cada local por join, en lugar de leer el banco de fotos entero.
+- [x] **Gestor:** `leerDatosGestor()` (corre en cada acción) hace todas las consultas en una sola tanda, sin las tres repetidas, y arma los cruces con `Map`. De 13,8 a 9,0 ms (mediana de 40), con la salida idéntica (comparada campo por campo).
+- [x] **Reordenar con las flechas:** un solo `UPDATE` en lugar de uno por fila. Guardar un producto inserta sus fotos y quesos de una vez. Test funcional nuevo: la flecha cambia el orden en el catálogo y vuelve.
+
+**Verificado:** suite local 145 de 145; imagen de producción con base nueva (migra hasta la 0004) y 115 de 115 contra ella.
+
+**Se evaluó y no se hizo** (poco beneficio o algún riesgo): guardar en caché el HTML armado de cada página (son 20 ms); precargar las fuentes (competiría con la foto del hero en conexiones lentas); dejar que Caddy comprima en lugar de Next (podría frenar el streaming); agrupar los inserts de la importación de fábrica (se usa poco); guardar la sesión del gestor en la cookie (ahorra una consulta pero demora el cierre de sesión).
+
 ### Paso 6.4 — Tests finales (casi terminado)
 
 - [x] Vitest (`pnpm test`, `tests/unit/`): `horarios` (incluida la hora de Argentina y el caso de Maipú), `precio` (reconstrucción de todos los precios de fábrica y `leerPrecioEscrito`), conteo de ocasiones (contra los números de la captura de textos del sitio viejo) y slugs. 32 tests. El conteo pasó a `lib/ocasiones.ts`, compartido por el catálogo y el gestor.

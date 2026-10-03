@@ -46,12 +46,16 @@ export async function prepararPagina(page: Page, ruta: { vieja: string; nueva: s
  * hidratar y daría un error de hidratación.
  */
 export async function esperarContenido(page: Page) {
+  // El recorrido se hace desde acá y no dentro de la página: con el reloj falso, los
+  // temporizadores de la página no esperan a que el navegador pinte, y contra un
+  // servidor rápido (producción) las "lazy" quedaban sin empezar a cargar.
+  const paso = await page.evaluate(() => Math.round(innerHeight * 0.8));
+  for (let y = 0; y < (await page.evaluate(() => document.documentElement.scrollHeight)); y += paso) {
+    await page.evaluate((y) => scrollTo(0, y), y);
+    await page.waitForTimeout(60);
+  }
   await page.evaluate(async () => {
     const pausa = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 30)));
-    for (let y = 0; y < document.documentElement.scrollHeight; y += Math.round(innerHeight * 0.8)) {
-      scrollTo(0, y);
-      await pausa();
-    }
     scrollTo(0, 0);
     await document.fonts.ready;
     await Promise.all(

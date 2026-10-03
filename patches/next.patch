@@ -1,0 +1,32 @@
+diff --git a/dist/esm/server/image-optimizer.js b/dist/esm/server/image-optimizer.js
+index 50c09924371205bfb335be7947fbce65b0f5fed2..018480a2a3222c365e09c4fc44a56b5685f986fb 100644
+--- a/dist/esm/server/image-optimizer.js
++++ b/dist/esm/server/image-optimizer.js	
+@@ -922,7 +922,10 @@ export async function fetchInternalImage(href, _req, _res, maximumResponseBody,
+         const mocked = createRequestResponseMocks({
+             url: href,
+             method,
+-            socket: _req.socket,
++            // Parche Maitilac (patches/next@16.3.6.patch): sin el socket del navegador.
++            // Si el navegador cortaba la conexión, la respuesta interna no terminaba nunca y
++            // esa imagen quedaba colgada para todos hasta reiniciar.
++            socket: undefined,
+             maximumResponseBody
+         });
+         await handleRequest(mocked.req, mocked.res, parseReqUrl(href));
+diff --git a/dist/server/image-optimizer.js b/dist/server/image-optimizer.js
+index b25880a32c763d0e0ac84e58c254ba601100e8c7..932d4f695ab9b6ef3103fb50ea8bb4179a3ee807 100644
+--- a/dist/server/image-optimizer.js
++++ b/dist/server/image-optimizer.js	
+@@ -1038,7 +1038,10 @@ async function fetchInternalImage(href, _req, _res, maximumResponseBody, handleR
+         const mocked = (0, _mockrequest.createRequestResponseMocks)({
+             url: href,
+             method,
+-            socket: _req.socket,
++            // Parche Maitilac (patches/next@16.3.6.patch): sin el socket del navegador.
++            // Si el navegador cortaba la conexión, la respuesta interna no terminaba nunca y
++            // esa imagen quedaba colgada para todos hasta reiniciar.
++            socket: undefined,
+             maximumResponseBody
+         });
+         await handleRequest(mocked.req, mocked.res, (0, _url.parseReqUrl)(href));

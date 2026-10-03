@@ -8,6 +8,7 @@ next-env.d.ts
 # Variables de entorno
 .env*
 !.env.example
+!infra/.env.produccion.example
 
 # Tests
 test-results/

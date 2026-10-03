@@ -17,7 +17,13 @@ export function TarjetaProducto({ p }: { p: Producto }) {
   return (
     <div className="card">
       <div className="tc-foto">
-        <Foto src={foto} sizes="(max-width:720px) 90vw, (max-width:1024px) 46vw, 280px" alt={p.nombre} loading="lazy" className="tc-img" />
+        <Foto
+          src={foto}
+          sizes="(max-width:720px) 90vw, (max-width:1024px) 46vw, 280px"
+          alt={p.nombre}
+          loading="lazy"
+          className="tc-img"
+        />
         {p.badge ? <span className="badge">{p.badge}</span> : null}
         {total > 1 ? (
           <>
@@ -64,16 +70,12 @@ export function TarjetaProducto({ p }: { p: Producto }) {
             ))}
           </div>
         ) : null}
-        <div className="tc-precio">
-          {precioVisible(p) ? (
-            <>
-              <span className="precio">{p.precio}</span>
-              <span className="tc-unidad">/ {p.unidad}</span>
-            </>
-          ) : (
-            <span className="precio">Consultar</span>
-          )}
-        </div>
+        {precioVisible(p) ? (
+          <div className="tc-precio">
+            <span className="precio">{p.precio}</span>
+            <span className="tc-unidad">/ {p.unidad}</span>
+          </div>
+        ) : null}
         <BotonDetalles slug={slug(p.nombre)} />
       </div>
     </div>

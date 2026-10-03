@@ -514,6 +514,20 @@ Con la paridad lograda, se mejora **de a una funcionalidad por vez**. Cada mejor
 5. **Revisión en `nuevo.<dominio>`** o en una URL de preview.
 6. **Merge**, deploy y entrada en `REGISTRO DE CAMBIOS.md`.
 
+### Pedido del cliente del 03/10/2026
+
+Revisión con antes y después: página privada "Revisión pedido Maitilac" (https://claude.ai/artifact/HJHCnT9UkxaJW3F2ja1hdq). Estilos nuevos en `styles/cambios.css` (capa `cambios`, después de las del sitio viejo).
+
+- [x] 1. Inicio: "Empresa familiar de Tandil / que cuida cada detalle", sin la frase de abajo (los botones quedan). En pantallas medianas y grandes se sacó el ancho máximo de 680 px para que entre en dos renglones; en el celular se corta parejo.
+- [x] 2. Footer oscuro: texto nuevo; en tablet, tres columnas alineadas arriba. En escritorio el logo ya estaba alineado con los títulos.
+- [x] 3. Catálogo: bajada nueva; sin precio no se ve nada (ni "Consultar"): `precioVisible()` en `lib/util.ts`; sin maridaje (detalle y destacados) ni recuadro de locales (destacados); filtros PARRILLA-PICADA-PIZZA-POSTRE-SANDWICH-RALLAR-REGALOS en ese orden (datos de fábrica). En el gestor se sacaron los campos de maridaje; los datos quedan en la base.
+- [x] 4. Locales: sin "Indicaciones Generales / Estacionamiento".
+- [x] 5. Premios: "Nuestros quesos, premiados."; rótulo "PREMIOS" en el detalle de producto.
+- [ ] 6. Proceso productivo: texto nuevo ✅; paso 3 "ELABORACION" con la tina sola (recorte de la imagen anterior) ✅; **falta el video** (con subtítulos) y **los originales de los dibujos del folleto** (en el PDF no se pueden separar del fondo).
+- [x] 7. Historia en el celular: los años en una fila que se desliza.
+- [ ] Aprobación de la revisión y **nueva referencia**: después de aprobarla, las capturas de referencia pasan a sacarse del sitio nuevo (`pnpm test:visual --update-snapshots`). Hasta entonces, los tests visuales que comparan contra el sitio viejo fallan en las páginas cambiadas.
+- Textos tal cual: sin punto final en la bajada del catálogo, el footer y el proceso; "ELABORACION" sin tilde; filtros en mayúsculas. A confirmar con el cliente.
+
 ### Backlog inicial
 
 Ordenado por valor para el cliente. Se reordena según lo que se decida en cada revisión.
@@ -548,4 +562,11 @@ Toda diferencia entre el sitio nuevo y `referencia/` tiene que estar en esta tab
 | — | Gestor → "Exportar" | Mismo botón y mismo texto; descarga `maitilac-copia-AAAA-MM-DD.json` con todas las tablas (incluido el equipo) en lugar de `catalogo-maitilac.txt`. El nombre del botón se dejó igual por paridad; el cartelito al pasar el mouse lo explica | Ahora es un backup, ya no un archivo para pegar en el código | Pendiente |
 | — | Gestor → acceso | Pantalla de login | Seguridad (plan P2) | Pendiente |
 | 28/09/2026 | Inicio → "Ver Detalles" | Abre el detalle del producto (en el sitio viejo no hacía nada y bloqueaba el scroll) | Corrección de un error | Pendiente |
+| 03/10/2026 | Inicio | Título "Empresa familiar de Tandil / que cuida cada detalle", sin la frase de abajo | Pedido del cliente | Cliente |
+| 03/10/2026 | Footer oscuro | Texto nuevo; en tablet, tres columnas | Pedido del cliente | Cliente |
+| 03/10/2026 | Catálogo | Bajada nueva; sin precio no se ve nada; sin maridaje ni locales; filtros con nombres y orden nuevos | Pedido del cliente | Cliente |
+| 03/10/2026 | Locales | Sin el bloque de estacionamiento | Pedido del cliente | Cliente |
+| 03/10/2026 | Nosotros → Premios | "Nuestros quesos, premiados."; rótulo "PREMIOS" en el detalle | Pedido del cliente | Cliente |
+| 03/10/2026 | Nosotros → Proceso productivo | Texto nuevo; paso 3 "ELABORACION" sin tarros | Pedido del cliente | Cliente |
+| 03/10/2026 | Nosotros → Historia (celular) | Años en una fila que se desliza | Pedido del cliente | Cliente |
 | — | `/catalogo/[slug]` | Entrando directo se ve el catálogo con el detalle abierto | URL propia por producto (SEO, compartir) | Pendiente |

@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import { expect, test } from "vitest";
 import ocasiones from "@/db/importar/data/ocasiones.json";
 import productos from "@/db/importar/data/productos.json";
@@ -13,12 +12,33 @@ test("cuenta sólo los productos de la lista que están marcados", () => {
   expect(productosDeOcasion({ match: [] }, lista)).toEqual([]);
 });
 
-test("con los datos de fábrica, los contadores son los del sitio viejo", () => {
-  // Los números que muestra el catálogo viejo, de la captura de textos de referencia
-  const referencia = readFileSync("tests/visual/__referencia__/catalogo-textos-escritorio.txt", "utf8");
+test("con los datos de fábrica, cada filtro tiene los mismos quesos que en el sitio viejo", () => {
+  // Contadores del catálogo viejo (captura de textos de referencia, antes de que el cliente
+  // les cambiara los nombres el 03/10/2026). Se comparan por clave, que no cambió.
+  const delSitioViejo: Record<string, number> = {
+    picadita: 3,
+    parrilla: 1,
+    pizza: 2,
+    postre: 2,
+    regalar: 2,
+    sandwich: 2,
+    rallar: 2,
+  };
   const visibles = productos.filter((p) => p.activo !== false);
-  for (const o of ocasiones.filter((x) => x.ver !== false)) {
-    const n = productosDeOcasion(o, visibles).length;
-    expect(referencia).toContain(`${o.label} ${n}\n`);
-  }
+  const contadores = Object.fromEntries(
+    ocasiones.map((o) => [o.key, productosDeOcasion(o, visibles).length]),
+  );
+  expect(contadores).toEqual(delSitioViejo);
+});
+
+test("los filtros tienen los nombres y el orden que pidió el cliente", () => {
+  expect(ocasiones.map((o) => o.label)).toEqual([
+    "PARRILLA",
+    "PICADA",
+    "PIZZA",
+    "POSTRE",
+    "SANDWICH",
+    "RALLAR",
+    "REGALOS",
+  ]);
 });

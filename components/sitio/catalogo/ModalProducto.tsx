@@ -135,27 +135,13 @@ export function ModalProducto({
           </h2>
           {p.tipo ? <div className="md-tipo">{p.tipo}</div> : null}
           {p.desc ? <p className="md-desc">{p.desc}</p> : null}
-          <div className="md-precio-fila">
-            <span className="md-precio">{precioVisible(p) ? p.precio : "Consultar"}</span>
-            {precioVisible(p) ? <span className="md-unidad">/ {p.unidad}</span> : null}
-          </div>
+          {precioVisible(p) ? (
+            <div className="md-precio-fila">
+              <span className="md-precio">{p.precio}</span>
+              <span className="md-unidad">/ {p.unidad}</span>
+            </div>
+          ) : null}
           <div className="md-info">
-            <div className="md-rotulo">MARIDAJE COMIDA</div>
-            <div className="md-chips">
-              {p.comida.map((m) => (
-                <span key={m} className="chip">
-                  {m}
-                </span>
-              ))}
-            </div>
-            <div className="md-rotulo">MARIDAJE BEBIDA</div>
-            <div className="md-chips">
-              {p.bebida.map((b) => (
-                <span key={b} className="chip">
-                  {b}
-                </span>
-              ))}
-            </div>
             {p.presentaciones && p.presentaciones.length ? (
               <>
                 <div className="md-rotulo">PRESENTACIÓN</div>
@@ -182,7 +168,7 @@ export function ModalProducto({
             ) : null}
             {p.premios ? (
               <>
-                <div className="md-rotulo-premios">PREMIOS CATA QUESOS Y SABORES DE TANDIL</div>
+                <div className="md-rotulo-premios">PREMIOS</div>
                 <div className="md-premios">{p.premios}</div>
               </>
             ) : null}

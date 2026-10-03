@@ -9,8 +9,15 @@ export async function FooterOscuro() {
     <footer className="foot-dark js-footer-dark">
       <div className="foot-grid">
         <div>
-          <Foto src="/img/logo-tandil-2.png" sizes="125px" alt="Maitilac — Quesos de Tandil" className="foot-logo" />
-          <p className="foot-desc">Quesos artesanales elaborados con leche propia desde nuestros tambos.</p>
+          <Foto
+            src="/img/logo-tandil-2.png"
+            sizes="125px"
+            alt="Maitilac — Quesos de Tandil"
+            className="foot-logo"
+          />
+          <p className="foot-desc">
+            Empresa familiar que, con el trabajo de cada día, hace que disfrutes de los buenos gustos
+          </p>
         </div>
         <div>
           <div className="foot-tit">NAVEGACIÓN</div>

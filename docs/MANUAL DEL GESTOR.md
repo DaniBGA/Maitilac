@@ -64,7 +64,7 @@ Al terminar: botón **"Guardar anuncios"**.
 
 ## 2. Buscá por ocasión (los filtros del catálogo)
 
-Son los botones que se ven arriba del catálogo: "Sale picadita", "Va a la parrilla", "A rallar se ha dicho"...
+Son los botones que se ven arriba del catálogo: "PARRILLA", "PICADA", "PIZZA"...
 
 | Acción | Cómo |
 |---|---|
@@ -151,12 +151,11 @@ Botón **"Editar"**. Se abre un panel lateral con todos los campos:
 | **Nombre** | |
 | **Tipo** | "Pasta Semidura con Ojos", etc. |
 | **Descripción** | Una o dos líneas |
-| **Precio** y **Unidad** | Por ejemplo "$4500", "4.500", "Desde $8500" o "Consultar". En el sitio se muestra siempre con el mismo formato ("$4500") |
-| **Mostrar el precio en el sitio** | Si lo destildás, en el sitio dice "Consultar" en lugar del precio. El precio queda guardado |
+| **Precio** y **Unidad** | Por ejemplo "$4500", "4.500" o "Desde $8500". En el sitio se muestra siempre con el mismo formato ("$4500"). Si escribís "Consultar" (o lo dejás vacío), el producto queda sin precio y en el sitio no se muestra nada en ese lugar |
+| **Mostrar el precio en el sitio** | Si lo destildás, en el sitio no se muestra el precio (no aparece nada en su lugar). El precio queda guardado para volver a mostrarlo |
 | **Presentación** | Entero, Trozado, Feteado. Marcá las que correspondan |
 | **Quesos incluidos** | Sólo para combos y picadas |
 | **Etiqueta destacada** | "Nuevo", "Producto del Mes"... Se ve como cartelito naranja sobre la foto |
-| **Maridaje comida / bebida** | Separados con comas |
 | **Premios** | El texto que aparece en el detalle |
 | **Fotos** | Se suben con "Subir foto" y se quitan con la × de cada una |
 
@@ -278,7 +277,7 @@ Si la foto es de un queso que todavía no está en el catálogo, elegí **"➕ P
 
 Te pide el nombre y crea el producto **con esa foto ya cargada**. Después se abre solo el panel de edición para que completes precio, descripción y el resto.
 
-- El producto nace **visible en el sitio**, con el precio sin mostrar (dice "Consultar") hasta que lo completes.
+- El producto nace **visible en el sitio**, sin precio a la vista hasta que lo completes.
 - Si escribís un nombre que ya existe, avisa y no lo crea.
 - Si cancelás, no crea nada y la foto queda como estaba.
 

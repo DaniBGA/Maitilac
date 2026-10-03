@@ -1,7 +1,15 @@
 [
   {
+    "key": "parrilla",
+    "label": "PARRILLA",
+    "ver": true,
+    "match": [
+      "Provoleta"
+    ]
+  },
+  {
     "key": "picadita",
-    "label": "Sale picadita",
+    "label": "PICADA",
     "ver": true,
     "match": [
       "Gouda",
@@ -10,16 +18,8 @@
     ]
   },
   {
-    "key": "parrilla",
-    "label": "Va a la parrilla",
-    "ver": true,
-    "match": [
-      "Provoleta"
-    ]
-  },
-  {
     "key": "pizza",
-    "label": "Nació para la pizza",
+    "label": "PIZZA",
     "ver": true,
     "match": [
       "Cremoso",
@@ -28,7 +28,7 @@
   },
   {
     "key": "postre",
-    "label": "Para postre",
+    "label": "POSTRE",
     "ver": true,
     "match": [
       "Gouda",
@@ -36,17 +36,8 @@
     ]
   },
   {
-    "key": "regalar",
-    "label": "Para regalar",
-    "ver": true,
-    "match": [
-      "Combo 3 Quesos",
-      "Flor de Picada"
-    ]
-  },
-  {
     "key": "sandwich",
-    "label": "Maestros del sandwich",
+    "label": "SANDWICH",
     "ver": true,
     "match": [
       "Barra Tybo",
@@ -55,11 +46,20 @@
   },
   {
     "key": "rallar",
-    "label": "A rallar se ha dicho",
+    "label": "RALLAR",
     "ver": true,
     "match": [
       "Reggianito",
       "Sardo"
+    ]
+  },
+  {
+    "key": "regalar",
+    "label": "REGALOS",
+    "ver": true,
+    "match": [
+      "Combo 3 Quesos",
+      "Flor de Picada"
     ]
   }
 ]

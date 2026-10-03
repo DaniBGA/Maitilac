@@ -44,8 +44,6 @@ export function PanelProducto({
 }) {
   const original = id ? productos.find((p) => p.id === id) : undefined;
   const [p, setP] = useState<ProductoEditado>(() => (original ? { ...original } : NUEVO));
-  const [comida, setComida] = useState((original?.comida ?? []).join(", "));
-  const [bebida, setBebida] = useState((original?.bebida ?? []).join(", "));
   const cambiar = (c: Partial<ProductoEditado>) => setP((x) => ({ ...x, ...c }));
 
   // Quesos que se pueden meter dentro de un combo o una picada: todos menos los
@@ -67,11 +65,6 @@ export function PanelProducto({
 
   const alternar = (lista: string[], v: string, on: boolean) =>
     on ? [...lista, v] : lista.filter((x) => x !== v);
-  const porComa = (v: string) =>
-    v
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
 
   const subir = async (archivos: FileList | null) => {
     const lista = Array.from(archivos ?? []);
@@ -92,8 +85,8 @@ export function PanelProducto({
       document.getElementById("gf-nombre")?.focus();
       return;
     }
-    if (await correr(guardarProducto(id, { ...p, comida: porComa(comida), bebida: porComa(bebida) })))
-      alCerrar();
+    // El maridaje ya no se muestra ni se edita (03/10/2026), pero se guarda el que tenía.
+    if (await correr(guardarProducto(id, p))) alCerrar();
   };
 
   const borrar = async () => {
@@ -219,8 +212,8 @@ export function PanelProducto({
               <label htmlFor="gf-verprecio" className="ges-3">
                 <strong className="gc-f145">Mostrar el precio en el sitio</strong>
                 <div className="g-ayuda ges-5">
-                  Si lo destildás, en el sitio dice &quot;Consultar&quot; en lugar del precio. El precio queda
-                  guardado para volver a mostrarlo.
+                  Si lo destildás, en el sitio no se muestra el precio. El precio queda guardado para volver a
+                  mostrarlo.
                 </div>
               </label>
             </div>
@@ -287,26 +280,6 @@ export function PanelProducto({
               value={p.badge}
               placeholder="Ej: Nuevo, Producto del Mes (vacío si no lleva)"
               onChange={(e) => cambiar({ badge: e.target.value })}
-            />
-          </div>
-          <div className="g-campo">
-            <label>Maridaje — comida</label>
-            <input
-              type="text"
-              id="gf-comida"
-              value={comida}
-              placeholder="Separá con comas: Nuez, Pera, Miel"
-              onChange={(e) => setComida(e.target.value)}
-            />
-          </div>
-          <div className="g-campo">
-            <label>Maridaje — bebida</label>
-            <input
-              type="text"
-              id="gf-bebida"
-              value={bebida}
-              placeholder="Separá con comas: Malbec, Cerveza rubia"
-              onChange={(e) => setBebida(e.target.value)}
             />
           </div>
           <div className="g-campo">

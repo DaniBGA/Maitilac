@@ -1,5 +1,6 @@
 import { FooterOscuro } from "@/components/sitio/FooterOscuro";
 import { getOcasiones, getProductoDelMes, getProductosVisibles } from "@/lib/datos";
+import { precioVisible } from "@/lib/util";
 import { AbrirProducto } from "../AbrirProducto";
 import { Catalogo } from "./Catalogo";
 import { connection } from "next/server";
@@ -20,7 +21,7 @@ export async function PaginaCatalogo() {
     <main id="page-catalogo" className="page">
       <section className="sec-pad cat-1">
         <h1 className="serif cat-2">Nuestro Catálogo</h1>
-        <p className="cat-3">Descubrí la variedad de sabores y texturas que logramos para vos.</p>
+        <p className="cat-3">Descubrí nuestra variedad de sabores y texturas</p>
       </section>
       {/* Producto del mes: texto y foto propios; nombre, precio y unidad del producto. */}
       {pm ? (
@@ -38,10 +39,12 @@ export async function PaginaCatalogo() {
               <span className="cat-8">Producto del Mes</span>
               <h2 className="serif cat-9">{pm.nombre}</h2>
               <p className="cat-10">{pm.texto}</p>
-              <div className="cat-11">
-                <span className="cat-12">{pm.verPrecio ? pm.precio : "Consultar"}</span>
-                {pm.verPrecio ? <span className="cat-13">/ {pm.unidad}</span> : null}
-              </div>
+              {precioVisible(pm) ? (
+                <div className="cat-11">
+                  <span className="cat-12">{pm.precio}</span>
+                  <span className="cat-13">/ {pm.unidad}</span>
+                </div>
+              ) : null}
               <AbrirProducto slug={pm.slug} className="btn-out btn-pill cat-14">
                 Ver detalles
               </AbrirProducto>

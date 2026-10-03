@@ -9,14 +9,6 @@
 .td-desc{margin:12px 0 0;font-size:15px;line-height:1.45;color:#6B655C;font-weight:500;min-height:22px}
 .td-precio{margin:16px 0 18px;display:flex;align-items:baseline;gap:6px}
 .td-unidad{font-size:14px;color:#9a9488;font-weight:600}
-.td-caja{border:1px solid rgba(94,61,34,.14);border-radius:12px;padding:14px;background:#FBF9F3;margin-bottom:20px}
-.td-rotulo{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.07em;color:#7A4E2B;margin-bottom:11px}
-.td-maridajes{display:flex;gap:7px;align-items:center;min-height:27px;overflow:hidden}
-.td-extra{color:#9a9488;font-size:12px;font-weight:700}
-.td-rotulo-locales{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.07em;color:#7A4E2B;margin:16px 0 10px}
-.td-locales{display:flex;flex-wrap:wrap;gap:14px}
-.td-local{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#4a453d}
-.td-punto{width:7px;height:7px;border-radius:999px;background:#617C52}
 .td-boton{margin-top:auto}
 
 /* Tarjeta de local (resumen) — pintarLocalesHome(), referencia/index.html:1897-1926 */

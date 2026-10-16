@@ -111,8 +111,8 @@ export function BloqueProductos({
                 <div className="gc-tipo">{p.tipo}</div>
                 <div className="gc-precio">
                   {p.precio} <span className="gc-unidad">/ {p.unidad}</span>
-                  {!p.verPrecio ? (
-                    <span className="g-mini gc-consultar">En el sitio dice &quot;Consultar&quot;</span>
+                  {!p.verPrecio || p.precio === "Consultar" ? (
+                    <span className="g-mini gc-consultar">El precio no se muestra en el sitio</span>
                   ) : null}
                 </div>
                 {p.presentaciones.length ? (

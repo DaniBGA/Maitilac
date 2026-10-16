@@ -101,7 +101,6 @@
 @media (max-width:1024px){
   /* Etiquetas: presentación y quesos del combo */
   .chip-pres,.chip-queso{font-size:12px !important;padding:6px 13px}
-  .chip{font-size:13px}
 
   /* Rótulos en mayúsculas */
   .canal-loc-tit{font-size:12px}
@@ -109,7 +108,6 @@
   /* Reescritas: en el sitio viejo apuntaban a los estilos en línea
      (div[style*="letter-spacing:.08em"] / .07em), que ahora son clases. */
   #home-locales .lr-rotulo{font-size:12px !important}
-  #home-products .td-rotulo,#home-products .td-rotulo-locales{font-size:12px !important}
   /* #catalogo-grid div[style*="letter-spacing:.07em"] no coincidía con ningún elemento
      en el sitio viejo (la tarjeta del catálogo no tiene rótulos): no se porta. */
   .g-premio-foto span{font-size:12px}

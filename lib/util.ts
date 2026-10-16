@@ -12,8 +12,12 @@ export const slug = (nombre: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-/** precioVisible() del sitio viejo: si está apagado, se muestra "Consultar" sin unidad. */
-export const precioVisible = (p: Producto) => p.verPrecio !== false;
+/**
+ * ¿Se muestra el precio? Sólo si está activado y es un precio (no "Consultar").
+ * Si no, no se muestra nada: ni el precio ni la palabra "Consultar" (pedido del cliente, 03/10/2026).
+ */
+export const precioVisible = (p: Pick<Producto, "verPrecio" | "precio">) =>
+  p.verPrecio !== false && p.precio !== "Consultar";
 
 /** Índice circular de foto, igual que el sitio viejo (tolera negativos). */
 export const indiceCircular = (i: number, total: number) => (total ? ((i % total) + total) % total : 0);

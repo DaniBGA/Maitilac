@@ -5,7 +5,7 @@ Sitio web de Maitilac (quesos artesanales de Tandil), en migración desde un ún
 - **Plan** (qué se construye y por qué): [docs/PLAN DE REFACTORIZACION.md](docs/PLAN%20DE%20REFACTORIZACION.md)
 - **Paso a paso** (cómo, en qué orden y estado actual): [docs/PASO A PASO.md](docs/PASO%20A%20PASO.md)
 
-> **Estado:** las 5 páginas públicas (Inicio, Nosotros, Catálogo con detalle de producto, Locales y Contacto) se ven igual que el sitio viejo y leen los datos de PostgreSQL. El gestor (con login) guarda en la base y los cambios se ven al instante. Fotos optimizadas, SEO y accesibilidad (Etapa 6) listos en lo que no depende del servidor. Falta: el servidor y la publicación (Etapa 4) y el lanzamiento.
+> **Estado:** las 5 páginas públicas (Inicio, Nosotros, Catálogo con detalle de producto, Locales y Contacto) se ven igual que el sitio viejo y leen los datos de PostgreSQL. El gestor (con login) guarda en la base y los cambios se ven al instante. Fotos optimizadas, SEO y accesibilidad (Etapa 6) listos en lo que no depende del servidor. El servidor (Etapa 4) está preparado y probado en local con Docker; falta el VPS, el dominio y el repo para publicarlo.
 
 ---
 
@@ -150,6 +150,24 @@ Saca las capturas **desde `referencia/`** (el sitio viejo) y las guarda en `test
 
 ---
 
+## Producción (Docker)
+
+El sitio se publica como una imagen Docker detrás de Caddy (HTTPS automático), con PostgreSQL al lado. **Publicar y actualizar:** [docs/GUIA DE DEPLOY.md](docs/GUIA%20DE%20DEPLOY.md), con `./scripts/deploy.sh`. Referencia técnica (copias, restauración, mantenimiento): [docs/OPERACION.md](docs/OPERACION.md).
+
+Para probar la imagen en local:
+
+```bash
+docker build -t maitilac:local .
+```
+
+Para correr los tests contra un sitio ya publicado (sólo las páginas públicas, sin tocar datos):
+
+```bash
+PRUEBA_URL=https://nuevo.<dominio> pnpm test:visual
+```
+
+---
+
 ## Todos los comandos
 
 | Comando | Qué hace |
@@ -163,6 +181,8 @@ Saca las capturas **desde `referencia/`** (el sitio viejo) y las guarda en `test
 | `pnpm ref:capturar` | Genera las capturas de referencia desde el sitio viejo |
 | `pnpm test:visual` | Compara el sitio nuevo contra las capturas de referencia |
 | `pnpm test` | Tests unitarios (Vitest): horarios, precios, filtros, slugs |
+| `./scripts/deploy.sh` | Publica una actualización en el VPS (ver la guía de deploy: `primera-vez`, `volver`, `usuario`, `copia`, `estado`) |
+| `pnpm herramientas` | Empaqueta las herramientas del servidor (migrar, importar, crear usuario) en `.next/herramientas/` |
 | `pnpm datos:extraer` | Vuelve a extraer los datos del sitio viejo (`content/` y `db/importar/data/`) |
 | `pnpm db:levantar` | Levanta PostgreSQL en Docker (puerto 5440) |
 | `pnpm db:migrar` | Aplica las migraciones pendientes |
@@ -188,14 +208,16 @@ lib/                  Acceso a datos (con caché), login, utilidades, horarios, 
 lib/gestor/           Server Actions del gestor, sesión y subida de fotos
 db/                   Esquema, migraciones e importación de datos (Drizzle + PostgreSQL)
 content/              Textos fijos: historia, proceso, Instagram (versionados en git)
-infra/                Docker Compose (por ahora, la base local)
+infra/                Docker Compose (base local y producción), Caddyfile, backups
 styles/
   sitio/              CSS del sitio viejo, portado textual (no redondear valores)
   en-linea/           Lo que en el sitio viejo eran atributos style=""
 public/               Fuentes, imágenes y foto del hero
 tests/visual/         Tests visuales y capturas de referencia
 referencia/           Sitio viejo congelado. NO EDITAR
-docs/                 Plan, paso a paso, registro de cambios, manual del gestor
+docs/                 Plan, paso a paso, registro de cambios, manual del gestor, operación
+patches/              Parche sobre Next (ver docs/OPERACION.md, notas técnicas)
+.github/workflows/    CI (verificación en GitHub)
 _fuentes/             Material original del cliente (no se publica)
 subidas/              Fotos subidas desde el gestor (no se sube al repo)
 ```

@@ -1,0 +1,59 @@
+# Producción en el VPS (docs/OPERACION.md). Va en /srv/maitilac/ junto con el
+# Caddyfile y el .env (permisos 600):
+#   docker compose up -d
+# Sólo Caddy publica puertos (80 y 443): ni la base ni el sitio quedan expuestos.
+name: maitilac
+
+services:
+  app:
+    image: ${IMAGEN:-maitilac:local}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://maitilac:${POSTGRES_PASSWORD:?falta en .env}@db:5432/maitilac
+      FOTOS_DIR: /data/fotos
+    volumes:
+      - fotos:/data/fotos
+      - cache-next:/app/.next/cache
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: maitilac
+      POSTGRES_USER: maitilac
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?falta en .env}
+    volumes:
+      - datos:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U maitilac -d maitilac"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMINIO: ${DOMINIO:?falta en .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - fotos:/srv/fotos:ro
+      - caddy-datos:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+
+volumes:
+  datos:
+  fotos:
+  cache-next:
+  caddy-datos:
+  caddy-config:

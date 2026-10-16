@@ -9,18 +9,29 @@
  */
 import { randomUUID } from "node:crypto";
 import { createInterface } from "node:readline/promises";
+import { Writable } from "node:stream";
 import { hashPassword } from "better-auth/crypto";
 import { and, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { account, user } from "../db/esquema-auth";
 
+/** Pregunta sin mostrar lo que se escribe (como sudo). */
+async function preguntarOculto(pregunta: string): Promise<string> {
+  process.stdout.write(pregunta);
+  // readline repite en pantalla cada tecla: se le da una salida que no muestra nada.
+  const muda = new Writable({ write: (_parte, _codificacion, listo) => listo() });
+  const rl = createInterface({ input: process.stdin, output: muda, terminal: true });
+  const valor = await rl.question("");
+  rl.close();
+  process.stdout.write("\n");
+  return valor;
+}
+
 async function pedirClave(): Promise<string> {
   if (process.env.CLAVE) return process.env.CLAVE;
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
-  const a = await rl.question("Contraseña (mínimo 10 caracteres): ");
-  const b = await rl.question("Repetir contraseña: ");
-  rl.close();
+  const a = await preguntarOculto("Contraseña (mínimo 10 caracteres): ");
+  const b = await preguntarOculto("Repetir contraseña: ");
   if (a !== b) throw new Error("Las contraseñas no coinciden.");
   return a;
 }

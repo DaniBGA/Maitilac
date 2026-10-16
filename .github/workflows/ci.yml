@@ -1,0 +1,58 @@
+# Verificación en cada pull request y en cada push a main, si el código está en GitHub.
+# La publicación no pasa por acá: se hace con scripts/deploy.sh (docs/GUIA DE DEPLOY.md).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verificar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      db:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: maitilac
+          POSTGRES_USER: maitilac
+          POSTGRES_PASSWORD: maitilac
+        ports: ["5440:5432"]
+        options: >-
+          --health-cmd "pg_isready -U maitilac -d maitilac"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      DATABASE_URL: postgres://maitilac:maitilac@localhost:5440/maitilac
+      BETTER_AUTH_SECRET: secreto-solo-para-ci-0123456789abcdef0123456789
+      BETTER_AUTH_URL: http://localhost:3000
+      SITIO_URL: http://localhost:3000
+      GESTOR_PRUEBA_EMAIL: prueba@maitilac.local
+      GESTOR_PRUEBA_CLAVE: clave-de-prueba-ci
+      FOTOS_DIR: ./subidas
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Los scripts leen .env; las variables de arriba tienen prioridad sobre las del archivo.
+      - run: cp .env.example .env
+      - run: pnpm lint
+      - run: pnpm exec tsc --noEmit
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm db:migrar
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:visual
+      - name: Guardar el informe de los tests visuales
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: informe-tests-visuales
+          path: |
+            playwright-report
+            tests/visual/__resultados__
+          retention-days: 14

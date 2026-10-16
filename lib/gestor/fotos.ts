@@ -5,7 +5,7 @@ import sharp from "sharp";
 
 /** Carpeta de las fotos subidas (en el VPS, un volumen que sirve Caddy en /fotos). */
 // turbopackIgnore: es una carpeta externa (un volumen en el VPS), no forma parte del build.
-export const carpetaFotos = () => resolve(/*turbopackIgnore: true*/ process.env.FOTOS_DIR || "./subidas");
+const carpetaFotos = () => resolve(/*turbopackIgnore: true*/ process.env.FOTOS_DIR || "./subidas");
 
 const TIPOS = ["image/jpeg", "image/png", "image/webp"];
 const MAXIMO_BYTES = 15 * 1024 * 1024;

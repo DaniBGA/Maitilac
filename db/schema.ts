@@ -10,6 +10,7 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   check,
+  index,
   integer,
   numeric,
   pgTable,
@@ -83,7 +84,8 @@ export const productoFotos = pgTable(
       .references(() => fotos.id, { onDelete: "restrict" }),
     orden: integer("orden").notNull(),
   },
-  (t) => [primaryKey({ columns: [t.productoId, t.fotoId] })],
+  // El índice por foto: el Banco de fotos busca en qué producto está cada una.
+  (t) => [primaryKey({ columns: [t.productoId, t.fotoId] }), index("producto_fotos_foto_idx").on(t.fotoId)],
 );
 
 /** Quesos que incluye un combo o picada, por id (plan, P4). */
@@ -98,7 +100,7 @@ export const comboQuesos = pgTable(
       .references(() => productos.id, { onDelete: "cascade" }),
     orden: integer("orden").notNull(),
   },
-  (t) => [primaryKey({ columns: [t.comboId, t.quesoId] })],
+  (t) => [primaryKey({ columns: [t.comboId, t.quesoId] }), index("combo_quesos_queso_idx").on(t.quesoId)],
 );
 
 /** Filtros "Buscá por ocasión". */
@@ -121,7 +123,10 @@ export const ocasionProductos = pgTable(
       .notNull()
       .references(() => productos.id, { onDelete: "cascade" }),
   },
-  (t) => [primaryKey({ columns: [t.ocasionId, t.productoId] })],
+  (t) => [
+    primaryKey({ columns: [t.ocasionId, t.productoId] }),
+    index("ocasion_productos_producto_idx").on(t.productoId),
+  ],
 );
 
 /** Los tres carteles de la portada. */
@@ -139,49 +144,61 @@ export const anuncios = pgTable(
   ],
 );
 
-export const premios = pgTable("premios", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  anio: text("anio").notNull().default(""),
-  titulo: text("titulo").notNull().default(""),
-  evento: text("evento").notNull().default(""),
-  detalle: text("detalle").notNull().default(""),
-  fotoId: uuid("foto_id").references(() => fotos.id, { onDelete: "set null" }),
-  ver: boolean("ver").notNull().default(true),
-  orden: integer("orden").notNull(),
-});
+export const premios = pgTable(
+  "premios",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    anio: text("anio").notNull().default(""),
+    titulo: text("titulo").notNull().default(""),
+    evento: text("evento").notNull().default(""),
+    detalle: text("detalle").notNull().default(""),
+    fotoId: uuid("foto_id").references(() => fotos.id, { onDelete: "set null" }),
+    ver: boolean("ver").notNull().default(true),
+    orden: integer("orden").notNull(),
+  },
+  (t) => [index("premios_foto_idx").on(t.fotoId)],
+);
 
-export const equipo = pgTable("equipo", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  nombre: text("nombre").notNull().default(""),
-  rol: text("rol").notNull().default(""),
-  area: text("area").notNull().default(""),
-  fotoId: uuid("foto_id").references(() => fotos.id, { onDelete: "set null" }),
-  ver: boolean("ver").notNull().default(true),
-  orden: integer("orden").notNull(),
-});
+export const equipo = pgTable(
+  "equipo",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    nombre: text("nombre").notNull().default(""),
+    rol: text("rol").notNull().default(""),
+    area: text("area").notNull().default(""),
+    fotoId: uuid("foto_id").references(() => fotos.id, { onDelete: "set null" }),
+    ver: boolean("ver").notNull().default(true),
+    orden: integer("orden").notNull(),
+  },
+  (t) => [index("equipo_foto_idx").on(t.fotoId)],
+);
 
-export const locales = pgTable("locales", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  nombre: text("nombre").notNull(),
-  direccion: text("direccion").notNull(),
-  /** Lo que se muestra, tal cual ("8:30 a 21:00 hs"). */
-  horarioSemana: text("horario_semana").notNull().default(""),
-  horarioDomingo: text("horario_domingo").notNull().default(""),
-  /** Lo que calcula "Abierto ahora" ("08:30"). Domingo en null = cerrado. */
-  abre: text("abre").notNull(),
-  cierra: text("cierra").notNull(),
-  domAbre: text("dom_abre"),
-  domCierra: text("dom_cierra"),
-  /** Foto del resumen del Inicio. */
-  fotoId: uuid("foto_id").references(() => fotos.id, { onDelete: "set null" }),
-  /** Foto de la página Locales. */
-  fotoDetalleId: uuid("foto_detalle_id").references(() => fotos.id, { onDelete: "set null" }),
-  /** Encuadre de esa foto (object-position), ej. "center 40%". */
-  encuadreDetalle: text("encuadre_detalle").notNull().default("center"),
-  comoLlegar: text("como_llegar").notNull().default(""),
-  mapaUrl: text("mapa_url").notNull().default(""),
-  orden: integer("orden").notNull(),
-});
+export const locales = pgTable(
+  "locales",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    nombre: text("nombre").notNull(),
+    direccion: text("direccion").notNull(),
+    /** Lo que se muestra, tal cual ("8:30 a 21:00 hs"). */
+    horarioSemana: text("horario_semana").notNull().default(""),
+    horarioDomingo: text("horario_domingo").notNull().default(""),
+    /** Lo que calcula "Abierto ahora" ("08:30"). Domingo en null = cerrado. */
+    abre: text("abre").notNull(),
+    cierra: text("cierra").notNull(),
+    domAbre: text("dom_abre"),
+    domCierra: text("dom_cierra"),
+    /** Foto del resumen del Inicio. */
+    fotoId: uuid("foto_id").references(() => fotos.id, { onDelete: "set null" }),
+    /** Foto de la página Locales. */
+    fotoDetalleId: uuid("foto_detalle_id").references(() => fotos.id, { onDelete: "set null" }),
+    /** Encuadre de esa foto (object-position), ej. "center 40%". */
+    encuadreDetalle: text("encuadre_detalle").notNull().default("center"),
+    comoLlegar: text("como_llegar").notNull().default(""),
+    mapaUrl: text("mapa_url").notNull().default(""),
+    orden: integer("orden").notNull(),
+  },
+  (t) => [index("locales_foto_idx").on(t.fotoId), index("locales_foto_detalle_idx").on(t.fotoDetalleId)],
+);
 
 /** Datos de contacto (una sola fila). */
 export const config = pgTable(

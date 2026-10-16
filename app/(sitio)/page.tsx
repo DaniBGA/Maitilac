@@ -97,10 +97,9 @@ async function InicioContenido() {
               </span>
             </div>
             <h1 className="serif ini-12">
-              Empresa familiar que
-              <br /> <em className="ini-13">cuida cada detalle</em>
+              Empresa familiar de Tandil
+              <br /> <em className="ini-13">que cuida cada detalle</em>
             </h1>
-            <p className="ini-14">Desde el campo, hasta llegar a vos. Quesos de TANDIL.</p>
             <div className="ini-15">
               <Link className="ini-16" href="/catalogo" data-go="catalogo">
                 Ver Catálogo{" "}

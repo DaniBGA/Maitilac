@@ -1,0 +1,49 @@
+/*
+ * Cambios de diseño pedidos por el cliente sobre el sitio viejo (docs/PASO A PASO.md,
+ * "Diferencias visuales aprobadas"). Van en su propia capa, después de las del sitio
+ * viejo: así se ve qué se cambió y lo de styles/sitio queda como era.
+ */
+
+/* Footer oscuro en tablet (03/10/2026): las tres columnas (logo, navegación y contacto)
+   alineadas arriba, como en escritorio. Antes pasaba a dos columnas y "Contacto" caía
+   debajo del logo. */
+@media (min-width: 721px) and (max-width: 1024px) {
+  .foot-grid {
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+/* Historia en el celular (03/10/2026): los años en una sola fila que se desliza con el
+   dedo, en lugar de tres filas de fechas amontonadas arriba del texto. */
+@media (max-width: 720px) {
+  .tl-nav {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    gap: 0 6px;
+    padding: 2px 2px 6px;
+  }
+  .tl-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .tl-item {
+    flex: 0 0 auto;
+    min-width: 72px;
+    scroll-snap-align: center;
+  }
+}
+
+/* Título del Inicio (03/10/2026): "Empresa familiar de Tandil / que cuida cada detalle"
+   en dos renglones. Con el ancho del sitio viejo (680 px) el primero no entraba. En el
+   celular no entra en uno: se corta parejo, sin dejar "Tandil" solo. */
+@media (min-width: 721px) {
+  .ini-7 {
+    max-width: none;
+  }
+}
+.ini-12 {
+  text-wrap: balance;
+}

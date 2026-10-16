@@ -8,6 +8,7 @@ next-env.d.ts
 # Variables de entorno
 .env*
 !.env.example
+!infra/.env.produccion.example
 
 # Tests
 test-results/
@@ -26,3 +27,7 @@ Thumbs.db
 .pnpm-debug.log*
 subidas/
 tests/visual/.sesion/
+
+# Publicación (scripts/deploy.sh): configuración local y copias bajadas del servidor
+deploy.env
+copias-servidor/

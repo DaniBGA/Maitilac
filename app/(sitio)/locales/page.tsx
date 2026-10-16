@@ -148,18 +148,6 @@ async function LocalesContenido() {
           ))}
         </div>
       </section>
-      <section className="sec-pad loc-22">
-        <div className="loc-23">
-          <h2 className="serif loc-24">Indicaciones Generales</h2>
-          <div className="loc-25">
-            <h3 className="serif loc-26">Estacionamiento</h3>
-            <p className="loc-27">
-              Ambos locales cuentan con espacio para estacionar en la puerta o en las inmediaciones. En
-              Avellaneda es zona de estacionamiento libre.
-            </p>
-          </div>
-        </div>
-      </section>
       <DatosLocales locales={locales} telefono={config.telefono} />
       <FooterOscuro />
     </main>

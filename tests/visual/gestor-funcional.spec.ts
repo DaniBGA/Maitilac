@@ -134,7 +134,11 @@ test("Exportar descarga una copia de seguridad con todos los datos", async ({ pa
 // ---------- Bloques nuevos ----------
 
 const campo = (page: Page, contenedor: string, etiqueta: string) =>
-  page.locator(`${contenedor} .g-campo`).filter({ has: page.locator("label", { hasText: etiqueta }) }).locator("input, textarea, select").first();
+  page
+    .locator(`${contenedor} .g-campo`)
+    .filter({ has: page.locator("label", { hasText: etiqueta }) })
+    .locator("input, textarea, select")
+    .first();
 
 test("contacto: el email nuevo se ve en el footer", async ({ page }) => {
   await page.goto("/gestor");
@@ -155,7 +159,10 @@ test("contacto: el email nuevo se ve en el footer", async ({ page }) => {
 test("locales: el horario nuevo se ve en Locales y en Contacto", async ({ page }) => {
   await page.goto("/gestor");
   const local = page.locator("#g-contacto .gn-local").first();
-  const horario = local.locator(".g-campo").filter({ hasText: "lunes a sábado (como se muestra)" }).locator("input");
+  const horario = local
+    .locator(".g-campo")
+    .filter({ hasText: "lunes a sábado (como se muestra)" })
+    .locator("input");
   const original = await horario.inputValue();
   await horario.fill("9:00 a 20:00 hs");
   await local.locator("button", { hasText: "Guardar local" }).click();
@@ -167,7 +174,11 @@ test("locales: el horario nuevo se ve en Locales y en Contacto", async ({ page }
 
   await page.goto("/gestor");
   const local2 = page.locator("#g-contacto .gn-local").first();
-  await local2.locator(".g-campo").filter({ hasText: "lunes a sábado (como se muestra)" }).locator("input").fill(original);
+  await local2
+    .locator(".g-campo")
+    .filter({ hasText: "lunes a sábado (como se muestra)" })
+    .locator("input")
+    .fill(original);
   await local2.locator("button", { hasText: "Guardar local" }).click();
   await expect(aviso(page)).toHaveText("Local guardado. Ya se ve en el sitio.");
 });
@@ -227,22 +238,22 @@ test("filtros: desmarcar un queso cambia el contador del catálogo", async ({ pa
   const sardo = () =>
     page
       .locator(".g-oc")
-      .filter({ has: page.locator('.js-oc-nom[value="A rallar se ha dicho"]') })
+      .filter({ has: page.locator('.js-oc-nom[value="RALLAR"]') })
       .locator(".g-oc-queso", { hasText: /^\s*Sardo\s*$/ });
-  const filtro = page.locator("#filtros .js-filtro", { hasText: "A rallar se ha dicho" });
+  const filtro = page.locator("#filtros .js-filtro", { hasText: "RALLAR" });
 
   await page.goto("/gestor");
   await expect(sardo()).toHaveClass(/\bon\b/);
   await sardo().locator("input").click();
   await expect(sardo()).not.toHaveClass(/\bon\b/);
   await page.goto("/catalogo");
-  await expect(filtro).toHaveText("A rallar se ha dicho 1");
+  await expect(filtro).toHaveText("RALLAR 1");
 
   await page.goto("/gestor");
   await sardo().locator("input").click();
   await expect(sardo()).toHaveClass(/\bon\b/);
   await page.goto("/catalogo");
-  await expect(filtro).toHaveText("A rallar se ha dicho 2");
+  await expect(filtro).toHaveText("RALLAR 2");
 });
 
 test("equipo: el cargo editado se ve en Nosotros", async ({ page }) => {
@@ -261,4 +272,23 @@ test("equipo: el cargo editado se ve en Nosotros", async ({ page }) => {
   await expect(aviso(page)).toHaveText("Actualizado");
   await page.goto("/nosotros");
   await expect(page.locator("#equipo")).not.toContainText("Cargo de prueba");
+});
+
+test("productos: la flecha cambia el orden en el catálogo", async ({ page }) => {
+  const nombres = () => page.locator("#catalogo-grid h3").allTextContents();
+  await page.goto("/catalogo");
+  const original = await nombres();
+  expect(original.slice(0, 2)).toEqual(["Gouda", "Holanda"]);
+
+  await page.goto("/gestor");
+  await tarjetaGestor(page, "Holanda").getByRole("button", { name: "Mover antes" }).click();
+  await expect(aviso(page)).toHaveText("Orden actualizado");
+  await page.goto("/catalogo");
+  expect(await nombres()).toEqual(["Holanda", "Gouda", ...original.slice(2)]);
+
+  await page.goto("/gestor");
+  await tarjetaGestor(page, "Holanda").getByRole("button", { name: "Mover después" }).click();
+  await expect(aviso(page)).toHaveText("Orden actualizado");
+  await page.goto("/catalogo");
+  expect(await nombres()).toEqual(original);
 });

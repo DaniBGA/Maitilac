@@ -18,7 +18,8 @@
     "db:importar": "tsx --env-file=.env db/importar/index.ts",
     "db:estudio": "drizzle-kit studio",
     "gestor:usuario": "tsx --env-file=.env scripts/crear-usuario.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "herramientas": "node scripts/herramientas.mjs"
   },
   "dependencies": {
     "better-auth": "^1.7.6",
@@ -37,6 +38,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.11",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "prettier": "^3.9.9",

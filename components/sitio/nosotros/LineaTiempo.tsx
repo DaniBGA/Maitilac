@@ -16,7 +16,11 @@ export function LineaTiempo({ hitos }: { hitos: Hito[] }) {
           className={`tl-item js-hito${i === activo ? " on" : ""}`}
           aria-pressed={i === activo}
           data-i={i}
-          onClick={() => setActivo(i)}
+          onClick={(e) => {
+            setActivo(i);
+            // En el celular los años están en una fila que se desliza: el elegido queda centrado.
+            e.currentTarget.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+          }}
         >
           <span className="tl-dot"></span>
           <span className="tl-anio">{x.anio}</span>

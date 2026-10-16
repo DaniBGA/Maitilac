@@ -9,8 +9,6 @@ export const RUTAS = [
   { nombre: "contacto", vieja: "/#contacto", nueva: "/contacto" },
 ] as const;
 
-export type Ruta = (typeof RUTAS)[number];
-
 export const ES_REFERENCIA = process.env.REFERENCIA === "1";
 
 // Jueves 01/10/2026: a las 11:00 los dos locales están abiertos.
@@ -45,13 +43,17 @@ export async function prepararPagina(page: Page, ruta: { vieja: string; nueva: s
  * cambiarles el atributo "loading" tocaría el DOM antes de que React termine de
  * hidratar y daría un error de hidratación.
  */
-export async function esperarContenido(page: Page) {
+async function esperarContenido(page: Page) {
+  // El recorrido se hace desde acá y no dentro de la página: con el reloj falso, los
+  // temporizadores de la página no esperan a que el navegador pinte, y contra un
+  // servidor rápido (producción) las "lazy" quedaban sin empezar a cargar.
+  const paso = await page.evaluate(() => Math.round(innerHeight * 0.8));
+  for (let y = 0; y < (await page.evaluate(() => document.documentElement.scrollHeight)); y += paso) {
+    await page.evaluate((y) => scrollTo(0, y), y);
+    await page.waitForTimeout(60);
+  }
   await page.evaluate(async () => {
     const pausa = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 30)));
-    for (let y = 0; y < document.documentElement.scrollHeight; y += Math.round(innerHeight * 0.8)) {
-      scrollTo(0, y);
-      await pausa();
-    }
     scrollTo(0, 0);
     await document.fonts.ready;
     await Promise.all(
@@ -81,7 +83,7 @@ export async function esperarContenido(page: Page) {
  * única posición que el navegador no reacomoda al agrandar la ventana para la
  * captura de página completa. El sitio nuevo tiene que conservar estas clases e id.
  */
-export async function detenerCarruseles(page: Page) {
+async function detenerCarruseles(page: Page) {
   await page.evaluate(() => {
     document.querySelectorAll<HTMLElement>(".tl-carrusel, #premios-carrusel").forEach((c) => {
       c.scrollLeft = 0;

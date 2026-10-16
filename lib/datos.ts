@@ -10,6 +10,7 @@
  * los componentes no dependen de cómo se guardan los datos.
  */
 import { and, asc, eq, isNull } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import { cacheLife, cacheTag } from "next/cache";
 import colores from "@/content/colores.json";
 import fotosHistoria from "@/content/fotos-historia.json";
@@ -168,21 +169,32 @@ export async function getProductoDelMes(): Promise<ProductoDelMes | null> {
 export async function getLocales(): Promise<Local[]> {
   "use cache";
   cachear("locales");
-  const filas = await db.select().from(s.locales).orderBy(asc(s.locales.orden));
-  const fotos = await db.select({ id: s.fotos.id, archivo: s.fotos.archivo, alt: s.fotos.alt }).from(s.fotos);
-  const foto = (id: string | null) => fotos.find((f) => f.id === id);
-  return filas.map((l) => ({
+  // Las dos fotos de cada local por join (antes se leía el banco de fotos entero).
+  const fotoInicio = alias(s.fotos, "foto_inicio");
+  const fotoLocales = alias(s.fotos, "foto_locales");
+  const filas = await db
+    .select({
+      local: s.locales,
+      foto: fotoInicio.archivo,
+      fotoDetalle: fotoLocales.archivo,
+      fotoDetalleAlt: fotoLocales.alt,
+    })
+    .from(s.locales)
+    .leftJoin(fotoInicio, eq(fotoInicio.id, s.locales.fotoId))
+    .leftJoin(fotoLocales, eq(fotoLocales.id, s.locales.fotoDetalleId))
+    .orderBy(asc(s.locales.orden));
+  return filas.map(({ local: l, foto, fotoDetalle, fotoDetalleAlt }) => ({
     nombre: l.nombre,
     direccion: l.direccion,
     semana: l.horarioSemana,
     domingo: l.horarioDomingo,
-    foto: foto(l.fotoId)?.archivo ?? "",
+    foto: foto ?? "",
     abre: l.abre,
     cierra: l.cierra,
     domAbre: l.domAbre,
     domCierra: l.domCierra,
-    fotoDetalle: foto(l.fotoDetalleId)?.archivo ?? "",
-    fotoDetalleAlt: foto(l.fotoDetalleId)?.alt ?? "",
+    fotoDetalle: fotoDetalle ?? "",
+    fotoDetalleAlt: fotoDetalleAlt ?? "",
     encuadreDetalle: l.encuadreDetalle,
     comoLlegar: l.comoLlegar,
     mapaUrl: l.mapaUrl,

@@ -1,10 +1,14 @@
+# Lo que no entra en la imagen (ni se manda al build).
 node_modules
 .next
 .git
+.github
 _fuentes
 referencia
 docs
 tests
 test-results
 playwright-report
+subidas
+infra
 .env*

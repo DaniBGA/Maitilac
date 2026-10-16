@@ -2,7 +2,7 @@
 
 Guía operativa para ejecutar el [PLAN DE REFACTORIZACION.md](PLAN%20DE%20REFACTORIZACION.md) de a un paso por vez. El plan explica **qué** se construye y **por qué**; esta guía explica **cómo** y en qué orden, y sobre todo **cómo verificar que el diseño quede idéntico**.
 
-> **Estado actual:** Etapas 0 a 3 terminadas. Etapa 5 (gestor) terminada salvo el Paso 5.10 (aprobar que se quite el enlace del footer, usuarios de D2, prueba en un celular con el sitio publicado). Etapa 6: hechos 6.1 (imágenes), 6.2 (SEO), casi todo 6.3 (falta confirmar Lighthouse ≥ 90 en el VPS), 6.4 (falta CI) y 6.5 (falta `OPERACION.md`); 6.6 es el lanzamiento. Falta subir el repo a GitHub. Próximo: **Etapa 4** (servidor), que necesita el dominio (D1c) y el repo. *(Actualizar esta línea al cerrar cada paso.)*
+> **Estado actual:** Etapas 0 a 3 terminadas. Etapa 5 (gestor) terminada salvo el Paso 5.10 (aprobar que se quite el enlace del footer, usuarios de D2, prueba en un celular con el sitio publicado). Etapa 6 hecha en lo que no depende del servidor. **Etapa 4 lista para publicar:** la publicación la hace el dueño del proyecto con [GUIA DE DEPLOY.md](GUIA%20DE%20DEPLOY.md) y `scripts/deploy.sh`. *(Actualizar esta línea al cerrar cada paso.)*
 
 ---
 
@@ -300,13 +300,11 @@ Criterio de la etapa: **los tests visuales tienen que seguir exactamente igual q
 
 ---
 
-## Etapa 4 — Servidor y publicación de prueba
+## Etapa 4 — Servidor y publicación de prueba (preparada; falta el VPS)
 
-*Necesita el dominio (D1c) y el repo en GitHub. Se hace al final, después de la Etapa 6 (decisión del 28/09/2026).*
+*Todo lo que no necesita el VPS ni el dominio ya está hecho y probado en local (03/10/2026). **La publicación la hace el dueño del proyecto** con [GUIA DE DEPLOY.md](GUIA%20DE%20DEPLOY.md) y `scripts/deploy.sh` (decisión del 03/10/2026). Referencia técnica: [OPERACION.md](OPERACION.md).*
 
-*Pendientes anotados durante las etapas 5 y 6:* la caché de imágenes optimizadas (`.next/cache/images`) conviene que viva en un volumen, para no regenerarlas en cada deploy; Caddy tiene que pasar el encabezado `Accept` (lo hace por defecto) para que el optimizador elija AVIF o WebP; Caddy tiene que servir `/fotos` desde el volumen de `FOTOS_DIR`; en el build de la imagen conviene pasar un `BETTER_AUTH_SECRET` de relleno (si no, Better Auth avisa en el log); Next copia `.env` dentro de `standalone`, pero `.dockerignore` excluye `.env*`, así que las variables van por el entorno del contenedor.
-
-### Paso 4.1 — Preparar el VPS
+### Paso 4.1 — Preparar el VPS ⏳
 
 En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH pública.
 
@@ -316,55 +314,49 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
   rsync --archive --chown=deploy:deploy ~/.ssh /home/deploy
   ```
 - [ ] En `/etc/ssh/sshd_config`: `PermitRootLogin no` y `PasswordAuthentication no`; `systemctl restart ssh`. **Probar el acceso con `deploy` en otra terminal antes de cerrar la sesión de root.**
-- [ ] Firewall: `ufw allow OpenSSH && ufw allow 80,443/tcp && ufw enable`.
+- [ ] Firewall: `ufw allow OpenSSH && ufw allow 80,443/tcp && ufw allow 443/udp && ufw enable`.
 - [ ] `apt install -y fail2ban unattended-upgrades`.
 - [ ] Docker: `curl -fsSL https://get.docker.com | sh` y `usermod -aG docker deploy`.
-- [ ] **Ojo:** Docker salta las reglas de `ufw` para los puertos que publica. Sólo Caddy publica puertos (80 y 443); Postgres y la app **no** publican ninguno.
+- [ ] **Ojo:** Docker salta las reglas de `ufw` para los puertos que publica. Sólo Caddy publica puertos (80 y 443); Postgres y la app **no** publican ninguno (ya es así en `infra/docker-compose.yml`).
 
 **Verificación:** `ssh deploy@<ip>` entra con clave; `ssh root@<ip>` es rechazado; `ufw status` muestra sólo 22, 80 y 443.
 
 ### Paso 4.2 — DNS y Caddy
 
-- [ ] Registro `A` de `nuevo.<dominio>` apuntando a la IP del VPS.
-- [ ] `infra/Caddyfile`:
-  ```
-  nuevo.<dominio> {
-    encode zstd gzip
-    handle_path /fotos/* {
-      root * /data/fotos
-      header Cache-Control "public, max-age=31536000, immutable"
-      file_server
-    }
-    reverse_proxy app:3000
-  }
-  ```
+- [ ] ⏳ Registro `A` de `nuevo.<dominio>` apuntando a la IP del VPS.
+- [x] `infra/Caddyfile`: HTTPS automático para `{$DOMINIO}`, compresión, `/fotos/*` directo del volumen (caché de un año) y encabezados de seguridad (HSTS, `nosniff`, `Referrer-Policy`, sin `Server`).
 
 ### Paso 4.3 — Docker de producción
 
-- [ ] `Dockerfile` multi-etapa: instala dependencias, hace `pnpm build` y copia la salida `standalone`. Al arrancar, corre las migraciones y después `node server.js`.
-- [ ] `infra/docker-compose.yml` con tres servicios: `app` (imagen de GHCR, `restart: unless-stopped`, volúmenes `fotos` y `cache-next`), `db` (`postgres:17`, volumen, *healthcheck*) y `caddy` (puertos 80/443, `Caddyfile`, volumen de certificados y `fotos` de sólo lectura).
-- [ ] En el VPS: `/srv/maitilac/` con `docker-compose.yml`, `Caddyfile` y `.env` (permisos `600`).
+- [x] `Dockerfile` multi-etapa (Node 24): instala dependencias (con el parche de Next), hace `pnpm build` y `pnpm herramientas`, y copia la salida `standalone`. Corre como usuario `node`. Al arrancar aplica las migraciones (`herramientas/migrar.mjs`) y después `node server.js`. 435 MB. No lleva ningún `.env` ni secreto (verificado en la imagen y en su historial).
+- [x] Herramientas empaquetadas con esbuild (`scripts/herramientas.mjs`): `migrar.mjs`, `importar.mjs` y `crear-usuario.mjs`, que corren con `node` solo dentro de la imagen.
+- [x] `infra/docker-compose.yml`: `app` (imagen de `IMAGEN`, volúmenes `fotos` y `cache-next`), `db` (`postgres:17-alpine`, *healthcheck*) y `caddy` (80/443 tcp y 443/udp, certificados y `fotos` de sólo lectura). `infra/.env.produccion.example` con las variables.
+- [x] En el VPS, `/srv/maitilac/` con esos archivos y el `.env` (permisos `600`): lo arma `deploy.sh primera-vez`.
 
-### Paso 4.4 — Deploy automático
+**Verificado en local** (con `DOMINIO=localhost` y Caddy en 8080/8443, porque el 80 de esta máquina está ocupado): las 8 rutas públicas responden, `/gestor` redirige al login, la copia de seguridad da 401 sin sesión; login con cookie `Secure`/`HttpOnly`; foto subida servida por Caddy desde el volumen y optimizada en AVIF; y **`PRUEBA_URL=https://localhost:8443 pnpm test:visual`: 115 de 115**, con la caché de imágenes vacía.
 
-- [ ] `.github/workflows/ci.yml`: lint, tests unitarios y visuales en cada *pull request*.
-- [ ] `.github/workflows/deploy.yml` en cada push a `main`: build de la imagen → push a GHCR → SSH al VPS → `docker compose pull app && docker compose up -d`.
-- [ ] Secretos en GitHub: `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`. En el VPS, `docker login ghcr.io` con un token de sólo lectura de paquetes.
-- [ ] Primer deploy y `pnpm db:importar` dentro del contenedor.
+### Paso 4.4 — Deploy con `scripts/deploy.sh`
 
-**Verificación:** `https://nuevo.<dominio>` abre con HTTPS válido; correr `pnpm test:visual` apuntando a esa URL da el mismo resultado que en local.
+- [x] `scripts/deploy.sh`, desde la computadora y sin depender de GitHub: verifica el código, compila la imagen, copia la configuración, hace una copia previa, sube la imagen por SSH (unos 110 MB), la activa, comprueba que las 5 páginas se armen bien (no alcanza con el código 200: con el streaming, una página rota también responde 200) y, si algo falla, vuelve sola a la anterior. Comandos `primera-vez` (crea el `.env` con secretos nuevos, carga los datos de fábrica y programa el cron), `volver`, `usuario`, `copia` y `estado`. Configuración en `deploy.env` (modelo: `deploy.env.example`).
+- [x] Probado contra un servidor Ubuntu 24.04 de prueba (contenedor con SSH): primera vez, actualizaciones, `volver` ida y vuelta, `copia`, `usuario` con login real, una versión que no compila (no publica) y una que se rompe en ejecución (vuelve sola en unos 10 s). La limpieza de imágenes nunca borra la actual ni la anterior.
+- [x] `docs/GUIA DE DEPLOY.md`: paso a paso desde el VPS vacío (seguridad, DNS, primera vez, actualizaciones, copias, dominio definitivo, problemas frecuentes).
+- [x] `.github/workflows/ci.yml` sigue sirviendo para verificar cada cambio si el código se sube a GitHub. `deploy.yml` (deploy por GitHub) se borró: lo reemplaza el script (03/10/2026).
+- [ ] ⏳ Primera publicación real (la hace el dueño del proyecto con la guía).
 
-**Commit:** `ci: deploy automático al VPS`
+**Verificación:** `https://nuevo.<dominio>` abre con HTTPS válido; `PRUEBA_URL=https://nuevo.<dominio> pnpm test:visual` da todo en verde (sólo páginas públicas, sin tocar datos).
 
 ### Paso 4.5 — Copias de seguridad
 
-- [ ] `infra/backup.sh`: `pg_dump` comprimido + archivo del volumen de fotos, con rotación (7 diarias, 4 semanales).
-- [ ] Cron del usuario `deploy`: `0 3 * * * /srv/maitilac/backup.sh`.
-- [ ] Activar los snapshots semanales en el panel de Hostinger.
+- [x] `infra/backup.sh`: `pg_dump` + archivo de las fotos subidas, con rotación (7 diarias, 4 semanales). `infra/restaurar.sh`: restaura base y fotos, pidiendo confirmación.
+- [x] Probado en local: copia → base reimportada de fábrica y fotos borradas → restauración → vuelven la foto subida, su archivo y el usuario del gestor, y Caddy la sirve. Rotación probada con copias viejas de mentira.
+- [x] Cron diario a las 3:00: lo programa `deploy.sh primera-vez` (probado en el servidor de prueba).
+- [ ] ⏳ Activar los snapshots semanales en el panel de Hostinger.
 
-**Verificación:** al día siguiente hay un backup; se restaura en la base local y el sitio local se ve igual.
-
-**Commit:** `ops: backups diarios`
+### Notas técnicas de esta etapa
+- **Error de Next encontrado al probar producción** (16.3.6, la última estable): si el navegador cortaba la conexión mientras el optimizador leía la foto original (alguien que cambia de página rápido en la primera visita), esa foto quedaba colgada para todos hasta reiniciar el sitio. El pedido interno reutilizaba el `socket` del navegador y su promesa no se resolvía nunca; como Next agrupa los pedidos iguales, arrastraba a todos los siguientes. Se reprodujo cerrando páginas a mitad de carga: 30 de 42 imágenes colgadas (10 sin Caddy, así que no era Caddy). **Parche** con `pnpm patch` (`patches/next.patch`): el pedido interno ya no usa ese `socket`. Después del parche, 0 de 42 en tres repeticiones. Al actualizar Next, comprobar si se corrigió y sacar el parche.
+- **Tests contra un sitio publicado:** `PRUEBA_URL=<url> pnpm test:visual` corre sólo las páginas públicas (sin el gestor, que modifica datos), sin levantar servidor ni tocar ninguna base. El recorrido con scroll de los tests pasó a hacerse desde Playwright con esperas reales.
+- Una vez, en la suite local, el catálogo salió sin sus dos últimos productos aunque la base los tenía; no se pudo reproducir (la corrida siguiente, 144 de 144). Si vuelve a pasar, investigar la caché del servidor de desarrollo.
+- Los tests ahora borran, al empezar, las fotos que subieron en corridas anteriores (`subidas/`): después de reimportar la base no las usa nada.
 
 ---
 
@@ -473,16 +465,30 @@ Las mejoras de esta etapa tienen que ser **invisibles**. Si alguna cambia el dis
 
 **Quedan como propuesta para la Etapa 7 (cambian el diseño):** el contraste de varios textos (años de la línea de tiempo, etiquetas de los canales de Contacto, unidades de precio, "Producto del Mes", etc.) no llega a AA (backlog 9), y el logo del footer claro de Nosotros se ve achatado en tablet y celular (backlog 10).
 
+### Optimización de velocidad (03/10/2026) ✅
+
+Medido antes de tocar nada, en modo producción contra la base local: las páginas públicas tardan entre 17 y 29 ms en armarse con la caché llena (la base sólo se consulta cuando el gestor guarda un cambio), y la primera visita después de arrancar, unos 300–450 ms (Node cargando el código). El margen estaba en otro lado:
+
+- [x] **Caché del navegador para `public/`:** Next mandaba fuentes e imágenes con `max-age=0` y el navegador las volvía a consultar en cada visita. Ahora (`headers()` en `next.config.ts`) las fuentes van con un año (`immutable`) y las imágenes con 31 días. Medido con un perfil de navegador cerrado y vuelto a abrir: al volver a Nosotros, 10 pedidos al servidor en lugar de 14 (las 4 fuentes ya no se piden). **Si se reemplaza un archivo de `public/`, hay que cambiarle el nombre.**
+- [x] **Índices** en las columnas que relacionan tablas (fotos de productos, de premios, del equipo y de los locales; quesos de los combos; productos de los filtros). Migración `0004_indices_claves_foraneas`. Con las tablas de hoy no se nota; sirve cuando crezca el banco de fotos y al borrar fotos o productos.
+- [x] **`getLocales`:** trae las dos fotos de cada local por join, en lugar de leer el banco de fotos entero.
+- [x] **Gestor:** `leerDatosGestor()` (corre en cada acción) hace todas las consultas en una sola tanda, sin las tres repetidas, y arma los cruces con `Map`. De 13,8 a 9,0 ms (mediana de 40), con la salida idéntica (comparada campo por campo).
+- [x] **Reordenar con las flechas:** un solo `UPDATE` en lugar de uno por fila. Guardar un producto inserta sus fotos y quesos de una vez. Test funcional nuevo: la flecha cambia el orden en el catálogo y vuelve.
+
+**Verificado:** suite local 145 de 145; imagen de producción con base nueva (migra hasta la 0004) y 115 de 115 contra ella.
+
+**Se evaluó y no se hizo** (poco beneficio o algún riesgo): guardar en caché el HTML armado de cada página (son 20 ms); precargar las fuentes (competiría con la foto del hero en conexiones lentas); dejar que Caddy comprima en lugar de Next (podría frenar el streaming); agrupar los inserts de la importación de fábrica (se usa poco); guardar la sesión del gestor en la cookie (ahorra una consulta pero demora el cierre de sesión).
+
 ### Paso 6.4 — Tests finales (casi terminado)
 
 - [x] Vitest (`pnpm test`, `tests/unit/`): `horarios` (incluida la hora de Argentina y el caso de Maipú), `precio` (reconstrucción de todos los precios de fábrica y `leerPrecioEscrito`), conteo de ocasiones (contra los números de la captura de textos del sitio viejo) y slugs. 32 tests. El conteo pasó a `lib/ocasiones.ts`, compartido por el catálogo y el gestor.
 - [x] Playwright funcional: navegación, modal y teclado (`navegacion.spec.ts`, `accesibilidad.spec.ts`); el filtro activo y el mensaje de WhatsApp se comparan contra el sitio viejo (`estados.spec.ts`). Del gestor, 16 (suman filtros y equipo).
-- [ ] Suite visual completa en verde en CI: se arma con el repo en GitHub (Etapa 4). En local, `pnpm test:visual` pasa completa (144).
+- [ ] Suite visual completa en verde en CI: el flujo ya está escrito (`.github/workflows/ci.yml`, Etapa 4); falta el repo para correrlo. En local, `pnpm test:visual` pasa completa (144).
 
-### Paso 6.5 — Documentación (casi terminado)
+### Paso 6.5 — Documentación ✅
 
 - [x] `docs/MANUAL DEL GESTOR.md` reescrito para el gestor nuevo (se hizo en la Etapa 5).
-- [ ] `docs/OPERACION.md`: deploy, backups, restauración y alta de usuarios. Se escribe con la Etapa 4, cuando exista el servidor.
+- [x] `docs/OPERACION.md`: puesta en marcha, deploy, backups, restauración, alta de usuarios y cambio de dominio (probado en local; falta repasarlo en el VPS).
 - [x] Entrada 30 en `REGISTRO DE CAMBIOS.md` con la migración (actualizarla al lanzar).
 
 *El Paso 6.6 necesita el servidor y el dominio: se hace después de la Etapa 4.*
@@ -510,6 +516,20 @@ Con la paridad lograda, se mejora **de a una funcionalidad por vez**. Cada mejor
 4. **Implementación + tests.** Si cambia el diseño, se genera una captura de referencia **nueva y aprobada** sólo para esa zona.
 5. **Revisión en `nuevo.<dominio>`** o en una URL de preview.
 6. **Merge**, deploy y entrada en `REGISTRO DE CAMBIOS.md`.
+
+### Pedido del cliente del 03/10/2026
+
+Revisión con antes y después: página privada "Revisión pedido Maitilac" (https://claude.ai/artifact/HJHCnT9UkxaJW3F2ja1hdq). Estilos nuevos en `styles/cambios.css` (capa `cambios`, después de las del sitio viejo).
+
+- [x] 1. Inicio: "Empresa familiar de Tandil / que cuida cada detalle", sin la frase de abajo (los botones quedan). En pantallas medianas y grandes se sacó el ancho máximo de 680 px para que entre en dos renglones; en el celular se corta parejo.
+- [x] 2. Footer oscuro: texto nuevo; en tablet, tres columnas alineadas arriba. En escritorio el logo ya estaba alineado con los títulos.
+- [x] 3. Catálogo: bajada nueva; sin precio no se ve nada (ni "Consultar"): `precioVisible()` en `lib/util.ts`; sin maridaje (detalle y destacados) ni recuadro de locales (destacados); filtros PARRILLA-PICADA-PIZZA-POSTRE-SANDWICH-RALLAR-REGALOS en ese orden (datos de fábrica). En el gestor se sacaron los campos de maridaje; los datos quedan en la base.
+- [x] 4. Locales: sin "Indicaciones Generales / Estacionamiento".
+- [x] 5. Premios: "Nuestros quesos, premiados."; rótulo "PREMIOS" en el detalle de producto.
+- [ ] 6. Proceso productivo: texto nuevo ✅; paso 3 "ELABORACION" con la tina sola (recorte de la imagen anterior) ✅; **falta el video** (con subtítulos) y **los originales de los dibujos del folleto** (en el PDF no se pueden separar del fondo).
+- [x] 7. Historia en el celular: los años en una fila que se desliza.
+- [ ] Aprobación de la revisión y **nueva referencia**: después de aprobarla, las capturas de referencia pasan a sacarse del sitio nuevo (`pnpm test:visual --update-snapshots`). Hasta entonces, los tests visuales que comparan contra el sitio viejo fallan en las páginas cambiadas.
+- Textos tal cual: sin punto final en la bajada del catálogo, el footer y el proceso; "ELABORACION" sin tilde; filtros en mayúsculas. A confirmar con el cliente.
 
 ### Backlog inicial
 
@@ -545,4 +565,11 @@ Toda diferencia entre el sitio nuevo y `referencia/` tiene que estar en esta tab
 | — | Gestor → "Exportar" | Mismo botón y mismo texto; descarga `maitilac-copia-AAAA-MM-DD.json` con todas las tablas (incluido el equipo) en lugar de `catalogo-maitilac.txt`. El nombre del botón se dejó igual por paridad; el cartelito al pasar el mouse lo explica | Ahora es un backup, ya no un archivo para pegar en el código | Pendiente |
 | — | Gestor → acceso | Pantalla de login | Seguridad (plan P2) | Pendiente |
 | 28/09/2026 | Inicio → "Ver Detalles" | Abre el detalle del producto (en el sitio viejo no hacía nada y bloqueaba el scroll) | Corrección de un error | Pendiente |
+| 03/10/2026 | Inicio | Título "Empresa familiar de Tandil / que cuida cada detalle", sin la frase de abajo | Pedido del cliente | Cliente |
+| 03/10/2026 | Footer oscuro | Texto nuevo; en tablet, tres columnas | Pedido del cliente | Cliente |
+| 03/10/2026 | Catálogo | Bajada nueva; sin precio no se ve nada; sin maridaje ni locales; filtros con nombres y orden nuevos | Pedido del cliente | Cliente |
+| 03/10/2026 | Locales | Sin el bloque de estacionamiento | Pedido del cliente | Cliente |
+| 03/10/2026 | Nosotros → Premios | "Nuestros quesos, premiados."; rótulo "PREMIOS" en el detalle | Pedido del cliente | Cliente |
+| 03/10/2026 | Nosotros → Proceso productivo | Texto nuevo; paso 3 "ELABORACION" sin tarros | Pedido del cliente | Cliente |
+| 03/10/2026 | Nosotros → Historia (celular) | Años en una fila que se desliza | Pedido del cliente | Cliente |
 | — | `/catalogo/[slug]` | Entrando directo se ve el catálogo con el detalle abierto | URL propia por producto (SEO, compartir) | Pendiente |

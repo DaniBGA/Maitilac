@@ -117,6 +117,9 @@ La herramienta central de toda la refactorización. Se arma en el paso 1.2 y se 
 
 - [x] **D1b:** VPS **KVM 2** de Hostinger (28/09/2026).
 - [ ] **D1c:** dominio, titular y DNS. *(Antes de la Etapa 4.)*
+  - Dominio **`maitilac.com`**, a nombre del cliente, registrado en **Squarespace**. El DNS se administra ahí (*Domains → maitilac.com → DNS → Registros personalizados*) (16/10/2026).
+  - El correo es **Google Workspace**: los registros `MX` (`aspmx.l.google.com` y `alt1`–`alt4`), el `TXT` SPF (`v=spf1 include:_spf.google.com ~all`), el `TXT` `google._domainkey` (DKIM) y el `CNAME` `mgearcncxcjp` (verificación de Google) **no se tocan nunca**.
+  - Falta saber dónde está publicado hoy el sitio viejo (registros `A`/`CNAME` de `@` y `www`).
 - [ ] **D2:** emails de las personas con acceso al gestor. *(Antes del paso 5.10; mientras tanto, usuario de prueba.)*
 
 ---

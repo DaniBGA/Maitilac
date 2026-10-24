@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
 import { authCliente } from "@/lib/auth-cliente";
 import type { DatosGestor, Resultado } from "@/lib/gestor/tipos";
@@ -20,7 +19,6 @@ import { BloqueProductos } from "./Productos";
  * guarda en la base y se ve al instante en el sitio, desde cualquier dispositivo.
  */
 export function Gestor({ inicial }: { inicial: DatosGestor }) {
-  const router = useRouter();
   const [datos, setDatos] = useState(inicial);
   const [aviso, setAviso] = useState("");
   const [verAviso, setVerAviso] = useState(false);
@@ -62,7 +60,8 @@ export function Gestor({ inicial }: { inicial: DatosGestor }) {
 
   const salir = async () => {
     await authCliente.signOut();
-    router.push("/gestor/ingresar");
+    // Navegación completa (como al ingresar): el gestor no queda en la memoria del navegador.
+    window.location.replace("/gestor/ingresar");
   };
 
   return (

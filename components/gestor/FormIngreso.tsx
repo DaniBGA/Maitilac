@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authCliente } from "@/lib/auth-cliente";
 
@@ -9,7 +8,6 @@ import { authCliente } from "@/lib/auth-cliente";
  * Usa los mismos colores y estilos que el gestor (.g-*).
  */
 export function FormIngreso() {
-  const router = useRouter();
   const [error, setError] = useState("");
   const [enviando, setEnviando] = useState(false);
 
@@ -31,8 +29,9 @@ export function FormIngreso() {
       );
       return;
     }
-    router.push("/gestor");
-    router.refresh();
+    // Navegación completa, no router.push: si se llegó acá con un enlace, el navegador
+    // tiene guardado que /gestor (sin sesión) lleva al login, y volvía acá en blanco.
+    window.location.replace("/gestor");
   };
 
   return (

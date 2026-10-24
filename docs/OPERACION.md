@@ -27,6 +27,7 @@ Al arrancar, `app` aplica las migraciones pendientes y después levanta el sitio
 |---|---|
 | `node herramientas/importar.mjs` | Carga los datos de fábrica (sólo con la base vacía; `--forzar` borra todo y reimporta) |
 | `node herramientas/crear-usuario.mjs <email> "<Nombre>"` | Crea un usuario del gestor o le cambia la contraseña |
+| `node herramientas/calentar.mjs` | Genera las versiones optimizadas de todas las fotos (lo corre `deploy.sh` después de publicar) |
 
 ### Archivos en `/srv/maitilac/`
 
@@ -119,7 +120,9 @@ La caché de imágenes optimizadas (`cache-next`) sobrevive a los deploys. La pr
 
 ## Notas técnicas
 
-- **Parche sobre Next** (`patches/next.patch`, lo aplica `pnpm install`). En Next 16.3.6, si el navegador cortaba la conexión mientras el optimizador leía la foto original (por ejemplo, alguien que cambia de página rápido), esa foto quedaba colgada para todos hasta reiniciar el sitio. El parche hace que esa lectura interna no dependa de la conexión del navegador. Al actualizar Next: revisar si se corrigió (se reproduce con la prueba descrita en la Etapa 4 de PASO A PASO.md) y, si es así, sacar el parche. Si el parche deja de aplicar, `pnpm install` falla y avisa.
+- **Fotos optimizadas por adelantado.** El optimizador de Next genera cada versión de una foto (AVIF o WebP, de cada ancho) la primera vez que alguien la pide, y un AVIF tarda 1-2 s. Para que ningún visitante espere, `deploy.sh` corre `herramientas/calentar.mjs` en segundo plano después de cada publicación (recorre las páginas del sitemap y pide todas las fotos), y el gestor hace lo mismo después de cambiar fotos. El resultado queda en `docker compose logs app` ("Imágenes listas: …"). A mano: `docker compose exec app node herramientas/calentar.mjs`.
+- **Versiones de seguridad** (23/10/2026): Next 16.4.2 y React 19.2.9 (avisos del 14/10/2026: ejecución remota con `use cache` y con el optimizador de imágenes, y DoS con Server Actions), sharp 0.35.5 y Node 24.22.1 en la imagen (arreglos del 21/10/2026). La versión de Node está fijada en el `Dockerfile`: para el próximo arreglo de seguridad, cambiarla ahí.
+- El parche que había sobre Next 16.3.6 (`patches/next.patch`: fotos que quedaban colgadas si el navegador cortaba la conexión) se sacó: Next 16.4 trae el mismo arreglo.
 - **Variables al compilar:** `SITIO_URL` se usa al compilar (robots.txt y metadatos; `deploy.sh` la toma de `deploy.env`) y al ejecutar (del `.env` del VPS). Las demás son sólo de ejecución. La imagen no lleva ningún secreto.
 - **GitHub Actions:** `.github/workflows/ci.yml` verifica cada cambio si el código está en GitHub. El deploy se hace con `deploy.sh`.
 - **HTTP/3:** Caddy lo ofrece por 443/udp (está publicado en el `docker-compose.yml`).

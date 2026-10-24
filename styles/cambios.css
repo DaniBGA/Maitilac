@@ -47,3 +47,13 @@
 .ini-12 {
   text-wrap: balance;
 }
+
+/* Proceso productivo (23/10/2026): el video ocupa el lugar de las dos fotos, con las
+   mismas esquinas y el mismo fondo que tenían (.nos-14), en su proporción (16:9). */
+.proceso-video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 20px;
+  display: block;
+  background-color: #2c2620;
+}

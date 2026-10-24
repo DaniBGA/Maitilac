@@ -148,6 +148,14 @@ comprobar() {
   return 1
 }
 
+# Las versiones optimizadas de las fotos se generan la primera vez que alguien las pide
+# (un AVIF tarda 1-2 s): se generan ya, en segundo plano, para que nadie las espere.
+# El resultado queda en el registro del sitio (docker compose logs app).
+calentar_imagenes() {
+  remoto "docker compose exec -d app sh -c 'node herramientas/calentar.mjs > /proc/1/fd/1 2>&1'" \
+    && ok "Generando las fotos optimizadas en segundo plano" || aviso "No se pudieron generar las fotos optimizadas (se generan solas al pedirlas)."
+}
+
 limpiar_imagenes() {
   # Se guardan las 3 publicaciones más nuevas y, siempre, la actual y la anterior (para poder volver).
   remoto "actual=\$(grep '^IMAGEN=' .env | cut -d= -f2); anterior=\$(cat .imagen-anterior 2>/dev/null || true); \
@@ -183,6 +191,7 @@ publicar() { # $@ = opciones
     error "No se publicó la versión nueva."
   fi
   limpiar_imagenes
+  calentar_imagenes
   echo
   ok "${N}Publicado: $ETIQUETA en $SITIO_URL ($(( SECONDS - inicio )) s)${X}"
 }
@@ -220,6 +229,7 @@ case "$comando" in
     if remoto "docker compose exec -T app node herramientas/importar.mjs" | tail -2; then
       remoto "docker compose restart app >/dev/null 2>&1"; comprobar || true
       ok "Datos cargados"
+      calentar_imagenes
     else
       ok "La base ya tenía datos: no se tocaron."
     fi

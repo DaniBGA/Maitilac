@@ -9,7 +9,7 @@ Cómo publicar el sitio en el VPS de Hostinger la primera vez y cómo actualizar
 ## Qué necesitás
 
 - El **VPS KVM 2** de Hostinger.
-- El **dominio**, con acceso a su DNS. Para la revisión del cliente se usa un subdominio: `nuevo.<dominio>`.
+- El **dominio**, con acceso a su DNS. Para la revisión del cliente se usa un subdominio: `nuevo.<dominio>`. Si todavía no está, se puede publicar sin él (paso 3, "Todavía sin dominio").
 - En tu computadora: el proyecto, **Docker**, **pnpm** y una **clave SSH**. Para ver si ya tenés una: `ls ~/.ssh/id_ed25519.pub`. Si no existe, se crea con `ssh-keygen -t ed25519`.
 
 En los comandos de abajo, reemplazá `<ip>` por la IP del VPS y `<dominio>` por el dominio.
@@ -92,6 +92,14 @@ dig +short nuevo.<dominio>          # tiene que mostrar la IP del VPS
 ```
 
 **No sigas hasta que muestre la IP.** Si no, el certificado HTTPS no se puede emitir.
+
+### Todavía sin dominio
+
+Se puede publicar igual, con HTTPS, usando la IP dentro de un nombre de [sslip.io](https://sslip.io): un servicio público que responde con la IP que lleva escrita. Para la IP `203.0.113.10` el nombre es `203-0-113-10.sslip.io` (los puntos de la IP, con guiones). No hay que configurar nada: saltá este paso y en el paso 4 poné `SITIO_URL=https://203-0-113-10.sslip.io`. Caddy saca el certificado solo, como con un dominio propio.
+
+- Comprobá antes que resuelva: `dig +short <ip-con-guiones>.sslip.io` tiene que mostrar la IP del VPS.
+- Si Let's Encrypt no da el certificado (lo dice `docker compose logs caddy`), probá con `nip.io` en lugar de `sslip.io`: son el mismo servicio.
+- Cuando esté el dominio, se pasa con [Pasar al dominio definitivo](#pasar-al-dominio-definitivo), igual que desde `nuevo.<dominio>`.
 
 ## 4. Configurar el script (en tu computadora)
 

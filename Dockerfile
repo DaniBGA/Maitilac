@@ -5,15 +5,14 @@
 #   node herramientas/importar.mjs [--forzar]    datos de fábrica
 #   node herramientas/crear-usuario.mjs <email> "<Nombre>"
 
-FROM node:24-slim AS base
+# Versión de Node fijada: la 24.22.1 trae los arreglos de seguridad del 21/10/2026.
+FROM node:24.22.1-slim AS base
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm install -g pnpm@12.6.0
 WORKDIR /app
 
 FROM base AS dependencias
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-# Parche sobre Next (ver patches/next.patch y docs/PASO A PASO.md, Etapa 4).
-COPY patches ./patches
 RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store pnpm install --frozen-lockfile
 
 FROM base AS compilacion
@@ -27,7 +26,7 @@ RUN SITIO_URL=$SITIO_URL \
     BETTER_AUTH_SECRET=relleno-solo-para-compilar \
     pnpm build && pnpm herramientas
 
-FROM node:24-slim AS sitio
+FROM node:24.22.1-slim AS sitio
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0 FOTOS_DIR=/data/fotos
 WORKDIR /app
 COPY --from=compilacion /app/.next/standalone ./

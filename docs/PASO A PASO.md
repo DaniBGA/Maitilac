@@ -328,7 +328,7 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
 
 ### Paso 4.3 — Docker de producción
 
-- [x] `Dockerfile` multi-etapa (Node 24): instala dependencias (con el parche de Next), hace `pnpm build` y `pnpm herramientas`, y copia la salida `standalone`. Corre como usuario `node`. Al arrancar aplica las migraciones (`herramientas/migrar.mjs`) y después `node server.js`. 435 MB. No lleva ningún `.env` ni secreto (verificado en la imagen y en su historial).
+- [x] `Dockerfile` multi-etapa (Node 24): instala dependencias, hace `pnpm build` y `pnpm herramientas`, y copia la salida `standalone`. Corre como usuario `node`. Al arrancar aplica las migraciones (`herramientas/migrar.mjs`) y después `node server.js`. 435 MB. No lleva ningún `.env` ni secreto (verificado en la imagen y en su historial).
 - [x] Herramientas empaquetadas con esbuild (`scripts/herramientas.mjs`): `migrar.mjs`, `importar.mjs` y `crear-usuario.mjs`, que corren con `node` solo dentro de la imagen.
 - [x] `infra/docker-compose.yml`: `app` (imagen de `IMAGEN`, volúmenes `fotos` y `cache-next`), `db` (`postgres:17-alpine`, *healthcheck*) y `caddy` (80/443 tcp y 443/udp, certificados y `fotos` de sólo lectura). `infra/.env.produccion.example` con las variables.
 - [x] En el VPS, `/srv/maitilac/` con esos archivos y el `.env` (permisos `600`): lo arma `deploy.sh primera-vez`.
@@ -353,7 +353,7 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
 - [ ] ⏳ Activar los snapshots semanales en el panel de Hostinger.
 
 ### Notas técnicas de esta etapa
-- **Error de Next encontrado al probar producción** (16.3.6, la última estable): si el navegador cortaba la conexión mientras el optimizador leía la foto original (alguien que cambia de página rápido en la primera visita), esa foto quedaba colgada para todos hasta reiniciar el sitio. El pedido interno reutilizaba el `socket` del navegador y su promesa no se resolvía nunca; como Next agrupa los pedidos iguales, arrastraba a todos los siguientes. Se reprodujo cerrando páginas a mitad de carga: 30 de 42 imágenes colgadas (10 sin Caddy, así que no era Caddy). **Parche** con `pnpm patch` (`patches/next.patch`): el pedido interno ya no usa ese `socket`. Después del parche, 0 de 42 en tres repeticiones. Al actualizar Next, comprobar si se corrigió y sacar el parche.
+- **Error de Next encontrado al probar producción** (16.3.6, la última estable): si el navegador cortaba la conexión mientras el optimizador leía la foto original (alguien que cambia de página rápido en la primera visita), esa foto quedaba colgada para todos hasta reiniciar el sitio. El pedido interno reutilizaba el `socket` del navegador y su promesa no se resolvía nunca; como Next agrupa los pedidos iguales, arrastraba a todos los siguientes. Se reprodujo cerrando páginas a mitad de carga: 30 de 42 imágenes colgadas (10 sin Caddy, así que no era Caddy). **Parche** con `pnpm patch` (`patches/next.patch`): el pedido interno ya no usa ese `socket`. Después del parche, 0 de 42 en tres repeticiones. Al actualizar Next, comprobar si se corrigió y sacar el parche. *(Corregido en Next 16.4: el parche se sacó el 23/10/2026.)*
 - **Tests contra un sitio publicado:** `PRUEBA_URL=<url> pnpm test:visual` corre sólo las páginas públicas (sin el gestor, que modifica datos), sin levantar servidor ni tocar ninguna base. El recorrido con scroll de los tests pasó a hacerse desde Playwright con esperas reales.
 - Una vez, en la suite local, el catálogo salió sin sus dos últimos productos aunque la base los tenía; no se pudo reproducir (la corrida siguiente, 144 de 144). Si vuelve a pasar, investigar la caché del servidor de desarrollo.
 - Los tests ahora borran, al empezar, las fotos que subieron en corridas anteriores (`subidas/`): después de reimportar la base no las usa nada.
@@ -477,6 +477,12 @@ Medido antes de tocar nada, en modo producción contra la base local: las págin
 
 **Verificado:** suite local 145 de 145; imagen de producción con base nueva (migra hasta la 0004) y 115 de 115 contra ella.
 
+### Fotos optimizadas por adelantado y actualización de seguridad (23-24/10/2026) ✅
+
+- [x] **Fotos generadas antes de que alguien las pida** (`lib/calentar.ts`): el optimizador de Next genera cada versión la primera vez que se pide, y un AVIF tarda 0,7-2 s. Con la caché vacía y 2 núcleos (como el KVM 2), el Inicio tardaba **6,4 s** en mostrar la foto principal. Ahora `deploy.sh` corre `herramientas/calentar.mjs` en segundo plano después de publicar (recorre el sitemap y pide todas las versiones de cada `srcset`, en AVIF y WebP), y el gestor hace lo mismo con `after()` después de cambiar algo con fotos. Medido con la imagen de producción, base nueva y 2 núcleos: 392 fotos, 784 versiones, 6 min en segundo plano; después, todas las páginas por debajo de 0,65 s. Con todo ya generado, el recorrido tarda unos 5 s.
+- [x] **Seguridad:** Next 16.4.2 y React 19.2.9 (avisos del 14/10/2026: ejecución remota con `use cache` y con el optimizador de imágenes, DoS con Server Actions; el sitio usa los tres), sharp 0.35.5, Node 24.22.1 fijado en el `Dockerfile` (arreglos del 21/10/2026) y vitest 5.0.5. Se sacó `patches/next.patch`: Next 16.4 trae el mismo arreglo.
+- [x] Verificado: las capturas del sitio nuevo son idénticas con 16.3.6 y con 16.4.2 (69 de 70; la otra, 37 px de recompresión de un logo); los 17 tests funcionales del gestor pasan; imagen de producción levantada con el `docker-compose.yml` de `infra/` sobre una base vacía (migraciones, datos de fábrica, páginas, `/gestor` → login, copia 401, video).
+
 **Se evaluó y no se hizo** (poco beneficio o algún riesgo): guardar en caché el HTML armado de cada página (son 20 ms); precargar las fuentes (competiría con la foto del hero en conexiones lentas); dejar que Caddy comprima en lugar de Next (podría frenar el streaming); agrupar los inserts de la importación de fábrica (se usa poco); guardar la sesión del gestor en la cookie (ahorra una consulta pero demora el cierre de sesión).
 
 ### Paso 6.4 — Tests finales (casi terminado)
@@ -526,7 +532,7 @@ Revisión con antes y después: página privada "Revisión pedido Maitilac" (htt
 - [x] 3. Catálogo: bajada nueva; sin precio no se ve nada (ni "Consultar"): `precioVisible()` en `lib/util.ts`; sin maridaje (detalle y destacados) ni recuadro de locales (destacados); filtros PARRILLA-PICADA-PIZZA-POSTRE-SANDWICH-RALLAR-REGALOS en ese orden (datos de fábrica). En el gestor se sacaron los campos de maridaje; los datos quedan en la base.
 - [x] 4. Locales: sin "Indicaciones Generales / Estacionamiento".
 - [x] 5. Premios: "Nuestros quesos, premiados."; rótulo "PREMIOS" en el detalle de producto.
-- [ ] 6. Proceso productivo: texto nuevo ✅; paso 3 "ELABORACION" con la tina sola (recorte de la imagen anterior) ✅; **falta el video** (con subtítulos) y **los originales de los dibujos del folleto** (en el PDF no se pueden separar del fondo).
+- [ ] 6. Proceso productivo: texto nuevo ✅; paso 3 "ELABORACION" con la tina sola (recorte de la imagen anterior) ✅; video en lugar de las fotos del tambo y la fábrica ✅ (23/10/2026, `public/video/proceso-productivo.mp4`, 1024×576, 2:38, con sonido; se reproduce al tocarlo, sin arranque automático; **los subtítulos vienen grabados en la imagen del video**, revisado el 24/10/2026); **faltan los originales de los dibujos del folleto** (en el PDF no se pueden separar del fondo: los tiene que conseguir el cliente).
 - [x] 7. Historia en el celular: los años en una fila que se desliza.
 - [ ] Aprobación de la revisión y **nueva referencia**: después de aprobarla, las capturas de referencia pasan a sacarse del sitio nuevo (`pnpm test:visual --update-snapshots`). Hasta entonces, los tests visuales que comparan contra el sitio viejo fallan en las páginas cambiadas.
 - Textos tal cual: sin punto final en la bajada del catálogo, el footer y el proceso; "ELABORACION" sin tilde; filtros en mayúsculas. A confirmar con el cliente.
@@ -571,5 +577,6 @@ Toda diferencia entre el sitio nuevo y `referencia/` tiene que estar en esta tab
 | 03/10/2026 | Locales | Sin el bloque de estacionamiento | Pedido del cliente | Cliente |
 | 03/10/2026 | Nosotros → Premios | "Nuestros quesos, premiados."; rótulo "PREMIOS" en el detalle | Pedido del cliente | Cliente |
 | 03/10/2026 | Nosotros → Proceso productivo | Texto nuevo; paso 3 "ELABORACION" sin tarros | Pedido del cliente | Cliente |
+| 23/10/2026 | Nosotros → Proceso productivo | Un video (16:9) en lugar de las dos fotos (tambo y fábrica) | Pedido del cliente | Cliente |
 | 03/10/2026 | Nosotros → Historia (celular) | Años en una fila que se desliza | Pedido del cliente | Cliente |
 | — | `/catalogo/[slug]` | Entrando directo se ve el catálogo con el detalle abierto | URL propia por producto (SEO, compartir) | Pendiente |

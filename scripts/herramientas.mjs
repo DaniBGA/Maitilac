@@ -6,6 +6,7 @@
  *   migrar.mjs         aplica las migraciones (la imagen lo corre al arrancar)
  *   importar.mjs       carga los datos de fábrica (pnpm db:importar)
  *   crear-usuario.mjs  crea un usuario del gestor (pnpm gestor:usuario)
+ *   calentar.mjs       genera las fotos optimizadas (pnpm imagenes:calentar; deploy.sh)
  */
 import { build } from "esbuild";
 
@@ -14,6 +15,7 @@ await build({
     migrar: "scripts/migrar.ts",
     importar: "db/importar/index.ts",
     "crear-usuario": "scripts/crear-usuario.ts",
+    calentar: "scripts/calentar-imagenes.ts",
   },
   bundle: true,
   platform: "node",

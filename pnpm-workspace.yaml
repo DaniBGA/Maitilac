@@ -2,5 +2,3 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: false
-patchedDependencies:
-  next: patches/next.patch

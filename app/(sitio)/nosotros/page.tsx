@@ -119,20 +119,15 @@ async function NosotrosContenido() {
               ))}
             </div>
           </div>
+          {/* Video del proceso (pedido del cliente del 03/10/2026): reemplaza las fotos del tambo y la fábrica. */}
           <div className="nos-13">
-            <Foto
-              className="nos-14"
-              src="/img/proceso-tambo.jpg"
-              sizes="(max-width:720px) 90vw, (max-width:1024px) 94vw, 540px"
-              alt="Vacas Holando en el tambo"
-              loading="lazy"
-            />
-            <Foto
-              className="nos-14"
-              src="/img/proceso-fabrica.jpg"
-              sizes="(max-width:720px) 90vw, (max-width:1024px) 94vw, 540px"
-              alt="Elaboración de quesos en la fábrica"
-              loading="lazy"
+            <video
+              className="proceso-video"
+              src="/video/proceso-productivo.mp4"
+              aria-label="El Proceso Productivo"
+              controls
+              playsInline
+              preload="metadata"
             />
           </div>
         </div>

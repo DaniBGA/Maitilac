@@ -216,7 +216,6 @@ public/               Fuentes, imágenes y foto del hero
 tests/visual/         Tests visuales y capturas de referencia
 referencia/           Sitio viejo congelado. NO EDITAR
 docs/                 Plan, paso a paso, registro de cambios, manual del gestor, operación
-patches/              Parche sobre Next (ver docs/OPERACION.md, notas técnicas)
 .github/workflows/    CI (verificación en GitHub)
 _fuentes/             Material original del cliente (no se publica)
 subidas/              Fotos subidas desde el gestor (no se sube al repo)

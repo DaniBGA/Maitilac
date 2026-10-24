@@ -10,11 +10,13 @@
  */
 import { and, asc, eq, isNull, ne, sql } from "drizzle-orm";
 import { updateTag } from "next/cache";
+import { after } from "next/server";
 import extrasFabrica from "@/db/importar/data/extras.json";
 import ocasionesFabrica from "@/db/importar/data/ocasiones.json";
 import premiosFabrica from "@/db/importar/data/premios.json";
 import productosFabrica from "@/db/importar/data/productos.json";
 import * as s from "@/db/schema";
+import { calentarImagenes } from "../calentar";
 import { db } from "../db";
 import {
   asegurarFotos,
@@ -35,6 +37,23 @@ import type { GLocal, ProductoEditado, Resultado } from "./tipos";
 
 class ErrorVisible extends Error {}
 
+/** Lo que muestra fotos en el sitio. */
+const CON_FOTOS = ["productos", "premios", "equipo", "locales", "producto-del-mes"];
+
+/**
+ * Después de responder, genera las versiones optimizadas de las fotos que cambiaron o que
+ * vuelven a verse (lib/calentar.ts), así el primer visitante no las espera. Las que ya
+ * estaban listas responden enseguida. En desarrollo (y en los tests) no hace falta.
+ */
+function calentarDespues() {
+  if (process.env.NODE_ENV !== "production") return;
+  after(() =>
+    calentarImagenes(`http://127.0.0.1:${process.env.PORT ?? 3000}`).catch((e) =>
+      console.error("Fotos optimizadas:", e),
+    ),
+  );
+}
+
 /** Envuelve cada acción: sesión, cambios, invalidación de caché y respuesta. */
 async function accion(
   etiquetas: string[],
@@ -44,6 +63,7 @@ async function accion(
     await requerirSesion();
     const r = await cambios();
     for (const e of etiquetas) updateTag(e);
+    if (etiquetas.some((e) => CON_FOTOS.includes(e))) calentarDespues();
     const aviso = typeof r === "object" ? r.aviso : r;
     const id = typeof r === "object" ? r.id : undefined;
     return { ok: true, datos: await leerDatosGestor(), aviso: aviso || undefined, id };

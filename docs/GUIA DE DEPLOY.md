@@ -10,9 +10,9 @@ Cómo publicar el sitio en el VPS de Hostinger la primera vez y cómo actualizar
 
 - El **VPS KVM 2** de Hostinger.
 - El **dominio**, con acceso a su DNS. Para la revisión del cliente se usa un subdominio: `nuevo.<dominio>`. Si todavía no está, se puede publicar sin él (paso 3, "Todavía sin dominio").
-- En tu computadora: el proyecto, **Docker**, **pnpm** y una **clave SSH**. Para ver si ya tenés una: `ls ~/.ssh/id_ed25519.pub`. Si no existe, se crea con `ssh-keygen -t ed25519`.
+- En tu computadora: el proyecto (con `pnpm install` hecho), **Node 24 o superior**, **Docker**, **pnpm** y una **clave SSH**. Para ver si ya tenés una: `ls ~/.ssh/id_ed25519.pub`. Si no existe, se crea con `ssh-keygen -t ed25519`.
 
-En los comandos de abajo, reemplazá `<ip>` por la IP del VPS y `<dominio>` por el dominio.
+En los comandos de abajo, reemplazá `<ip>` por la IP del VPS y `<dominio>` por el dominio, **sin los signos `< >`**: `ssh deploy@<ip>` se escribe, por ejemplo, `ssh deploy@203.0.113.10`.
 
 ---
 
@@ -58,7 +58,7 @@ usermod -aG docker deploy
 mkdir -p /srv/maitilac && chown deploy:deploy /srv/maitilac
 ```
 
-**Antes de cerrar la sesión de root**, abrí **otra terminal** y comprobá que entrás con el usuario nuevo:
+**Antes de cerrar la sesión de root**, abrí **otra terminal en tu computadora** (no en el servidor: ahí no está tu clave) y comprobá que entrás con el usuario nuevo:
 
 ```bash
 ssh deploy@<ip>
@@ -101,9 +101,41 @@ Se puede publicar igual, con HTTPS, usando la IP dentro de un nombre de [sslip.i
 - Si Let's Encrypt no da el certificado (lo dice `docker compose logs caddy`), probá con `nip.io` en lugar de `sslip.io`: son el mismo servicio.
 - Cuando esté el dominio, se pasa con [Pasar al dominio definitivo](#pasar-al-dominio-definitivo), igual que desde `nuevo.<dominio>`.
 
-## 4. Configurar el script (en tu computadora)
+## 4. Configurar el script
 
-En la carpeta del proyecto:
+`scripts/deploy.sh` se puede correr de dos maneras. Elegí una:
+
+| | **A. En el VPS** | **B. Desde tu computadora** |
+|---|---|---|
+| Dónde está el código | clonado en el VPS, se actualiza con `git pull` | tu carpeta del proyecto |
+| Dónde se compila la imagen | en el VPS (unos minutos; el sitio sigue andando) | en tu computadora, y se sube por SSH (unos 110 MB) |
+| Qué hace falta | sólo git y Docker (ya están en el VPS) | Node 24+, pnpm, Docker y la clave SSH |
+| Verificación antes de publicar | lint y tests, en GitHub (CI) con cada push; tipos, al compilar | lint, tipos y tests en tu computadora |
+
+### A. En el VPS
+
+Conectado como `deploy` (en el VPS **no** hace falta instalar Node ni pnpm: todo se compila dentro de Docker):
+
+```bash
+ssh deploy@<ip>
+git clone https://github.com/DaniBGA/Maitilac.git
+cd Maitilac
+cp deploy.env.example deploy.env
+nano deploy.env
+```
+
+En `deploy.env`:
+
+```bash
+VPS=local
+SITIO_URL=https://nuevo.<dominio>
+```
+
+`VPS=local` le dice al script que ya está en el servidor: no usa SSH ni sube la imagen. Los comandos de los pasos siguientes (`./scripts/deploy.sh …`) se corren ahí, dentro de `~/Maitilac`.
+
+### B. Desde tu computadora
+
+En la carpeta del proyecto (si es una computadora sin el proyecto: `git clone https://github.com/DaniBGA/Maitilac.git`, `cd Maitilac` y `pnpm install`):
 
 ```bash
 cp deploy.env.example deploy.env
@@ -116,7 +148,7 @@ VPS=deploy@<ip>
 SITIO_URL=https://nuevo.<dominio>
 ```
 
-`deploy.env` no se sube al repo.
+En las dos maneras, `deploy.env` no se sube al repo.
 
 ## 5. Primera publicación
 
@@ -126,14 +158,15 @@ SITIO_URL=https://nuevo.<dominio>
 
 Hace todo esto solo (tarda unos minutos, la primera vez un poco más):
 
-1. Comprueba que puede entrar al VPS y que Docker anda.
+1. Comprueba que puede entrar al VPS (o, en el VPS, que Docker anda).
 2. Crea `/srv/maitilac/.env` en el servidor, con contraseñas nuevas generadas al azar. Quedan **sólo en el servidor**.
-3. Verifica el código (lint, tipos, tests unitarios).
-4. Arma la imagen del sitio y la sube al VPS (unos 110 MB).
+3. Verifica el código (lint, tipos, tests unitarios). En el VPS no: avisa y sigue (lo verifica GitHub).
+4. Arma la imagen del sitio y, desde la computadora, la sube al VPS (unos 110 MB).
 5. Levanta el sitio, la base de datos y Caddy, que pide el certificado HTTPS solo.
-6. Comprueba que el sitio responda y que las 5 páginas se armen bien.
-7. Carga los datos de fábrica (productos, premios, locales…).
-8. Programa la copia de seguridad diaria (3:00).
+6. Carga los datos de fábrica (productos, premios, locales…).
+7. Comprueba que el sitio responda y que las 5 páginas se armen bien.
+8. Empieza a generar las fotos optimizadas, en segundo plano (unos minutos).
+9. Programa la copia de seguridad diaria (3:00).
 
 Después creá los usuarios del gestor, uno por persona:
 
@@ -164,9 +197,15 @@ En hPanel → VPS → **Snapshots y copias de seguridad**: activar las copias se
 1. Hacé los cambios y probalos en local (`pnpm dev`, `pnpm test:visual`).
 2. Commiteá.
 3. Publicá:
-   ```bash
-   ./scripts/deploy.sh
-   ```
+   - **A. En el VPS:** subí los cambios (`git push`) y mirá en la pestaña *Actions* del repo que pasen `pnpm lint`, `tsc` y `pnpm test`. *(Mientras el cliente no apruebe las capturas nuevas, el paso de los tests visuales falla en las páginas que él pidió cambiar: es lo esperado.)* Después, en el VPS:
+     ```bash
+     ssh deploy@<ip>
+     cd ~/Maitilac && git pull && ./scripts/deploy.sh
+     ```
+   - **B. Desde tu computadora:**
+     ```bash
+     ./scripts/deploy.sh
+     ```
 
 El script hace siempre lo mismo y te muestra cada paso:
 

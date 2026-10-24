@@ -42,13 +42,15 @@ Al arrancar, `app` aplica las migraciones pendientes y después levanta el sitio
 
 ## Publicar y actualizar
 
-Con `scripts/deploy.sh`, desde la computadora: [GUIA DE DEPLOY.md](GUIA%20DE%20DEPLOY.md). Lo que hace en el servidor, por si hiciera falta a mano:
+Con `scripts/deploy.sh`: [GUIA DE DEPLOY.md](GUIA%20DE%20DEPLOY.md). Se corre desde la computadora (sube la imagen por SSH) o en el mismo VPS, con el repo clonado en `~/Maitilac` y `VPS=local` en su `deploy.env` (compila ahí, sin SSH). Lo que hace en el servidor, por si hiciera falta a mano:
 
 1. Copia los archivos de `infra/` a `/srv/maitilac/`.
 2. Corre `./backup.sh` (si la base está levantada).
-3. Carga la imagen nueva (`docker save | ssh … docker load`) con una etiqueta `maitilac:<fecha>-<commit>`.
+3. Carga la imagen nueva (`docker save | ssh … docker load`; con `VPS=local` ya está, porque se compiló ahí) con una etiqueta `maitilac:<fecha>-<commit>`.
 4. Guarda la versión actual en `.imagen-anterior`, escribe la nueva en `IMAGEN=` del `.env` y corre `docker compose up -d`.
-5. Comprueba `/api/auth/ok` y que las 5 páginas traigan su `<main>` sin marcas de error. Si no, vuelve a la imagen anterior.
+5. La primera vez, carga los datos de fábrica (`herramientas/importar.mjs`): con la base vacía las páginas no se pueden armar.
+6. Comprueba `/api/auth/ok` y que las 5 páginas traigan su `<main>` sin marcas de error. Si no, vuelve a la imagen anterior.
+7. Genera las fotos optimizadas en segundo plano (`herramientas/calentar.mjs`).
 
 Para volver a mano: poner en `IMAGEN=` del `.env` la etiqueta anterior (`docker image ls maitilac`) y `docker compose up -d`.
 

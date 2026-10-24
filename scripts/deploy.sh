@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Publicación del sitio en el VPS, desde esta computadora (docs/GUIA DE DEPLOY.md).
+# Publicación del sitio en el VPS (docs/GUIA DE DEPLOY.md). Se puede correr desde la
+# computadora (sube la imagen por SSH) o en el mismo VPS, con el repo clonado ahí y
+# VPS=local en deploy.env (compila y levanta ahí mismo, sin SSH).
 #
 #   ./scripts/deploy.sh                      actualizar el sitio con el código de esta carpeta
 #   ./scripts/deploy.sh primera-vez          primera puesta en marcha en el VPS
@@ -37,7 +39,7 @@ CONFIG="${DEPLOY_CONFIG:-deploy.env}"
 [ -f "$CONFIG" ] || error "Falta $CONFIG. Copiá deploy.env.example a deploy.env y completalo."
 # shellcheck source=/dev/null
 . "$CONFIG"
-: "${VPS:?Falta VPS en deploy.env (ej: deploy@203.0.113.10)}"
+: "${VPS:?Falta VPS en deploy.env (ej: deploy@203.0.113.10, o local si el script corre en el VPS)}"
 : "${SITIO_URL:?Falta SITIO_URL en deploy.env (ej: https://nuevo.ejemplo.com)}"
 DIR_REMOTO="${DIR_REMOTO:-/srv/maitilac}"
 SSH_OPCIONES="${SSH_OPCIONES:-}"
@@ -45,11 +47,31 @@ CURL_OPCIONES="${CURL_OPCIONES:-}"
 SITIO_URL="${SITIO_URL%/}"
 DOMINIO="${SITIO_URL#*://}"; DOMINIO="${DOMINIO%%/*}"; DOMINIO="${DOMINIO%%:*}"
 
+# VPS=local: el script corre en el mismo VPS. Los comandos "remotos" corren acá.
+LOCAL=""; [ "$VPS" = "local" ] && LOCAL=si
+
 # shellcheck disable=SC2086
-remoto() { ssh $SSH_OPCIONES "$VPS" "cd '$DIR_REMOTO' && $1"; }
+remoto() {
+  if [ -n "$LOCAL" ]; then (cd "$DIR_REMOTO" && bash -c "$1")
+  else ssh $SSH_OPCIONES "$VPS" "cd '$DIR_REMOTO' && $1"; fi
+}
+
+# Escribe la entrada estándar en un archivo del servidor, con permisos 600.
+# shellcheck disable=SC2086
+escribir_remoto() { # $1 = ruta
+  if [ -n "$LOCAL" ]; then (umask 077 && cat > "$1")
+  else ssh $SSH_OPCIONES "$VPS" "umask 077 && cat > '$1'"; fi
+}
 
 # ---------- Pasos ----------
 probar_conexion() {
+  if [ -n "$LOCAL" ]; then
+    paso "En el servidor (VPS=local)"
+    docker compose version >/dev/null 2>&1 && docker ps >/dev/null 2>&1 \
+      || error "No anda 'docker compose' para este usuario (¿está en el grupo docker? Salir y volver a entrar)."
+    ok "Docker anda"
+    return
+  fi
   paso "Conexión con el servidor ($VPS)"
   # shellcheck disable=SC2086
   ssh $SSH_OPCIONES -o BatchMode=yes -o ConnectTimeout=10 "$VPS" true \
@@ -67,6 +89,12 @@ verificar_codigo() {
     read -r -p "¿Seguir? (s/N) " r; [ "$r" = "s" ] || error "Cancelado."
   fi
   if [[ "$opciones" == *" --sin-verificar "* ]]; then aviso "Sin verificar el código (--sin-verificar)."; return; fi
+  if ! command -v pnpm >/dev/null; then
+    # En el VPS no hay Node ni pnpm: lint y tests corren en GitHub (CI) con cada push,
+    # y los tipos se controlan igual al compilar la imagen.
+    aviso "Sin pnpm en esta máquina: no se corren lint ni tests (los corre GitHub al hacer push). Los tipos se controlan al compilar."
+    return
+  fi
   paso "Verificando el código (lint, tipos, tests)"
   pnpm lint >/dev/null || error "pnpm lint encontró problemas. Corré 'pnpm lint' para verlos."
   pnpm exec tsc --noEmit || error "Hay errores de tipos."
@@ -81,14 +109,17 @@ compilar_imagen() {
   local cambios=""; [ -z "$(git status --porcelain 2>/dev/null)" ] || cambios="-con-cambios"
   ETIQUETA="maitilac:$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD 2>/dev/null || echo sin-git)$cambios"
   paso "Compilando la imagen $ETIQUETA"
+  [ -n "$LOCAL" ] && echo "(en el VPS tarda unos minutos; mientras tanto el sitio sigue andando)"
   docker build --quiet --build-arg "SITIO_URL=$SITIO_URL" -t "$ETIQUETA" . >/dev/null || error "Falló la compilación de la imagen."
   ok "Imagen lista"
 }
 
 copiar_archivos() {
   paso "Copiando la configuración del servidor (docker-compose, Caddyfile, scripts)"
+  local archivos=(infra/docker-compose.yml infra/Caddyfile infra/backup.sh infra/restaurar.sh)
   # shellcheck disable=SC2086
-  scp -q $SSH_OPCIONES infra/docker-compose.yml infra/Caddyfile infra/backup.sh infra/restaurar.sh "$VPS:$DIR_REMOTO/"
+  if [ -n "$LOCAL" ]; then cp "${archivos[@]}" "$DIR_REMOTO/"
+  else scp -q $SSH_OPCIONES "${archivos[@]}" "$VPS:$DIR_REMOTO/"; fi
   remoto "chmod +x backup.sh restaurar.sh"
   ok "Archivos al día (el .env del servidor no se toca)"
 }
@@ -101,6 +132,7 @@ copia_previa() {
 }
 
 subir_imagen() {
+  [ -n "$LOCAL" ] && return # ya está en el Docker del servidor
   paso "Subiendo la imagen al servidor (unos 110 MB)"
   local medidor=cat; command -v pv >/dev/null && medidor="pv -N imagen"
   # shellcheck disable=SC2086
@@ -156,6 +188,27 @@ calentar_imagenes() {
     && ok "Generando las fotos optimizadas en segundo plano" || aviso "No se pudieron generar las fotos optimizadas (se generan solas al pedirlas)."
 }
 
+# Primera vez: con la base vacía las páginas no se pueden armar, así que los datos de
+# fábrica se cargan antes de comprobarlas. importar.mjs no toca una base que ya tiene datos.
+cargar_fabrica() {
+  paso "Datos de fábrica"
+  # Espera a que el sitio haya arrancado (las migraciones corren antes): se pregunta
+  # desde adentro del contenedor, sin depender todavía del certificado HTTPS.
+  local listo=""
+  for _ in $(seq 1 45); do
+    if remoto "docker compose exec -T app node -e \"fetch('http://127.0.0.1:3000/api/auth/ok').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))\"" >/dev/null 2>&1; then listo=si; break; fi
+    sleep 2
+  done
+  [ -n "$listo" ] || { aviso "El sitio no arrancó: no se cargaron los datos."; return; }
+  if remoto "docker compose exec -T app node herramientas/importar.mjs" | tail -2; then
+    # La importación no pasa por el gestor: se reinicia para que la caché arranque vacía.
+    remoto "docker compose restart app >/dev/null 2>&1"
+    ok "Datos cargados"
+  else
+    ok "La base ya tenía datos: no se tocaron."
+  fi
+}
+
 limpiar_imagenes() {
   # Se guardan las 3 publicaciones más nuevas y, siempre, la actual y la anterior (para poder volver).
   remoto "actual=\$(grep '^IMAGEN=' .env | cut -d= -f2); anterior=\$(cat .imagen-anterior 2>/dev/null || true); \
@@ -176,6 +229,7 @@ publicar() { # $@ = opciones
   paso "Activando la versión nueva (las migraciones corren solas al arrancar)"
   [ -n "$anterior" ] && remoto "echo '$anterior' > .imagen-anterior"
   activar "$ETIQUETA"
+  [ -n "${CARGAR_FABRICA:-}" ] && cargar_fabrica
   if ! comprobar; then
     aviso "El sitio no responde con la versión nueva. Registro del sitio:"
     remoto "docker compose logs --tail=30 app" || true
@@ -207,8 +261,8 @@ case "$comando" in
   primera-vez)
     probar_conexion
     remoto "true" 2>/dev/null || {
-      # shellcheck disable=SC2086
-      ssh $SSH_OPCIONES "$VPS" "mkdir -p '$DIR_REMOTO'" \
+      if [ -n "$LOCAL" ]; then mkdir -p "$DIR_REMOTO" 2>/dev/null
+      else ssh $SSH_OPCIONES "$VPS" "mkdir -p '$DIR_REMOTO'"; fi \
         || error "No se pudo crear $DIR_REMOTO. En el servidor: sudo mkdir -p $DIR_REMOTO && sudo chown \$USER: $DIR_REMOTO"
     }
     if ! remoto "test -f .env"; then
@@ -219,20 +273,12 @@ case "$comando" in
         -e "s|^BETTER_AUTH_URL=.*|BETTER_AUTH_URL=$SITIO_URL|" \
         -e "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=$(openssl rand -hex 32)|" \
         -e "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=$(openssl rand -hex 32)|" \
-        infra/.env.produccion.example | ssh $SSH_OPCIONES "$VPS" "umask 077 && cat > '$DIR_REMOTO/.env'"
+        infra/.env.produccion.example | escribir_remoto "$DIR_REMOTO/.env"
       ok ".env creado en $DIR_REMOTO (permisos 600). Los secretos quedan sólo en el servidor."
     else
       ok "El servidor ya tiene .env: no se toca."
     fi
-    publicar "$@"
-    paso "Datos de fábrica"
-    if remoto "docker compose exec -T app node herramientas/importar.mjs" | tail -2; then
-      remoto "docker compose restart app >/dev/null 2>&1"; comprobar || true
-      ok "Datos cargados"
-      calentar_imagenes
-    else
-      ok "La base ya tenía datos: no se tocaron."
-    fi
+    CARGAR_FABRICA=si publicar "$@"
     paso "Copias de seguridad automáticas (todos los días a las 3:00)"
     remoto "mkdir -p copias && (crontab -l 2>/dev/null | grep -v '$DIR_REMOTO/backup.sh'; echo '0 3 * * * $DIR_REMOTO/backup.sh >> $DIR_REMOTO/copias/backup.log 2>&1') | crontab -"
     ok "Programadas en el cron del servidor"
@@ -255,9 +301,11 @@ case "$comando" in
   usuario)
     email="${1:-}"; nombre="${2:-}"
     [[ "$email" == *@* ]] || error 'Uso: ./scripts/deploy.sh usuario <email> "<Nombre>"'
+    comando_usuario="docker compose exec app node herramientas/crear-usuario.mjs '$email' '${nombre//\'/}'"
     # -t: la herramienta pide la contraseña por teclado
     # shellcheck disable=SC2086
-    ssh -t $SSH_OPCIONES "$VPS" "cd '$DIR_REMOTO' && docker compose exec app node herramientas/crear-usuario.mjs '$email' '${nombre//\'/}'"
+    if [ -n "$LOCAL" ]; then remoto "$comando_usuario"
+    else ssh -t $SSH_OPCIONES "$VPS" "cd '$DIR_REMOTO' && $comando_usuario"; fi
     ;;
 
   copia)
@@ -265,6 +313,11 @@ case "$comando" in
     paso "Copia de seguridad en el servidor"
     remoto "./backup.sh" | tail -1
     fecha="$(date +%F)"
+    if [ -n "$LOCAL" ]; then
+      ok "Quedó en $DIR_REMOTO/copias/diarias/ (base-$fecha.dump y fotos-$fecha.tar.gz)."
+      echo "Para tenerla también en tu computadora, desde ella: scp 'deploy@<ip>:$DIR_REMOTO/copias/diarias/*-$fecha.*' ."
+      exit 0
+    fi
     mkdir -p copias-servidor
     # shellcheck disable=SC2086
     scp -q $SSH_OPCIONES "$VPS:$DIR_REMOTO/copias/diarias/base-$fecha.dump" "$VPS:$DIR_REMOTO/copias/diarias/fotos-$fecha.tar.gz" copias-servidor/

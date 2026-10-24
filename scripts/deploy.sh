@@ -41,6 +41,8 @@ CONFIG="${DEPLOY_CONFIG:-deploy.env}"
 . "$CONFIG"
 : "${VPS:?Falta VPS en deploy.env (ej: deploy@203.0.113.10, o local si el script corre en el VPS)}"
 : "${SITIO_URL:?Falta SITIO_URL en deploy.env (ej: https://nuevo.ejemplo.com)}"
+[[ "$VPS" == *203.0.113.10* || "$SITIO_URL" == *ejemplo.com* ]] \
+  && error "$CONFIG tiene los valores de ejemplo. Editalo: VPS=local (si corrés esto en el VPS) o VPS=deploy@<ip>, y SITIO_URL=https://<la dirección del sitio>."
 DIR_REMOTO="${DIR_REMOTO:-/srv/maitilac}"
 SSH_OPCIONES="${SSH_OPCIONES:-}"
 CURL_OPCIONES="${CURL_OPCIONES:-}"

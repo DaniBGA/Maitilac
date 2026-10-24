@@ -79,19 +79,33 @@ Comprobá: `ssh root@<ip>` tiene que ser rechazado y `ssh deploy@<ip>` tiene que
 
 ## 3. DNS
 
-En el panel donde se administra el dominio, creá un registro:
+`maitilac.com` se administra en Squarespace: *Domains → maitilac.com → DNS*. **Los registros del correo (`MX`, los `TXT` y el `CNAME` de Google) no se tocan nunca.**
 
-| Tipo | Nombre | Valor |
-|---|---|---|
-| `A` | `nuevo` | `<ip>` |
+Hay dos maneras. Elegí una:
+
+**a) Directo en el dominio** (el sitio nuevo reemplaza enseguida al que se ve hoy en `maitilac.com`):
+
+1. Si hay una sección **"Valores predeterminados de Squarespace"** (o registros `A`, `AAAA` o `CNAME` de `@` o `www` que apunten a Squarespace u otro hosting), borrá **sólo esos**.
+2. En *Registros personalizados → Agregar registro*:
+
+   | Tipo | Nombre | Datos |
+   |---|---|---|
+   | `A` | `@` | `<ip>` |
+   | `A` | `www` | `<ip>` |
+
+   `www.maitilac.com` redirige solo a `maitilac.com` (está en `infra/Caddyfile`).
+3. En `deploy.env` (paso 4): `SITIO_URL=https://maitilac.com`.
+
+**b) Con un subdominio de prueba**, para que el cliente revise antes de reemplazar el sitio actual: un registro `A` con nombre `nuevo` y datos `<ip>`, y `SITIO_URL=https://nuevo.maitilac.com`. Cuando lo apruebe, se pasa al dominio con [Pasar al dominio definitivo](#pasar-al-dominio-definitivo).
 
 Comprobá desde tu computadora, porque puede tardar unos minutos o, a veces, unas horas:
 
 ```bash
-dig +short nuevo.<dominio>          # tiene que mostrar la IP del VPS
+dig +short maitilac.com             # (o nuevo.maitilac.com) tiene que mostrar sólo la IP del VPS
+dig +short www.maitilac.com         # en la opción a), también
 ```
 
-**No sigas hasta que muestre la IP.** Si no, el certificado HTTPS no se puede emitir.
+**No sigas hasta que muestre la IP** (y sólo esa: si aparece otra más, quedó un registro viejo). Si no, el certificado HTTPS no se puede emitir.
 
 ### Todavía sin dominio
 
@@ -283,9 +297,9 @@ Cuando el cliente apruebe `nuevo.<dominio>`:
    ssh deploy@<ip>
    nano /srv/maitilac/.env             # DOMINIO=<dominio>, SITIO_URL y BETTER_AUTH_URL=https://<dominio>
    ```
-3. **En el repo**, agregá al final de `infra/Caddyfile` la redirección desde las otras direcciones, y commiteá:
+3. **En el repo**, agregá al final de `infra/Caddyfile` la redirección desde la dirección de prueba, y commiteá (la de `www` ya está):
    ```
-   nuevo.<dominio>, www.<dominio> {
+   nuevo.<dominio> {
    	redir https://<dominio>{uri} permanent
    }
    ```

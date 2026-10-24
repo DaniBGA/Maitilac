@@ -18,3 +18,10 @@
 
 	reverse_proxy app:3000
 }
+
+# www.<dominio> lleva al dominio sin www. Si DOMINIO es un subdominio de prueba
+# (nuevo.<dominio>) o de sslip.io, este nombre no existe en el DNS: Caddy no puede
+# sacarle certificado y lo reintenta en el registro, sin afectar al sitio.
+www.{$DOMINIO} {
+	redir https://{$DOMINIO}{uri} permanent
+}

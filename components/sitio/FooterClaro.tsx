@@ -122,7 +122,12 @@ export async function FooterClaro() {
       <div className="fc-bottom">
         <div className="fc-bottom-fila">
           <span>© 2026 Maitilac. Todos los derechos reservados.</span>
-          <span>Hecho con ♥ en Tandil</span>
+          <span>
+            Desarrollado por{" "}
+            <a className="fc-credito" href="https://www.grupovexus.com" target="_blank" rel="noopener">
+              Grupo Vexus
+            </a>
+          </span>
         </div>
       </div>
     </footer>

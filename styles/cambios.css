@@ -57,3 +57,12 @@
   display: block;
   background-color: #2c2620;
 }
+
+/* Footer claro de Nosotros (24/10/2026): crédito "Desarrollado por Grupo Vexus" en lugar
+   de "Hecho con ♥ en Tandil". El enlace, del mismo gris que el resto de la línea. */
+.fc-credito {
+  color: inherit;
+}
+.fc-credito:hover {
+  color: #da8737;
+}

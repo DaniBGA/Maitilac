@@ -578,5 +578,6 @@ Toda diferencia entre el sitio nuevo y `referencia/` tiene que estar en esta tab
 | 03/10/2026 | Nosotros → Premios | "Nuestros quesos, premiados."; rótulo "PREMIOS" en el detalle | Pedido del cliente | Cliente |
 | 03/10/2026 | Nosotros → Proceso productivo | Texto nuevo; paso 3 "ELABORACION" sin tarros | Pedido del cliente | Cliente |
 | 23/10/2026 | Nosotros → Proceso productivo | Un video (16:9) en lugar de las dos fotos (tambo y fábrica) | Pedido del cliente | Cliente |
+| 24/10/2026 | Nosotros → footer claro | "Desarrollado por Grupo Vexus" (enlace a grupovexus.com) en lugar de "Hecho con ♥ en Tandil" | Crédito del desarrollo | Grupo Vexus |
 | 03/10/2026 | Nosotros → Historia (celular) | Años en una fila que se desliza | Pedido del cliente | Cliente |
 | — | `/catalogo/[slug]` | Entrando directo se ve el catálogo con el detalle abierto | URL propia por producto (SEO, compartir) | Pendiente |

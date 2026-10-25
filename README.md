@@ -69,7 +69,7 @@ Abrir **http://localhost:3000**. Los cambios se ven al guardar, sin recargar.
 | Detalle de producto | http://localhost:3000/catalogo/gouda |
 | Locales | http://localhost:3000/locales |
 | Contacto | http://localhost:3000/contacto |
-| Gestor | http://localhost:3000/gestor (pide iniciar sesión) |
+| Gestor | http://localhost:3000/admin (lleva a /gestor; pide iniciar sesión) |
 
 ### Versión de producción, en local
 
@@ -82,7 +82,7 @@ pnpm start      # http://localhost:3000
 
 ## Gestor
 
-Entrar en **http://localhost:3000/gestor** con el email y la contraseña de un usuario del gestor. Lo que se guarda ahí se ve al instante en el sitio. Cómo se usa cada bloque: [docs/MANUAL DEL GESTOR.md](docs/MANUAL%20DEL%20GESTOR.md).
+Entrar en **http://localhost:3000/admin** con el email y la contraseña de un usuario del gestor. Lo que se guarda ahí se ve al instante en el sitio. Cómo se usa cada bloque: [docs/MANUAL DEL GESTOR.md](docs/MANUAL%20DEL%20GESTOR.md).
 
 **Usuarios:** no hay registro público. Se crean (o se les cambia la contraseña) con:
 

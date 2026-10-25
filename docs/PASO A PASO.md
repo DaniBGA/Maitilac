@@ -406,7 +406,7 @@ En el panel de Hostinger: instalar **Ubuntu 24.04** y cargar tu clave SSH públi
 ### Paso 5.10 — Copia de seguridad y cierre del gestor
 
 - [x] "Exportar" descarga `maitilac-copia-AAAA-MM-DD.json` con **todas** las tablas, incluido el equipo (el export viejo no lo traía).
-- [ ] Quitar el enlace "Gestor del catálogo" del footer público. **Pendiente de aprobación** (ver *Diferencias visuales aprobadas*). Hoy sigue y lleva al login.
+- [x] Quitar el enlace "Gestor del catálogo" del footer público (24/10/2026). Al gestor se entra escribiendo `<dominio>/admin`, que redirige a `/gestor` (`redirects()` en `next.config.ts`).
 - [ ] Crear los usuarios de D2 en el VPS (faltan los emails; mientras tanto se usa el usuario de prueba de `.env`).
 - [ ] Prueba de punta a punta: una persona edita desde una computadora y el cambio se ve **al instante** en un celular. Necesita el sitio publicado (Etapa 4). En local ya está probado con los tests funcionales.
 
@@ -567,7 +567,7 @@ Toda diferencia entre el sitio nuevo y `referencia/` tiene que estar en esta tab
 | — | Gestor → Contacto y locales | Bloque nuevo al final: contacto, producto del mes y locales | Datos que estaban escritos a mano en el HTML pasan a ser editables (plan P5) | Pendiente |
 | — | Gestor → Banco de fotos | Bloque nuevo al final (la copia congelada del sitio viejo no lo tiene) | Registro §24 y pedido del cliente del 06/08/2026 | Pendiente |
 | — | Gestor → encabezado | Botón "Salir" | Cerrar la sesión del login | Pendiente |
-| — | Footer público | Se quita el enlace "Gestor del catálogo" | Seguridad (plan P2) | Pendiente |
+| 24/10/2026 | Footer público | Se quita el enlace "Gestor del catálogo"; al gestor se entra por `/admin` | Seguridad (plan P2) y prolijidad del footer | Grupo Vexus |
 | — | Gestor → "Exportar" | Mismo botón y mismo texto; descarga `maitilac-copia-AAAA-MM-DD.json` con todas las tablas (incluido el equipo) en lugar de `catalogo-maitilac.txt`. El nombre del botón se dejó igual por paridad; el cartelito al pasar el mouse lo explica | Ahora es un backup, ya no un archivo para pegar en el código | Pendiente |
 | — | Gestor → acceso | Pantalla de login | Seguridad (plan P2) | Pendiente |
 | 28/09/2026 | Inicio → "Ver Detalles" | Abre el detalle del producto (en el sitio viejo no hacía nada y bloqueaba el scroll) | Corrección de un error | Pendiente |

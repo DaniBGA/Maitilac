@@ -52,10 +52,7 @@ export async function FooterOscuro() {
       <div className="foot-bottom">
         <div className="foot-bottom-fila">
           <span>© 2026 Maitilac · Quesos de Tandil. Todos los derechos reservados.</span>
-          {/* Se quita en el paso 5.10 (ver "Diferencias visuales aprobadas"). */}
-          <Link href="/gestor" data-go="gestor" className="foot-gestor">
-            Gestor del catálogo
-          </Link>
+          {/* El enlace "Gestor del catálogo" se sacó (paso 5.10): al gestor se entra por /admin. */}
         </div>
       </div>
     </footer>

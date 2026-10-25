@@ -6,7 +6,7 @@ Guía para administrar el contenido del sitio sin tocar código.
 
 ## Cómo entrar
 
-1. Abrí la dirección del sitio y agregale **/gestor** al final (por ejemplo, `maitilac.com/gestor`).
+1. Abrí la dirección del sitio y agregale **/admin** al final: `maitilac.com/admin`. (El sitio no tiene un enlace al gestor: hay que escribir la dirección. Conviene guardarla en favoritos.)
 2. Escribí tu **email** y tu **contraseña** y apretá **"Ingresar"**.
 
 Cada persona tiene su propio usuario. No hay forma de registrarse desde el sitio: los usuarios los crea quien mantiene el sitio, que también puede ponerte una contraseña nueva si te la olvidás.

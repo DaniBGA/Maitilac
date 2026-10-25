@@ -9,7 +9,6 @@
 .foot-logo{height:92px;width:auto;display:block}
 .foot-desc{margin:20px 0 0;font-size:15px;line-height:1.6;max-width:340px}
 .foot-bottom-fila{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.foot-gestor{color:rgba(247,244,236,.35);font-size:12px}
 
 /* Footer claro (Nosotros) — referencia/index.html:759-800 */
 .fc{background:#EFEBDF;border-top:1px solid rgba(94,61,34,.1)}

@@ -40,6 +40,11 @@ const nextConfig: NextConfig = {
       { source: "/video/:archivo*", headers: [{ key: "Cache-Control", value: dias(31) }] },
     ];
   },
+  // Al gestor se entra escribiendo <dominio>/admin: el enlace del footer se sacó (paso 5.10).
+  // Temporal (307): el navegador no la guarda, por si algún día cambia.
+  async redirects() {
+    return [{ source: "/admin", destination: "/gestor", permanent: false }];
+  },
 };
 
 export default nextConfig;

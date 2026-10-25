@@ -193,7 +193,7 @@ La contraseña se escribe dos veces y no se ve en pantalla. Pasásela a la perso
 ## 6. Comprobar
 
 - Abrí `https://nuevo.<dominio>`: tiene que abrir con el candado.
-- Entrá a `https://nuevo.<dominio>/gestor` con un usuario y probá cambiar algo.
+- Entrá a `https://<dirección del sitio>/admin` con un usuario y probá cambiar algo.
 - Opcional, desde la carpeta del proyecto, los tests visuales contra el servidor (sólo las páginas públicas, sin tocar datos):
   ```bash
   PRUEBA_URL=https://nuevo.<dominio> pnpm test:visual

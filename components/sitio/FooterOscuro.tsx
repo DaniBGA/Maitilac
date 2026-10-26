@@ -10,7 +10,7 @@ export async function FooterOscuro() {
       <div className="foot-grid">
         <div>
           <Foto
-            src="/img/logo-tandil-2.png"
+            src="/img/logo maitilac.png"
             sizes="125px"
             alt="Maitilac — Quesos de Tandil"
             className="foot-logo"

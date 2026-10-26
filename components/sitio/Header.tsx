@@ -35,7 +35,7 @@ export function Header({ instagram }: { instagram: string }) {
     <header>
       <div className="hdr">
         <Link href="/" className="hdr-logo" onClick={cerrar}>
-          <Foto src="/img/logo-tandil-2.png" sizes="70px" alt="Maitilac — Quesos de Tandil" />
+          <Foto src="/img/logo maitilac.png" sizes="70px" alt="Maitilac — Quesos de Tandil" />
         </Link>
         <button
           className="burger"

@@ -174,7 +174,7 @@ async function NosotrosContenido() {
               <span className="cd-circulo">
                 <Foto src="/img/cadena/3-elaboracion.png" sizes="134px" alt="" loading="lazy" />
               </span>{" "}
-              <span className="cd-num">3</span> <span className="cd-lbl">ELABORACION</span>
+              <span className="cd-num">3</span> <span className="cd-lbl">Elaboración</span>
             </li>
             <li className="cd-paso">
               <span className="cd-circulo">
@@ -222,7 +222,6 @@ async function NosotrosContenido() {
           <div className="nos-19">
             <span className="nos-20">DISTINCIONES</span>
             <h2 className="serif nos-21">Premios y Reconocimientos</h2>
-            <p className="nos-22">Nuestros quesos, premiados.</p>
           </div>
           <CarruselPremios premios={premios} className="nos-23" />
         </div>

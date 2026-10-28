@@ -568,6 +568,10 @@ Toda diferencia entre el sitio nuevo y `referencia/` tiene que estar en esta tab
 | — | Gestor → Banco de fotos | Bloque nuevo al final (la copia congelada del sitio viejo no lo tiene) | Registro §24 y pedido del cliente del 06/08/2026 | Pendiente |
 | — | Gestor → encabezado | Botón "Salir" | Cerrar la sesión del login | Pendiente |
 | 24/10/2026 | Footer público | Se quita el enlace "Gestor del catálogo"; al gestor se entra por `/admin` | Seguridad (plan P2) y prolijidad del footer | Grupo Vexus |
+| 28/10/2026 | Nosotros → Premios | Sin el subtítulo ("Nuestros quesos, premiados.") | Pedido del cliente | Cliente |
+| 28/10/2026 | Nosotros → Cadena de producción | "Elaboración", escrito como los otros pasos (antes "ELABORACION") | Pedido del cliente | Cliente |
+| 28/10/2026 | Contacto → "Pedir presupuesto mayorista" | Abre WhatsApp mayorista con un mensaje listo, en lugar de cambiar el formulario de al lado a "Compra por mayor" (en computadora no se notaba) | Pedido del cliente ("no anda") | Cliente |
+| 28/10/2026 | Nosotros → fotos de la historia | La fila de abajo se mueve (no se movía en ninguna pantalla) y la de arriba va a la velocidad prevista, 0,5 px por cuadro (iba al doble) | Corrección de un error que venía del sitio viejo | Cliente |
 | 26/10/2026 | Header y footers | Logo nuevo (`img/logo maitilac.png`, mismo diseño con otros tonos) en lugar de `img/logo-tandil-2.png`, también en el ícono de la pestaña | Logo actualizado | Grupo Vexus |
 | — | Gestor → "Exportar" | Mismo botón y mismo texto; descarga `maitilac-copia-AAAA-MM-DD.json` con todas las tablas (incluido el equipo) en lugar de `catalogo-maitilac.txt`. El nombre del botón se dejó igual por paridad; el cartelito al pasar el mouse lo explica | Ahora es un backup, ya no un archivo para pegar en el código | Pendiente |
 | — | Gestor → acceso | Pantalla de login | Seguridad (plan P2) | Pendiente |

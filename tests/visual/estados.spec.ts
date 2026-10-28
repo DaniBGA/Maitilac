@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { RUTAS, capturarElemento, esperarImagenes, prepararPagina } from "./preparar";
+import { ES_REFERENCIA, RUTAS, capturarElemento, esperarImagenes, prepararPagina } from "./preparar";
 
 const [, nosotros] = RUTAS;
 
@@ -113,10 +113,12 @@ test.describe("estados — Contacto", () => {
     );
   });
 
-  test("Pedir presupuesto mayorista cambia de pestaña", async ({ page }) => {
+  test("Pedir presupuesto mayorista abre WhatsApp mayorista", async ({ page }) => {
+    test.skip(ES_REFERENCIA, "En el sitio viejo cambiaba de pestaña (cambio del 28/10/2026)");
     await prepararPagina(page, contacto);
-    await page.locator("#ir-mayorista").click();
-    await expect(page.locator("#form-help")).toHaveText(/volúmenes/);
+    const boton = page.locator("#ir-mayorista");
+    await expect(boton).toHaveAttribute("href", /^https:\/\/wa\.me\/\d+\?text=Hola!%20Quer%C3%ADa%20pedir%20un%20presupuesto%20mayorista$/);
+    await expect(boton).toHaveAttribute("target", "_blank");
   });
 
   for (const pestana of ["consulta", "mayorista"]) {

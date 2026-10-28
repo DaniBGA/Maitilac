@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import type { Local } from "@/lib/tipos";
 import { enlaceWhatsApp, mensajeContacto, type Pestana } from "@/lib/whatsapp";
 
@@ -18,14 +18,6 @@ export function SeccionContacto({
   locales: Local[];
 }) {
   const [pestana, setPestana] = useState<Pestana>("consulta");
-  const form = useRef<HTMLFormElement>(null);
-
-  // "Pedir presupuesto mayorista" abre el formulario ya en la pestaña mayorista
-  const irMayorista = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setPestana("mayorista");
-    form.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
 
   const enviar = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -242,7 +234,15 @@ export function SeccionContacto({
               <li>Entregas programadas en Tandil y zona</li>
               <li>Asesoramiento en variedades y presentaciones</li>
             </ul>
-            <a className="canal-cta" href="#" id="ir-mayorista" onClick={irMayorista}>
+            {/* Abre WhatsApp mayorista (28/10/2026). En el sitio viejo cambiaba el formulario de al
+                lado a "Compra por mayor", y en computadora casi no se notaba. */}
+            <a
+              className="canal-cta"
+              href={enlaceWhatsApp(whatsappMayorista, "Hola! Quería pedir un presupuesto mayorista")}
+              target="_blank"
+              rel="noopener"
+              id="ir-mayorista"
+            >
               Pedir presupuesto mayorista{" "}
               <svg
                 width="15"
@@ -299,7 +299,7 @@ export function SeccionContacto({
               Compra por mayor
             </button>
           </div>
-          <form className="con-14" id="form-contacto" ref={form} onSubmit={enviar}>
+          <form className="con-14" id="form-contacto" onSubmit={enviar}>
             <h3 className="serif con-15">Envianos un mensaje</h3>
             <p className="con-16" id="form-help">
               {pestana === "mayorista"

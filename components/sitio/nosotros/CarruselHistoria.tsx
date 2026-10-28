@@ -46,17 +46,27 @@ export function CarruselHistoria({
     c2.scrollLeft = c2.scrollWidth / 2;
 
     const pausa = { c1: false, c2: false };
+    // La posición se lleva acá, con decimales. El navegador redondea scrollLeft a píxeles
+    // enteros: sumando 0,5 al valor leído la fila de arriba iba al doble de velocidad, y
+    // restando 0,5 la de abajo volvía siempre al mismo píxel y no se movía (pasaba igual en
+    // el sitio viejo). En pausa se toma la posición real, por si se corrió a mano.
+    let x1 = c1.scrollLeft;
+    let x2 = c2.scrollLeft;
     let id = 0;
     const mover = () => {
-      if (!pausa.c1) {
-        c1.scrollLeft += 0.5;
+      if (pausa.c1) x1 = c1.scrollLeft;
+      else {
+        x1 += 0.5;
         const mitad = c1.scrollWidth / 2;
-        if (c1.scrollLeft >= mitad) c1.scrollLeft -= mitad;
+        if (x1 >= mitad) x1 -= mitad;
+        c1.scrollLeft = x1;
       }
-      if (!pausa.c2) {
-        c2.scrollLeft -= 0.5; // sentido contrario
+      if (pausa.c2) x2 = c2.scrollLeft;
+      else {
+        x2 -= 0.5; // sentido contrario
         const mitad = c2.scrollWidth / 2;
-        if (c2.scrollLeft <= 0) c2.scrollLeft += mitad;
+        if (x2 <= 0) x2 += mitad;
+        c2.scrollLeft = x2;
       }
       id = requestAnimationFrame(mover);
     };

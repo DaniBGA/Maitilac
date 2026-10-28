@@ -4,7 +4,7 @@ import { useState } from "react";
 import { asignarFoto, crearProductoConFoto, subirFotosBanco } from "@/lib/gestor/acciones";
 import type { GFoto, GProducto } from "@/lib/gestor/tipos";
 import { ruta } from "@/lib/util";
-import type { Correr } from "./comun";
+import { subirFoto, type Correr } from "./comun";
 import type { Resultado } from "@/lib/gestor/tipos";
 
 const NUEVO = "__nuevo__";
@@ -38,12 +38,11 @@ export function BancoFotos({
     correr(asignarFoto(f.id, valor || null));
   };
 
-  const subir = (archivos: FileList | null) => {
-    const lista = Array.from(archivos ?? []);
-    if (!lista.length) return;
-    const formulario = new FormData();
-    for (const a of lista) formulario.append("foto", a);
-    correr(subirFotosBanco(formulario));
+  // De a una: cada envío lleva una sola foto, así ninguno pasa el límite de Next.
+  const subir = async (archivos: FileList | null) => {
+    for (const a of Array.from(archivos ?? [])) {
+      if (!(await correr(subirFoto(a, subirFotosBanco)))) return; // correr ya avisó qué pasó
+    }
   };
 
   return (

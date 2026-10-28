@@ -77,5 +77,12 @@ export type DatosGestor = {
 export type ProductoEditado = Omit<GProducto, "id">;
 
 /** Resultado de una acción: los datos actualizados, o un mensaje de error. */
+/**
+ * Peso máximo de una foto subida desde el gestor. Lo controla el servidor (lib/gestor/fotos.ts)
+ * y el gestor antes de mandarla. El límite de Next por envío (next.config.ts) deja margen sobre esto.
+ */
+export const FOTO_MAXIMO_MB = 15;
+export const FOTO_PESADA = `La foto es demasiado pesada (máximo ${FOTO_MAXIMO_MB} MB).`;
+
 export type Resultado =
   { ok: true; datos: DatosGestor; aviso?: string; id?: string } | { ok: false; error: string };

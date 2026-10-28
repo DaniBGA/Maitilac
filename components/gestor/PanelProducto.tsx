@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { borrarProducto, guardarProducto, subirFotoProducto } from "@/lib/gestor/acciones";
-import type { GProducto, ProductoEditado } from "@/lib/gestor/tipos";
+import { FOTO_PESADA, type GProducto, type ProductoEditado } from "@/lib/gestor/tipos";
 import { atraparTab, useDevolverFoco } from "@/lib/foco";
 import { ruta } from "@/lib/util";
-import { formularioFoto, type Correr } from "./comun";
+import { formularioFoto, fotoPesada, type Correr } from "./comun";
 
 const PRESENTACIONES = ["Entero", "Trozado", "Feteado"];
 
@@ -70,7 +70,14 @@ export function PanelProducto({
     const lista = Array.from(archivos ?? []);
     let agregadas = 0;
     for (const f of lista) {
-      const r = await subirFotoProducto(formularioFoto(f));
+      if (fotoPesada(f)) {
+        avisar(FOTO_PESADA);
+        continue;
+      }
+      const r = await subirFotoProducto(formularioFoto(f)).catch(() => ({
+        ok: false as const,
+        error: "No se pudo subir la foto. Revisá la conexión y probá de nuevo.",
+      }));
       if (r.ok) {
         agregadas++;
         setP((x) => ({ ...x, photos: [...x.photos, r.archivo] }));

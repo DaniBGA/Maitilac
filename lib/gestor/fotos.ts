@@ -2,13 +2,13 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, normalize, resolve } from "node:path";
 import sharp from "sharp";
+import { FOTO_MAXIMO_MB, FOTO_PESADA } from "./tipos";
 
 /** Carpeta de las fotos subidas (en el VPS, un volumen que sirve Caddy en /fotos). */
 // turbopackIgnore: es una carpeta externa (un volumen en el VPS), no forma parte del build.
 const carpetaFotos = () => resolve(/*turbopackIgnore: true*/ process.env.FOTOS_DIR || "./subidas");
 
 const TIPOS = ["image/jpeg", "image/png", "image/webp"];
-const MAXIMO_BYTES = 15 * 1024 * 1024;
 
 /**
  * Guarda una foto subida desde el gestor. Igual que gAchicar() del gestor viejo,
@@ -18,7 +18,7 @@ const MAXIMO_BYTES = 15 * 1024 * 1024;
  */
 export async function guardarFoto(archivo: File): Promise<string> {
   if (!TIPOS.includes(archivo.type)) throw new Error("La foto tiene que ser JPG, PNG o WebP.");
-  if (archivo.size > MAXIMO_BYTES) throw new Error("La foto es demasiado pesada (máximo 15 MB).");
+  if (archivo.size > FOTO_MAXIMO_MB * 1024 * 1024) throw new Error(FOTO_PESADA);
   const entrada = Buffer.from(await archivo.arrayBuffer());
   const salida = await sharp(entrada)
     .rotate()

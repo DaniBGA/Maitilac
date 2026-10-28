@@ -11,7 +11,7 @@ import {
 import type { GLocal, GProducto, GProductoDelMes } from "@/lib/gestor/tipos";
 import type { Config } from "@/lib/tipos";
 import { ruta } from "@/lib/util";
-import { formularioFoto, type Correr } from "./comun";
+import { subirFoto, type Correr } from "./comun";
 
 function Texto({
   etiqueta,
@@ -138,12 +138,12 @@ function EditorLocal({ local, correr }: { local: GLocal; correr: Correr }) {
           <FotoCambiable
             titulo="Foto del Inicio"
             foto={local.foto}
-            alElegir={(f) => correr(fotoLocal(local.id, "resumen", formularioFoto(f)))}
+            alElegir={(f) => correr(subirFoto(f, (fd) => fotoLocal(local.id, "resumen", fd)))}
           />
           <FotoCambiable
             titulo="Foto de la página Locales"
             foto={local.fotoDetalle}
-            alElegir={(f) => correr(fotoLocal(local.id, "detalle", formularioFoto(f)))}
+            alElegir={(f) => correr(subirFoto(f, (fd) => fotoLocal(local.id, "detalle", fd)))}
           />
         </div>
       </div>
@@ -225,7 +225,7 @@ export function BloqueContacto({
         <FotoCambiable
           titulo="Foto"
           foto={productoDelMes.foto}
-          alElegir={(f) => correr(fotoProductoDelMes(formularioFoto(f)))}
+          alElegir={(f) => correr(subirFoto(f, fotoProductoDelMes))}
         />
       </div>
       <button

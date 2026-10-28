@@ -1,6 +1,6 @@
 "use client";
 
-import type { Resultado } from "@/lib/gestor/tipos";
+import { FOTO_MAXIMO_MB, FOTO_PESADA, type Resultado } from "@/lib/gestor/tipos";
 
 /** Ejecuta una acción del servidor, actualiza los datos y muestra el aviso. Devuelve si salió bien. */
 export type Correr = (accion: Promise<Resultado>) => Promise<boolean>;
@@ -59,4 +59,15 @@ export function formularioFoto(archivo: File) {
   const f = new FormData();
   f.append("foto", archivo);
   return f;
+}
+
+export const fotoPesada = (archivo: File) => archivo.size > FOTO_MAXIMO_MB * 1024 * 1024;
+
+/**
+ * Manda una foto con la acción dada. Si pesa de más, avisa sin mandarla: el envío
+ * superaría el límite de Next y fallaría con un error que no dice por qué.
+ */
+export function subirFoto(archivo: File, accion: (f: FormData) => Promise<Resultado>): Promise<Resultado> {
+  if (fotoPesada(archivo)) return Promise.resolve({ ok: false, error: FOTO_PESADA });
+  return accion(formularioFoto(archivo));
 }

@@ -17,7 +17,7 @@ import {
 } from "@/lib/gestor/acciones";
 import type { GPersona, GPremio } from "@/lib/gestor/tipos";
 import { ruta } from "@/lib/util";
-import { Flechas, formularioFoto, Mas, type Correr } from "./comun";
+import { Flechas, Mas, subirFoto, type Correr } from "./comun";
 
 /** Campo de texto que se guarda al salir de él (como los del gestor viejo). */
 function Campo({
@@ -123,7 +123,7 @@ export function BloquePremios({ premios, correr }: { premios: GPremio[]; correr:
               <Foto
                 className="g-premio-foto"
                 foto={p.foto}
-                alElegir={(f) => correr(fotoPremio(p.id, formularioFoto(f)))}
+                alElegir={(f) => correr(subirFoto(f, (fd) => fotoPremio(p.id, fd)))}
               />
               <div className="g-premio-campos">
                 <Campo
@@ -208,7 +208,7 @@ export function BloqueEquipo({ equipo, correr }: { equipo: GPersona[]; correr: C
               <Foto
                 className="g-persona-foto"
                 foto={m.foto}
-                alElegir={(f) => correr(fotoPersona(m.id, formularioFoto(f)))}
+                alElegir={(f) => correr(subirFoto(f, (fd) => fotoPersona(m.id, fd)))}
               />
               <div className="g-persona-campos">
                 <Campo

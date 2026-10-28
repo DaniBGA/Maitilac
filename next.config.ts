@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
   },
   // Caché por etiqueta con 'use cache' (lib/datos.ts).
   cacheComponents: true,
+  // Fotos del gestor: cada envío lleva una sola, de hasta 15 MB (FOTO_MAXIMO_MB en
+  // lib/gestor/tipos.ts), más lo que suma el formulario. Next acepta 1 MB por defecto en
+  // las Server Actions, y proxy.ts (que mira /gestor) guarda hasta 10 MB del envío.
+  experimental: {
+    serverActions: { bodySizeLimit: "16mb" },
+    proxyClientMaxBodySize: "16mb",
+  },
   // Sin el indicador flotante de desarrollo: tapa parte de las capturas de los tests visuales.
   // Los errores de consola los controla el test "sin errores en consola".
   devIndicators: false,

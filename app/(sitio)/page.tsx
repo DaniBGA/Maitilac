@@ -143,7 +143,7 @@ async function InicioContenido() {
                 <path d="M17 13.9c2.7.5 4.5 2.3 4.5 5.1"></path>
               </svg>
             </div>
-            <div className="serif ini-23">+40 Años</div>
+            <div className="serif ini-23">+80 Años</div>
             <p className="ini-24">De tradición familiar en el sector lácteo.</p>
           </div>
           <div className="ini-21">

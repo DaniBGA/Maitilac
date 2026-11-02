@@ -66,3 +66,57 @@
 .fc-credito:hover {
   color: #da8737;
 }
+
+/* Historia (02/11/2026): el detalle del año elegido en la línea de tiempo, entre el relato y
+   las fotos. Mismos colores y tipografías que la sección. */
+.tl-detalle {
+  background: #efebdf;
+  border-radius: 20px;
+  padding: 28px 32px;
+  scroll-margin: 110px 0 24px;
+}
+.tl-detalle-anio {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #c67a31;
+}
+.tl-detalle-tit {
+  margin: 6px 0 12px;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: #2a2621;
+}
+.tl-detalle p {
+  margin: 0 0 12px;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #4a453d;
+  font-weight: 500;
+}
+.tl-detalle p:last-child {
+  margin-bottom: 0;
+}
+.tl-detalle strong {
+  color: #2a2621;
+}
+/* En el celular los años están arriba y no quedan fijos: el detalle va justo debajo de ellos,
+   antes del relato, así tocar un año no lleva al final de la sección. */
+@media (max-width: 720px) {
+  .tl-panel {
+    display: flex;
+    flex-direction: column;
+  }
+  .tl-detalle {
+    order: -1;
+    margin-bottom: 28px;
+    padding: 22px 20px;
+  }
+  .tl-detalle-tit {
+    font-size: 25px;
+  }
+  .tl-detalle p {
+    font-size: 16px;
+  }
+}

@@ -4,7 +4,7 @@ import { FooterClaro } from "@/components/sitio/FooterClaro";
 import { IcoTick } from "@/components/sitio/Icono";
 import { CarruselHistoria } from "@/components/sitio/nosotros/CarruselHistoria";
 import { CarruselPremios } from "@/components/sitio/nosotros/CarruselPremios";
-import { LineaTiempo } from "@/components/sitio/nosotros/LineaTiempo";
+import { Historia } from "@/components/sitio/nosotros/Historia";
 import {
   getEquipoVisible,
   getFotosHistoria,
@@ -51,12 +51,11 @@ async function NosotrosContenido() {
           <div className="nos-6">
             <span className="nos-7">DESDE 1940</span>
           </div>
-          {/* Línea de tiempo vertical a la izquierda.
-                 A la derecha: la historia y, debajo, el carrusel de fotos. */}
-          <div className="timeline">
-            <LineaTiempo hitos={getHistoria()} />
-            <div className="tl-panel">
-              {/* La historia */}
+          {/* Línea de tiempo vertical a la izquierda. A la derecha: la historia, el detalle
+                 del año elegido y, debajo, el carrusel de fotos (components/sitio/nosotros/Historia.tsx). */}
+          <Historia
+            hitos={getHistoria()}
+            relato={
               <div className="tl-relato">
                 <p className="tl-lema">
                   En MAITILAC creemos que los buenos quesos empiezan mucho antes de llegar a la mesa.
@@ -85,15 +84,15 @@ async function NosotrosContenido() {
                   horma que sale de la planta.
                 </p>
                 <p>
-                  Somos tres generaciones de una misma familia trabajando con la misma pasión: producir
+                  Ya somos tres generaciones de una misma familia dedicadas a la misma pasión: producir
                   alimentos de calidad y compartir el sabor de nuestras raíces.
                 </p>
               </div>
-              {/* Dos filas de fotos: arriba las de archivo, abajo las actuales.
-                     Cada una se desplaza sola hacia un lado distinto. */}
-              <CarruselHistoria fotosHistoria={getFotosHistoria()} fotosHoy={getFotosHoy()} />
-            </div>
-          </div>
+            }
+            /* Dos filas de fotos: arriba las de archivo, abajo las actuales.
+               Cada una se desplaza sola hacia un lado distinto. */
+            fotos={<CarruselHistoria fotosHistoria={getFotosHistoria()} fotosHoy={getFotosHoy()} />}
+          />
         </div>
       </section>
       {/* Proceso productivo */}

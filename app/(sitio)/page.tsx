@@ -237,8 +237,8 @@ async function InicioContenido() {
               ordeñe a mano y mucho trabajo familiar.
             </p>
             <p className="ini-40">
-              Somos tres generaciones de una misma familia trabajando con la misma pasión: producir alimentos
-              de calidad y compartir el sabor de nuestras raíces.
+              Ya somos tres generaciones de una misma familia dedicadas a la misma pasión: 
+              producir alimentos de calidad y compartir el sabor de nuestras raíces.
             </p>
             <Link className="ini-41" href="/nosotros" data-go="nosotros">
               Conocé más sobre nosotros{" "}

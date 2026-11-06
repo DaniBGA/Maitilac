@@ -35,7 +35,7 @@ import type {
   Producto,
   ProductoDelMes,
 } from "./tipos";
-import { slug } from "./util";
+import { etiquetaProducto, slug } from "./util";
 
 /** Caché hasta que el gestor invalide alguna de estas etiquetas. */
 function cachear(...etiquetas: string[]) {
@@ -74,7 +74,7 @@ export async function getAnuncios(): Promise<Anuncios> {
 /** Productos visibles en el sitio (activos y no borrados), en el orden del gestor. */
 export async function getProductosVisibles(): Promise<Producto[]> {
   "use cache";
-  cachear("productos");
+  cachear("productos", "producto-del-mes");
   const filas = await db
     .select()
     .from(s.productos)
@@ -90,6 +90,7 @@ export async function getProductosVisibles(): Promise<Producto[]> {
     .from(s.comboQuesos)
     .innerJoin(s.productos, eq(s.productos.id, s.comboQuesos.quesoId))
     .orderBy(asc(s.comboQuesos.orden));
+  const [delMes] = await db.select({ id: s.productoDelMes.productoId }).from(s.productoDelMes).limit(1);
 
   return filas.map((p) => ({
     nombre: p.nombre,
@@ -100,7 +101,7 @@ export async function getProductosVisibles(): Promise<Producto[]> {
     precio: precioTexto(p.precio, p.precioPrefijo),
     unidad: p.unidad,
     verPrecio: p.verPrecio,
-    badge: p.badge,
+    badge: etiquetaProducto(p.badge, p.id === delMes?.id),
     photos: fotos.filter((f) => f.productoId === p.id).map((f) => f.archivo),
     comida: p.maridajeComida,
     bebida: p.maridajeBebida,

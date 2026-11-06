@@ -155,7 +155,7 @@ Botón **"Editar"**. Se abre un panel lateral con todos los campos:
 | **Mostrar el precio en el sitio** | Si lo destildás, en el sitio no se muestra el precio (no aparece nada en su lugar). El precio queda guardado para volver a mostrarlo |
 | **Presentación** | Entero, Trozado, Feteado. Marcá las que correspondan |
 | **Quesos incluidos** | Sólo para combos y picadas |
-| **Etiqueta destacada** | "Nuevo", "Producto del Mes"... Se ve como cartelito naranja sobre la foto |
+| **Etiqueta destacada** | "Nuevo", por ejemplo. Se ve como cartelito naranja sobre la foto. "Producto del Mes" no se escribe acá: la pone sola el bloque *Producto del mes* (bloque 6) |
 | **Premios** | El texto que aparece en el detalle |
 | **Fotos** | Se suben con "Subir foto" y se quitan con la × de cada una |
 
@@ -216,7 +216,7 @@ Al terminar: botón **"Guardar contacto"**.
 
 El bloque grande que se ve arriba de todo en el catálogo.
 
-- **Producto:** el nombre, el precio y la unidad salen del producto elegido. Con **"— No mostrar el bloque —"** el bloque desaparece del catálogo.
+- **Producto:** el nombre, el precio y la unidad salen del producto elegido. Ese producto lleva además el cartelito **"Producto del Mes"** en su tarjeta; al elegir otro, el cartelito se pasa solo al nuevo. Con **"— No mostrar el bloque —"** el bloque desaparece del catálogo y ningún producto lleva el cartelito.
 - **Texto:** la frase que acompaña al producto.
 - **Foto:** clic sobre la foto para cambiarla. Se guarda en el momento.
 

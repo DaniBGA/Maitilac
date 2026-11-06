@@ -8,7 +8,7 @@
  *  4. devuelve los datos del gestor actualizados.
  * Los mensajes son los mismos que mostraba el gestor viejo.
  */
-import { and, asc, eq, isNull, ne, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
 import { updateTag } from "next/cache";
 import { after } from "next/server";
 import extrasFabrica from "@/db/importar/data/extras.json";
@@ -29,7 +29,7 @@ import {
 } from "../importacion";
 import { leerPrecioEscrito } from "../precio";
 import type { Anuncios, Config } from "../tipos";
-import { slug } from "../util";
+import { esEtiquetaDelMes, slug } from "../util";
 import { leerDatosGestor } from "./datos";
 import { guardarFoto } from "./fotos";
 import { requerirSesion } from "./sesion";
@@ -569,6 +569,11 @@ export async function guardarProductoDelMes(productoId: string, texto: string): 
         target: s.productoDelMes.id,
         set: { productoId: productoId || null, texto: limpiar(texto) },
       });
+    // La etiqueta "Producto del Mes" sale sola del producto elegido (etiquetaProducto en
+    // lib/util.ts): se borra donde estaba escrita a mano, así el gestor muestra lo mismo que el sitio.
+    const conEtiqueta = await db.select({ id: s.productos.id, badge: s.productos.badge }).from(s.productos);
+    const viejas = conEtiqueta.filter((p) => esEtiquetaDelMes(p.badge)).map((p) => p.id);
+    if (viejas.length) await db.update(s.productos).set({ badge: "" }).where(inArray(s.productos.id, viejas));
     return productoId
       ? "Producto del mes guardado. Ya se ve en el catálogo."
       : "El catálogo ya no muestra producto del mes.";

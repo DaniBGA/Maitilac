@@ -19,6 +19,19 @@ export const slug = (nombre: string) =>
 export const precioVisible = (p: Pick<Producto, "verPrecio" | "precio">) =>
   p.verPrecio !== false && p.precio !== "Consultar";
 
+export const PRODUCTO_DEL_MES = "Producto del Mes";
+
+/**
+ * Etiqueta que se ve sobre la foto. "Producto del Mes" la lleva sólo el producto elegido en el
+ * bloque "Producto del mes" del gestor, y sale sola: antes era texto escrito en cada producto y,
+ * al elegir otro, el anterior la seguía mostrando (06/11/2026). Las demás etiquetas, tal cual.
+ */
+export const etiquetaProducto = (etiqueta: string, esDelMes: boolean) =>
+  esDelMes ? PRODUCTO_DEL_MES : esEtiquetaDelMes(etiqueta) ? "" : etiqueta;
+
+export const esEtiquetaDelMes = (etiqueta: string) =>
+  etiqueta.trim().toLowerCase() === PRODUCTO_DEL_MES.toLowerCase();
+
 /** Índice circular de foto, igual que el sitio viejo (tolera negativos). */
 export const indiceCircular = (i: number, total: number) => (total ? ((i % total) + total) % total : 0);
 // Nota: en el sitio viejo, un producto sin fotos tenía <img src="">. React no admite

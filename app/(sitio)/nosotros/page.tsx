@@ -161,7 +161,7 @@ async function NosotrosContenido() {
               <span className="cd-circulo">
                 <Foto src="/img/cadena/1-pastando.png" sizes="134px" alt="" loading="lazy" />
               </span>{" "}
-              <span className="cd-num">1</span> <span className="cd-lbl">El campo</span>
+              <span className="cd-num">1</span> <span className="cd-lbl">Del campo</span>
             </li>
             <li className="cd-paso">
               <span className="cd-circulo">
@@ -185,7 +185,7 @@ async function NosotrosContenido() {
               <span className="cd-circulo">
                 <Foto src="/img/cadena/5-local.png" sizes="134px" alt="" loading="lazy" />
               </span>{" "}
-              <span className="cd-num">5</span> <span className="cd-lbl">Nuestros locales</span>
+              <span className="cd-num">5</span> <span className="cd-lbl">A nuestros locales</span>
             </li>
             <li className="cd-paso">
               <span className="cd-circulo">

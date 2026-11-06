@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import productos from "@/db/importar/data/productos.json";
-import { indiceCircular, ruta, slug } from "@/lib/util";
+import { etiquetaProducto, indiceCircular, ruta, slug } from "@/lib/util";
 
 describe("slug", () => {
   test.each([
@@ -30,4 +30,15 @@ test("ruta: las rutas relativas del sitio viejo van desde la raíz", () => {
   expect(ruta("/fondo-hero.jpg")).toBe("/fondo-hero.jpg");
   expect(ruta("https://ejemplo.com/a.jpg")).toBe("https://ejemplo.com/a.jpg");
   expect(ruta("")).toBe("");
+});
+
+test('etiquetaProducto: "Producto del Mes" sólo en el producto del mes elegido', () => {
+  expect(etiquetaProducto("", true)).toBe("Producto del Mes");
+  expect(etiquetaProducto("Nuevo", true)).toBe("Producto del Mes");
+  // El que deja de serlo no la sigue mostrando, aunque la tenga escrita
+  expect(etiquetaProducto("Producto del Mes", false)).toBe("");
+  expect(etiquetaProducto(" producto del mes ", false)).toBe("");
+  // Las demás etiquetas, tal cual
+  expect(etiquetaProducto("Nuevo", false)).toBe("Nuevo");
+  expect(etiquetaProducto("", false)).toBe("");
 });

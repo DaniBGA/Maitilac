@@ -192,6 +192,14 @@ test("producto del mes: se puede cambiar desde el gestor", async ({ page }) => {
   await expect(aviso(page)).toHaveText("Producto del mes guardado. Ya se ve en el catálogo.");
   await page.goto("/catalogo");
   await expect(page.locator(".cat-9")).toHaveText("Gouda");
+  // El cartelito "Producto del Mes" se pasa solo al producto nuevo (antes quedaba en el Holanda)
+  const etiqueta = (nombre: string) =>
+    page
+      .locator("#catalogo-grid .card")
+      .filter({ has: page.locator("h3", { hasText: new RegExp(`^${nombre}$`) }) })
+      .locator(".badge");
+  await expect(etiqueta("Gouda")).toHaveText("Producto del Mes");
+  await expect(etiqueta("Holanda")).toHaveCount(0);
 
   await page.goto("/gestor");
   await campo(page, "#g-contacto", "Producto").selectOption(original);

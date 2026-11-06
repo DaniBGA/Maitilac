@@ -285,9 +285,13 @@ export function PanelProducto({
               type="text"
               id="gf-badge"
               value={p.badge}
-              placeholder="Ej: Nuevo, Producto del Mes (vacío si no lleva)"
+              placeholder="Ej: Nuevo (vacío si no lleva)"
               onChange={(e) => cambiar({ badge: e.target.value })}
             />
+            <div className="g-ayuda">
+              &quot;Producto del Mes&quot; no se escribe acá: la lleva sola el producto elegido en el bloque
+              Producto del mes, más abajo.
+            </div>
           </div>
           <div className="g-campo">
             <label>Premios</label>

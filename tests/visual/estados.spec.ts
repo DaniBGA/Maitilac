@@ -18,11 +18,11 @@ test.describe("estados — Nosotros", () => {
     expect(await capturarElemento(page, ".timeline")).toMatchSnapshot("nosotros-globo-ultimo.png");
   });
 
-  test("año seleccionado", async ({ page }) => {
+  test("la línea de tiempo no se toca: sin botones ni año marcado", async ({ page }) => {
+    test.skip(ES_REFERENCIA, "En el sitio viejo los años eran botones (cambio del 09/11/2026)");
     await prepararPagina(page, nosotros);
-    await page.locator(".tl-item").nth(2).click();
-    await page.mouse.move(0, 0);
-    expect(await capturarElemento(page, ".tl-nav")).toMatchSnapshot("nosotros-anio-seleccionado.png");
+    await expect(page.locator(".tl-item")).toHaveCount(9);
+    await expect(page.locator("#tl-nav button, .tl-item.on")).toHaveCount(0);
   });
 
   test("hover en un paso de la cadena", async ({ page }, info) => {
